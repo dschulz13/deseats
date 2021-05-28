@@ -1,0 +1,12 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^Meta$
+^docs$
+^doc$
+^data-raw$
+^cran-comments\.md$
+^futureIdeas$
+^.Rhistory\.Rhistory$
+^CRAN-RELEASE$
+^Literature, basic code, etc$

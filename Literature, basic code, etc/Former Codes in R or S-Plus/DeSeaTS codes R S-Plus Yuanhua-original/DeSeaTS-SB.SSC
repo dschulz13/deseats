@@ -1,0 +1,144 @@
+########## Non-rosust smooth of DI monthly data ##########
+########## with two local dummy variables at tb. ##########
+########## Programmer: Yuanhua Feng                 ##########
+########## Date: July 2006                          ##########
+
+DeSeaTS.SB<-function(y, s, p, kn, h, tb)
+{
+
+n<-length(y)           ## number of observations
+ye<-matrix(0,2,n)      ## definition of the matrix of estimates
+ht<-2*h+1              ## total bandwith
+
+t1<-tb
+t2<-tb
+
+xg<-matrix(0,p+s,ht)   ## data matrix for the trend
+xs<-xg                 ## data matrix for the season
+xw<-xg                 ## weighted data matrix
+
+
+  for(j in (1:(p+1))){xg[j,1:ht]<-(((1:ht)-h-1)/(h+0.5))**(j-1)}
+  for(j in (1:(trunc((s-1)/2)))){
+	xs[p+2*j,  1:ht]<-cos(2*j*pi*(1:ht)/s)
+	xs[p+2*j+1,1:ht]<-sin(2*j*pi*(1:ht)/s)
+	}
+
+  if(s/2==trunc(s/2)){
+	xs[p+s,1:ht]<-cos(pi*(1:ht))
+	}
+
+xt<-rbind(xg[1:(p+1),], xs[(p+2):(p+s),])
+
+
+
+hr<-c(2*h-(0:h)) #pointwise right bandwith
+
+##############Smoothing for points not involving the change points
+     for(i in (1:(t1-h-1))){
+	     if(i<=h+1){
+                   wk<-(1-(((1:ht)-i)/(hr[i]+0.5))**2)**(kn-1)
+
+                   for(j in (1:(p+s))){xw[j,]<-xt[j,]*wk}
+
+
+
+                   yw<-solve(xw%*%t(xt))%*%xw
+       
+                   xgt<-t(xg[,i])
+                   xst<-t(xs[,i])
+
+                   gw<-xgt%*%yw
+                   ye[1,i]<-gw%*%cbind(y[1:ht])
+                   sw<-xst%*%yw
+                   ye[2,i]<-sw%*%cbind(y[1:ht])
+
+                   ye[1,n-i+1]<-gw%*%cbind(y[n:(n-ht+1)])
+                   ye[2,n-i+1]<-sw%*%cbind(y[n:(n-ht+1)])
+
+                  }
+
+	     if(i>h+1 && i<n-h){
+                           ye[1,i]<-gw%*%cbind(y[(i-h):(i+h)])
+                           ye[2,i]<-sw%*%cbind(y[(i-h):(i+h)])
+                          }
+        }
+
+       for(i in ((t1+h):(t2-h-1))){
+	                   ye[1,i]<-gw%*%cbind(y[(i-h):(i+h)])
+                      ye[2,i]<-sw%*%cbind(y[(i-h):(i+h)])
+                      }
+      for(i in ((t2+h):(n-h-1))){
+	                   ye[1,i]<-gw%*%cbind(y[(i-h):(i+h)])
+                      ye[2,i]<-sw%*%cbind(y[(i-h):(i+h)])
+                      }
+
+                     xs<-rbind(xs[1,], xs)
+
+############## Smoothing for points involving the first jump point
+     for(i in ((t1-h):(t1+h-1))){
+                     dc<-i-t1+h+1
+                     dv<-xg[1,]
+                     dv[1:(ht-dc)]<-0
+                     
+                     xg1<-rbind(xg[1:(p+1),], dv, xg[(p+2):(p+s),])
+                     xt<-rbind(xg1[1:(p+2),], xs[(p+3):(p+s+1),])
+                     xw<-xt
+
+                   wk<-(1-(((1:ht)-h-1)/(hr[h+1]+0.5))**2)**(kn-1)
+
+                   for(j in (1:(p+s+1))){xw[j,]<-xt[j,]*wk}
+
+
+
+                   yw<-solve(xw%*%t(xt))%*%xw
+       
+                   xgt<-t(xg1[,h+1])
+                   xst<-t(xs[,h+1])
+
+                   gw<-xgt%*%yw
+                   sw<-xst%*%yw
+
+                   ye[1,i]<-gw%*%cbind(y[(i-h):(i+h)])
+                   ye[2,i]<-sw%*%cbind(y[(i-h):(i+h)])
+
+                 }
+
+
+############## Smoothing for points involving the sendon point with jump in the first derivative
+     for(i in ((t2-h):(t2+h-1))){
+                     dc<-i-t2+h+1
+                     dv<-xg[2,]
+                     dv[1:(ht-dc)]<-0
+                     
+                     xg1<-rbind(xg[1:(p+1),], dv, xg[(p+2):(p+s),])
+                     xt<-rbind(xg1[1:(p+2),], xs[(p+3):(p+s+1),])
+                     xw<-xt
+
+                   wk<-(1-(((1:ht)-h-1)/(hr[h+1]+0.5))**2)**(kn-1)
+
+                   for(j in (1:(p+s+1))){xw[j,]<-xt[j,]*wk}
+
+
+
+                   yw<-solve(xw%*%t(xt))%*%xw
+       
+                   xgt<-t(xg1[,h+1])
+                   xst<-t(xs[,h+1])
+
+                   gw<-xgt%*%yw
+                   sw<-xst%*%yw
+
+                   ye[1,i]<-gw%*%cbind(y[(i-h):(i+h)])
+                   ye[2,i]<-sw%*%cbind(y[(i-h):(i+h)])
+
+                 }
+
+
+ge<-ye[1,]
+se<-ye[2,]
+
+drop(ye)
+}
+
+################### End of the function

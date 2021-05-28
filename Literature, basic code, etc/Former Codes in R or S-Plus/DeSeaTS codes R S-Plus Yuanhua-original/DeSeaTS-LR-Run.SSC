@@ -1,0 +1,70 @@
+source("DeSeaTS-LR.ssc")
+
+###################################
+#yall<-read.table("MilkPr.dat")
+y1<-yall[,1]   ######### The direct method
+
+y2<-Deseasonal ######### Using seasonal adjusted data, almost the same as method 1
+
+y3<-yall[,1]/yall[,3]*100 ## Using deflated data
+
+y<-y1
+t0<-1983
+n<-length(y)
+s<-12
+##### best parameter choices: p=1, kn=2, hl=4*s
+p<-1
+kn<-2           
+hl<-trunc(4*s)
+hr<-hl
+ht<-hl+1
+
+#yel<-DeSeaTS.R(y, s, p, kn, hr) ## The results
+yel<-DeSeaTS.L(y, s, p, kn, hl) ## The results
+
+gel<-yel[1,1:(n-2*hl)]
+sel<-yel[2,1:(n-2*hl)]
+
+
+#yer<-DeSeaTS.R(y, s, p, kn, hr) ## The results
+yer<-DeSeaTS.R(y, s, p, kn, hr) ## The results
+
+ger<-yer[1,ht:(n-ht+1)]
+ser<-yer[2,ht:(n-ht+1)]
+
+Year<-((ht:(n-ht+1))-1)/s+t0
+p1<-(85-1)/s+t0
+p2<-(155-1)/s+t0
+p3<-(226-1)/s+t0
+
+
+####**************************************************************####
+        par(mfrow=c(2,1), mai=c(0.7, 0.7, 0.7, 0.7))
+
+matplot(Year, cbind(gel, ger, y[ht:(n-ht+1)]), type="l", lty=c(4, 3, 1), col=c(5,6, 1))
+abline(h=0)
+abline(v=p1)
+abline(v=p2)
+abline(v=p3)
+title("The milk production time series and the two one-side fitted trends", cex=0.6)
+title(xlab="Observation Year")
+
+matplot(Year, cbind(gel-ger), type="l", lty=c(1), col=c(5))
+abline(h=0)
+abline(v=p1)
+abline(v=p2)
+abline(v=p3)
+title("The differences between the two one-side fitted trends", cex=0.6)
+title(xlab="Observation Year")
+
+#matplot(Year, cbind(sel, sel*0), type="l", lty=c(1, 2), col=c(3,1))
+#title("The left-side estimated seasonality", cex=0.6)
+#title(xlab="Observation Year")
+
+#matplot(Year, cbind(ser, ser*0), type="l", lty=c(1, 2), col=c(3,1))
+#title("The right-side estimated seasonality", cex=0.6)
+#title(xlab="Observation Year")
+
+
+
+#dev.off()

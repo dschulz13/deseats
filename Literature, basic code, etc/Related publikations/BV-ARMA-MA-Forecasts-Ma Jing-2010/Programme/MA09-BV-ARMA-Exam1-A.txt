@@ -1,0 +1,83 @@
+###### Main program for decomposing a seasonal time series #######
+    
+        source("MA09-BV-ARMA-Function.txt")   ###  Call the function BV-ARMA
+
+
+##### Example 1 with the UK tourism Expenditure Data 
+Name="Example with UK tpurism Expenditure Data"
+x=read.table("UKTourism.txt") #### 2--income, 3--expenditure
+y=log(x[,3])
+
+t0=1971
+
+n=length(y)
+
+s=12
+
+x=(0:(n-1))/s+t0
+
+p=1
+bStart=1.5*s/n
+kn=2
+
+hStart=trunc(bStart*n+0.5)
+bPr=trunc(bStart*1000+0.5)/1000
+cat("This is the", Name,".",fill=T)
+cat("p=", p, "    kn=", kn, "    n=", n, "    s=", s ,fill=T) 
+cat("hStart=", hStart, "    bStart=", bPr, fill=T)
+
+result1=AutoDeSeaTS(y, s, p, kn, bStart, "m") ## The results
+
+ye=result1$ye  ## The estimate
+bopt=result1$bopt  ## The selected bandwidth
+sig2D=result1$sig2D
+sig2S=result1$sig2S
+cat("VarD=", sig2D, fill=T)
+cat("VarS=", sig2S, fill=T)
+ge=ye[1,]
+se=ye[2,]
+
+Residuen=y-ge-se
+Year=((1:n)-1)/s+t0
+
+##        postscript(file="MA09-BV-ARMA-Exam1.ps", horizontal=F)
+##        pdf(file="MA09-BV-ARMA-Exam1.pdf")
+####**************************************************************####
+        par(mfrow=c(3,1), mai=c(0.6, 0.3, 0.4, 0.2))
+
+matplot(x, cbind(y, ge), type="l", lty=c(1, 3), col=c(5,6))
+
+matplot(x, cbind(se, se*0), type="l", lty=c(1, 2), col=c(3,1))
+
+matplot(x, cbind(Residuen, Residuen*0), type="l", lty=c(1, 2), col=c(7, 1))
+
+
+## dev.off()
+
+
+#### Fit an ARMA model to the residuals with given p and q
+p=1
+q=1
+ARMA.res11=arima(Residuen, order=c(p, 0, q))
+
+summary(ARMA.res11)
+
+
+#### Calculate BIC for ARMA(p, q), p=0, 1, ..., p.max; q=0, ..., q.max
+p.max=5
+q.max=1
+
+BIC=matrix(0, p.max+1, q.max+1)
+
+for(p in 0:p.max)
+  {for(q in 0:q.max)
+    {ARMA.respq=arima(Residuen, order=c(p, 0, q))
+     BIC[p+1, q+1]=-2*ARMA.respq$loglik+log(n)*(p+q)
+    }
+   }
+
+
+phat=3
+qhat=0
+ARMA.res.BIC=arima(Residuen, order=c(phat, 0, qhat))
+
