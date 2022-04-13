@@ -11,9 +11,11 @@ lm_decomp <- function(yt, trend_poly = 1, season = 0) {
             (1 + trend_poly):(trend_poly + season - 1)] <- diag(nrow = season, 
                                                               ncol = season - 1)
     }
-    X_mat[(N - rest_rows + 1):N, 
+    if (rest_rows >= 1) {
+      X_mat[(N - rest_rows + 1):N, 
           (1 + trend_poly):(trend_poly + season - 1)] <- diag(nrow = rest_rows, 
                                                               ncol = season - 1)
+    }
     X_mat[(1:N) %% season == 0, ] <- rep(-1, trend_poly + season - 1)
     name_season <- paste0("S", 1:(season - 1))
   } else {
