@@ -11,52 +11,44 @@ bv4.1 <- function(yt) {
   ye
 }
 
-.bv4.1_weights <- function(ti, k) {
-  1 - abs(ti) / (k + 1)
+.bv4.1_weights <- function(t, ti, k) {
+  1 - abs(ti - t) / (k + 1)
 }
 
-.obtain_weights_b4.1 <- function(tp_ll = numeric(0), tp_lc = -13:13, weight_ll = 0, weight_lc = 1) {
+.obtain_weights_lc <- function(tp_lc, t_lc) {
+  b_lc <- length(tp_lc)
+  D_lc <- max(abs(tp_lc - t_lc))
+  W_lc <- .bv4.1_weights(t_lc, tp_lc, D_lc)
   
-  b_ll = length(tp_ll)
-  b_lc = length(tp_lc)  
-  
-  # Local cubic part
-  D <- max(tp_lc)
-  weights_trend <- .bv4.1_weights(ti = tp_lc, k = D)
   tt <- tp_lc / 10
+  
   X <- matrix(1, nrow = 4, ncol = b_lc)
   X[2, ] <- tt
   X[3, ] <- tt^2
   X[4, ] <- tt^3
-  XW <- X %*% diag(weights_trend)
+  XW <- X %*% diag(W_lc)
   ws_lc <- solve(XW %*% t(X), XW)[1, ]
   
-  # Local linear part
-  if (b_ll > 0) {
-  D <- max(tp_ll)
-  weights_trend <- .bv4.1_weights(ti = tp_ll, k = D)
+  ws_lc  
+}
+
+.obtain_weights_ll <- function(tp_ll, t_ll) {
+  b_ll <- length(tp_ll)
+  D_ll <- max(abs(tp_ll - t_ll))
+  W_ll <- .bv4.1_weights(t_ll, tp_ll, D_ll)
+  
   tt <- tp_ll / 10
+  
   X <- matrix(1, nrow = 2, ncol = b_ll)
   X[2, ] <- tt
-  XW <- X %*% diag(weights_trend)
-  ws_ll <- c(solve(XW %*% t(X), XW)[1, ], rep(0, max(0, b_lc - b_ll)))
-  } else {
-    ws_ll <- rep(0, b_lc)
-  }
-
-  ws <- weight_ll * ws_ll + weight_lc * ws_lc
-  ws
-  
+  XW <- X %*% diag(W_ll)
+  ws_ll <- solve(XW %*% t(X), XW)[1, ]
+ 
+  ws_ll  
 }
 
-.list_tp_ll <- vector("list", 14)
-.list_tp_ll[[1]] <- 0:19
-for (i in 2:7) {
-  .list_tp_ll[[i]] <- c(.list_tp_ll[[i - 1]] - 1, max(.list_tp_ll[[i - 1]]))
-}
-for (i in 8:14) {
-  .list_tp_ll[[i]] <- numeric(0)
-}
+# For local cubic
+
 .list_tp_lc <- list(
   0:26,
   -1:24,
@@ -73,24 +65,46 @@ for (i in 8:14) {
   -12:15,
   -13:13
 )
+.list_t_lc <- rep(0, 14)
 
-.weight_ll <- c(seq(6 / 12, 1 / 12, by = -(1 / 12)), rep(0, 8))
-.weight_lc <- c(seq(6 / 12, 11 / 12, by = 1 / 12), rep(1, 8))
+.mat_lc <- matrix(0, ncol = 30, nrow = 27)
+for (i in 1:14) {
+  .mat_lc[i, 1:length(.list_tp_lc[[i]])] <- .obtain_weights_lc(.list_tp_lc[[i]], .list_t_lc[[i]])
+}
 
-.list_ws <- purrr::pmap(
-  list(
-    .list_tp_ll,
-    .list_tp_lc,
-    .weight_ll,
-    .weight_lc
-  ),
-  function(.x, .y, .v, .w) {.obtain_weights_b4.1(tp_ll = .x, tp_lc = .y, weight_ll = .v, weight_lc = .w)}
+.mat_lc[15:27, ] <- .mat_lc[13:1, 30:1]
+
+# For local linear at the boundary
+
+.list_tp_ll <- list(
+   0:19,
+  -1:19,
+  -2:19,
+  -3:19,
+  -4:19,
+  -5:19
 )
 
-.ws_trend_monthly <- matrix(0, ncol = 30, nrow = 27)
-for (i in 1:14) {
-  .l <- length(.list_ws[[i]])
-  .ws_trend_monthly[i, 1:.l] <- .list_ws[[i]]
+.list_t_ll <- c(0, -1, -2, -3, -4, -5)
+
+.mat_ll <- matrix(0, ncol = 30, nrow = 27)
+for (i in 1:6) {
+  .mat_ll[i, 1:length(.list_tp_ll[[i]])] <- .obtain_weights_ll(.list_tp_ll[[i]], .list_t_ll[[i]])
 }
-.ws_trend_monthly[15:27, ] <- rev(.ws_trend_monthly[1:13, ])
+.mat_ll[15:27, ] <- .mat_ll[13:1, 30:1]
+
+.weight_ll <- c(seq(6 / 12, 1 / 12, by = -(1 / 12)), rep(0, 15), seq(1 / 12, 6 / 12, by = (1 / 12)))
+.weight_lc <- c(seq(6 / 12, 11 / 12, by = 1 / 12), rep(1, 15), seq(11 / 12, 6 / 12, by = -(1 / 12)))
+
+.mat_ll_weighted <- .mat_ll
+for (i in 1:27) {
+  .mat_ll_weighted[i, ] <- .mat_ll_weighted[i, ] * .weight_ll[[i]] 
+}
+
+.mat_lc_weighted <- .mat_lc
+for (i in 1:27) {
+  .mat_lc_weighted[i, ] <- .mat_lc_weighted[i, ] * .weight_lc[[i]] 
+}
+
+.ws_trend_monthly <- .mat_ll_weighted + .mat_lc_weighted
 
