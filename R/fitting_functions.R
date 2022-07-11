@@ -46,15 +46,17 @@ smooth_deseats <- function(y, period = 12, order_poly = 1,
   # Absolute bandwidth obtained from the relative bandwidth
   bwidth_absolute <- trunc(n * bwidth + 0.5)
   # Maximum (total) bandwidth to right side
-  bwidth_max <- 2 * bwidth_absolute + 1      
+  bwidth_max <- 2 * bwidth_absolute + 1     
+  
+  # Empty matrices for the weighting systems
+  ws <- matrix(0, nrow = bwidth_max, ncol = bwidth_max)
+  ws_G <- ws
+  ws_S <- ws
 
-  # Data matrix for the trend
-  dataMat_G <- matrix(0, nrow = order_poly + period, ncol = bwidth_max) 
-  # Data matrix for the season
-  dataMat_S <- dataMat_G                 
-  # Weighted data matrix
-  dataMat_weighted <- dataMat_G                 
-
+  # Empty matrix for X values
+  X_G <- rep(0, nrow = order_poly + 1, ncol = bwidth_max)
+  X_s <- rep(0, nrow = period - 1, ncol = bwidth_max)
+  
   seq_bwidth_abs <- 0:bwidth_absolute
   right_bwidth_extension <- bwidth_absolute - seq_bwidth_abs
   bwidth_right <- bwidth_absolute + bf * right_bwidth_extension
@@ -68,8 +70,21 @@ smooth_deseats <- function(y, period = 12, order_poly = 1,
   all_t_centered_2 <- all_t_centered^2
   
   # All u-values to be considered in the kernel functions
-  all_u <- all_t_centered / bwidth_absolute
-  all_u_poly <- t(unname(poly(all_u, degree = order_poly, raw = TRUE)))
+  all_GX <- all_t_centered / bwidth_absolute
+  all_GX_poly <- rbind(
+    rep(1, m),
+    t(unname(poly(all_GX, degree = order_poly, raw = TRUE)))
+  )
+  
+  all_SX <- matrix(0, nrow = period - 1, ncol = m)
+  for (i in 1:trunc((period - 1) / 2)) {
+    all_SX[2 * i - 1, ] <- cos(2 * i * pi * all_t_centered / period)
+    all_SX[2 * i, ] <- sin(2 * i * pi * all_t_centered / period)
+  }
+  
+  if (period / 2 == trunc(period / 2)) {
+    all_SX[period - 1, ] <- cos(pi * all_t_centered) 
+  }
 
   allLowB <- bwidth_absolute - seq_bwidth_abs + 1   # NOTE: remove + 1 in C++
   allUpB <- bwidth_absolute + bwidth_right + 1
@@ -79,65 +94,55 @@ smooth_deseats <- function(y, period = 12, order_poly = 1,
   # Uniform and Epanechnikov kernels
   weight_fun <- weights_select(mu)
   
-  #dataMat_G <- 
   
-  # for (j in 1:(order_poly + 1)) {
-  #   dataMat_G[j, 1:bwidth_max] <- (((1:bwidth_total) - bwidth_absolute - 1) / bwidth_absolute)^(j - 1)
-  # }
+  #xt <- rbind(dataMat_G[1:(order_poly + 1), ], dataMat_S[(order_poly + 2):(order_poly + period), ])
 
-  for (j in 1:(trunc((s - 1) / 2))) {
-    dataMat_S[order_poly + 2 * j, ] <- cos(2 * j * pi * seq_len(bwidth_max) / s)
-    dataMat_S[order_poly + 2 * j + 1, ] <- sin(2 * j * pi * seq_len(bwidth_max) / s)
-  }
-
-  if (s / 2 == trunc(s / 2)) {
-    dataMat_S[order_poly + period, ] <- cos(pi * seq_len(bwidth_max))
-  }
-
-  xt <- rbind(dataMat_G[1:(order_poly + 1), ], dataMat_S[(order_poly + 2):(order_poly + period), ])
-
-  bwidth_right <- c(2 * bwidth_absolute - (0:bwidth_absolute)) #pointwise right bandwith
-
+  Xt <- rbind(all_GX_poly, all_SX)
+  
   wk <- rep(0, bwidth_max)
   
-  dataMat_weighted[1, 1:bwidth_total[[1]]] <- 1
+  dataMat <- matrix(0, nrow = period + order_poly, ncol = bwidth_max)
   
-  for (i in 1:(n - bwidth_absolute - 1)) {
+  ej <- t(c(1, rep(0, order_poly), rep(0, period - 1)))
+  phi <- t(c(rep(0, order_poly + 1), rep(c(1, 0), period / 2)[-period]))
+  vec <- t(c(ej[1:(order_poly + 1)], phi[(order_poly + 2):(order_poly + period)]))
+  
+  for (i in 1:(bwidth_absolute + 1)) {
     
     lowB <- allLowB[[i]]
     upB <- allUpB[[i]]
   
-    if (i <= bwidth_absolute + 1) {
-    
-      wk[1:bwidth_total[[i]]] <- weight_fun(lowB = lowB, upB = upB, 
+    wk[1:bwidth_total[[i]]] <- weight_fun(lowB = lowB, upB = upB, 
                        allsequ2 = all_t_centered_2, 
-                       hr2 = bwidth_right_squared)
+                       hr2 = bwidth_right_squared[[i]])
     
-      dataMat_weighted[1, bwdith_total[[i]]] <- 1     # update the first row with values 1
-      dataMat_weighted[2:(order_poly + period)] <- xt[, lowB:upB] * diag(wk)
-    
-      yw <- solve(dataMat_weighted %*% t(xt)) %*% dataMat_weighted
-    
-      xgt <- t(dataMat_G[, i])
-      xst <- t(dataMat_S[, i])
-    
-      gw <- xgt %*% yw
-      G[[i]] <- gw %*% cbind(y[1:bwidth_total])
-      sw <- xst %*% yw
-      S[[i]] <- sw %*% cbind(y[1:bwidth_total])
-    
-      G[[n - i + 1]] <- gw %*% cbind(y[n:(n - bwidth_total + 1)])
-      S[[n - i + 1]] <- sw %*% cbind(y[n:(n - bwidth_total + 1)])
-    
-    }
-  
-    if (i > (h + 1) && i < (n - h)) {
-      G[[i]] <- gw %*% cbind(y[(i - bwidth_absolute):(i + bwidth_absolute)])
-      S[[i]] <- sw %*% cbind(y[(i - bwidth_absolute):(i + bwidth_absolute)])
-    }
-  }
+    dataMat[, 1:bwidth_total[[i]]] <- Xt[, lowB:upB]
+    xw <- dataMat %*% diag(wk)
+    xa <- solve(xw %*% t(dataMat), xw)
+    ws_G[i, ] <- ej %*% xa
+    ws_S[i, ] <- phi %*% xa
+    ws[i, ] <- vec %*% xa
 
-  data.frame(trend = G, season = S)
+  }
+  
+  ws_G[(bwidth_absolute + 2):(bwidth_max), ] <- ws_G[bwidth_absolute:1, bwidth_max:1]
+  ws_S[(bwidth_absolute + 2):(bwidth_max), ] <- ws_S[bwidth_absolute:1, bwidth_max:1]
+  ws[(bwidth_absolute + 2):(bwidth_max), ] <- ws[bwidth_absolute:1, bwidth_max:1]
+  
+  ye_G <- rep(NA, n)
+  ye_S <- ye_G
+  
+  ye_G[1:bwidth_absolute] <- ws_G[1:bwidth_absolute, , drop = FALSE] %*% y[1:(2 * bwidth_absolute + 1)]
+  y_mat <- matrix(0, ncol = 2 * bwidth_absolute + 1, nrow = n - 2 * bwidth_absolute)
+  for (i in 1:(n - 2 * bwidth_absolute)) {
+    y_mat[i, ] <- y[i:(i + 2 * bwidth_absolute)]
+  }
+  ye_G[(bwidth_absolute + 1):(n - bwidth_absolute)] <- y_mat %*% ws_G[bwidth_absolute + 1, , drop = TRUE]
+  ye_G[(n - bwidth_absolute + 1):n] <- ws_G[(bwidth_absolute + 2):(2 * bwidth_absolute + 1), , drop = FALSE] %*% y[(n - 2 * bwidth_absolute):n]
+  
+  ye_S[1:bwidth_absolute] <- ws_S[1:bwidth_absolute, , drop = FALSE] %*% y[1:(2 * bwidth_absolute + 1)] 
+  ye_S[(bwidth_absolute + 1):(n - bwidth_absolute)] <- y_mat %*% ws_S[bwidth_absolute + 1, , drop = TRUE]
+  ye_S[(n - bwidth_absolute + 1):n] <- ws_S[(bwidth_absolute + 2):(2 * bwidth_absolute + 1), , drop = FALSE] %*% y[(n - 2 * bwidth_absolute):n]  
   
 }
 
