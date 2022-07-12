@@ -41,7 +41,7 @@ int factorialCpp(const int k) {
 
 // C++ version of deseats smoothing
 // [[Rcpp::export]]
-arma::mat gsmoothdeseatsCpp(const arma::vec& y, const int p,
+Rcpp::List gsmoothdeseatsCpp(const arma::vec& y, const int p,
   const int s, const int mu, const double b, const int bb) {
 
   const int n = y.size();
@@ -78,12 +78,12 @@ arma::mat gsmoothdeseatsCpp(const arma::vec& y, const int p,
   }
   
   for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
-    dataMat.row(p + 2 * i - 1) = arma::cos(2.0 * i * M_PI * allsequ / s);
+    dataMat.row(p + 2 * i - 1) = arma::cos(2.0 * i * M_PI * allsequ / s); //look here
     dataMat.row(p + 2 * i) = arma::sin(2.0 * i * M_PI * allsequ / s);
   }
   
   if ((s / 2.0) == std::trunc(s / 2.0)) {
-    dataMat.row(s - 2) = arma::cos(M_PI * allsequ);
+    dataMat.row(p + s - 1) = arma::cos(M_PI * allsequ);
   }  
   
   arma::rowvec ej = arma::zeros<arma::rowvec>(p + s);
@@ -153,7 +153,7 @@ arma::mat gsmoothdeseatsCpp(const arma::vec& y, const int p,
                               _["Trend"] = grG,
                               _["Season"] = grS);
   
-  return dataMat;
+  return listOut;
   
 }
 

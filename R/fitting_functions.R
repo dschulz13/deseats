@@ -93,9 +93,6 @@ smooth_deseats <- function(y, period = 12, order_poly = 1,
   # This way, some calculations will be faster, especially for the
   # Uniform and Epanechnikov kernels
   weight_fun <- weights_select(mu)
-  
-  
-  #xt <- rbind(dataMat_G[1:(order_poly + 1), ], dataMat_S[(order_poly + 2):(order_poly + period), ])
 
   Xt <- rbind(all_GX_poly, all_SX)
   
@@ -145,8 +142,7 @@ smooth_deseats <- function(y, period = 12, order_poly = 1,
   ye_S[(n - bwidth_absolute + 1):n] <- ws_S[(bwidth_absolute + 2):(2 * bwidth_absolute + 1), , drop = FALSE] %*% y[(n - 2 * bwidth_absolute):n]  
   
   
-  #cbind(Observations = y, Trend = ye_G, Season = ye_S, Residuals = y - ye_G- ye_S)
-  Xt
+  cbind(Observations = y, Trend = ye_G, Season = ye_S, Residuals = y - ye_G- ye_S)
 }
 
 deseats_fit <- function(spec, time_series) {
