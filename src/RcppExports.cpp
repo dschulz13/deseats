@@ -6,59 +6,63 @@
 
 using namespace Rcpp;
 
-// rcpparma_hello_world
-arma::mat rcpparma_hello_world();
-RcppExport SEXP _anRpackage_rcpparma_hello_world() {
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
+// cf0Cpp
+List cf0Cpp(const NumericVector Xt);
+RcppExport SEXP _DeSeaTS_cf0Cpp(SEXP XtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpparma_hello_world());
+    Rcpp::traits::input_parameter< const NumericVector >::type Xt(XtSEXP);
+    rcpp_result_gen = Rcpp::wrap(cf0Cpp(Xt));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_outerproduct
-arma::mat rcpparma_outerproduct(const arma::colvec& x);
-RcppExport SEXP _anRpackage_rcpparma_outerproduct(SEXP xSEXP) {
+// gsmoothdeseatsCpp
+arma::vec gsmoothdeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb);
+RcppExport SEXP _DeSeaTS_gsmoothdeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_outerproduct(x));
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
+    rcpp_result_gen = Rcpp::wrap(gsmoothdeseatsCpp(y, p, s, mu, b, bb));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_innerproduct
-double rcpparma_innerproduct(const arma::colvec& x);
-RcppExport SEXP _anRpackage_rcpparma_innerproduct(SEXP xSEXP) {
+// gsmoothCalc2Cpp
+List gsmoothCalc2Cpp(const arma::vec& y, const int v, const int p, const int mu, const double b, const int bb);
+RcppExport SEXP _DeSeaTS_gsmoothCalc2Cpp(SEXP ySEXP, SEXP vSEXP, SEXP pSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_innerproduct(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpparma_bothproducts
-Rcpp::List rcpparma_bothproducts(const arma::colvec& x);
-RcppExport SEXP _anRpackage_rcpparma_bothproducts(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_bothproducts(x));
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type v(vSEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
+    rcpp_result_gen = Rcpp::wrap(gsmoothCalc2Cpp(y, v, p, mu, b, bb));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_anRpackage_rcpparma_hello_world", (DL_FUNC) &_anRpackage_rcpparma_hello_world, 0},
-    {"_anRpackage_rcpparma_outerproduct", (DL_FUNC) &_anRpackage_rcpparma_outerproduct, 1},
-    {"_anRpackage_rcpparma_innerproduct", (DL_FUNC) &_anRpackage_rcpparma_innerproduct, 1},
-    {"_anRpackage_rcpparma_bothproducts", (DL_FUNC) &_anRpackage_rcpparma_bothproducts, 1},
+    {"_DeSeaTS_cf0Cpp", (DL_FUNC) &_DeSeaTS_cf0Cpp, 1},
+    {"_DeSeaTS_gsmoothdeseatsCpp", (DL_FUNC) &_DeSeaTS_gsmoothdeseatsCpp, 6},
+    {"_DeSeaTS_gsmoothCalc2Cpp", (DL_FUNC) &_DeSeaTS_gsmoothCalc2Cpp, 6},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_anRpackage(DllInfo *dll) {
+RcppExport void R_init_DeSeaTS(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

@@ -108,7 +108,7 @@ smooth_deseats <- function(y, period = 12, order_poly = 1,
   vec <- t(c(ej[1:(order_poly + 1)], phi[(order_poly + 2):(order_poly + period)]))
   
   for (i in 1:(bwidth_absolute + 1)) {
-    
+  
     lowB <- allLowB[[i]]
     upB <- allUpB[[i]]
   
@@ -145,7 +145,8 @@ smooth_deseats <- function(y, period = 12, order_poly = 1,
   ye_S[(n - bwidth_absolute + 1):n] <- ws_S[(bwidth_absolute + 2):(2 * bwidth_absolute + 1), , drop = FALSE] %*% y[(n - 2 * bwidth_absolute):n]  
   
   
-  cbind(Observations = y, Trend = ye_G, Season = ye_S, Residuals = y - ye_G- ye_S)
+  #cbind(Observations = y, Trend = ye_G, Season = ye_S, Residuals = y - ye_G- ye_S)
+  Xt
 }
 
 deseats_fit <- function(spec, time_series) {
