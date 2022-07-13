@@ -157,12 +157,121 @@ Rcpp::List gsmoothdeseatsCpp(const arma::vec& y, const int p,
   
 }
 
+double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart) {
+  
+  double bopt = bStart;
+  double boptOld = 0;
+  double boptOld2 = 0;
+  const int n = yt.size();
+  const int k = p + 1
+  
+  double bmax = 0.5 - 1 / n;     // The maximum bandwidth 
+  double bmin = 1 * s / n;       // The minimum bandwidth 
 
-// You can include R code blocks in C++ files processed with sourceCpp
-// (useful for testing and development). The R code will be automatically
-// run after the compilation.
-//
+  const int v = k;
+  const int pv = k + 1;
+  
+  const double cb = 0.05;        // Default
+  const int bb = 1;              // Default
 
-/*** R
-
-*/
+  const int n1 = std::trunc(n * cb);  
+  
+  const int m = 100000;
+  const arma::vec u = seqCpp(-m, m) / (m + 0.5);
+  const arma::vec wk = arma::pow((1 - arma::pow(u, 2.0)), mu);
+  const double R2 = arma::sum(arma::pow(wk, 2.0)) / m;  
+  
+  arma::vec wkp;
+  
+  if (p == 1) {
+    wkp = wk;
+  } else if (p == 3) {
+    if (mu == 0) {
+      wkp = 3.0 / 8.0 * (3.0 - 5.0 * arma::pow(u, 2.0));
+    } else if (mu == 1) {
+      wkp = 15.0 / 32.0 * (3.0 - 10.0 * arma::pow(u, 2.0) + 7.0 * arma::pow(u, 4.0));      
+    } else if (mu == 2) {
+      wkp = 105.0 / 64.0 * (1.0 - 5.0 * arma::pow(u, 2.0) + 7.0 * arma::pow(u, 4.0) - 3.0 * arma::pow(u, 6.0));      
+    } else if (mu == 3) {
+      wkp = 315.0 / 512.0 * (3.0 - 20.0 * arma::pow(u, 2.0) + 42.0 * arma::pow(u, 4.0) - 36.0 * arma::pow(u, 6.0) + 11.0 * arma::pow(u, 8.0));      
+    }
+  }
+  
+  const double Rp = arma::sum(arma::pow(wkp, 2.0)) / m;
+  const double mukp = arma::sum(arma::pow(u, 4.0) * wkp) / m;  
+  
+  const double c1 = std::pow(factorialCpp(k), 2.0) / (2 * k);
+  const double c2 = (1.0 - 2.0 * cb) * (Rp + (s - 1.0) * R2) / std::pow(mukp, 2.0);  
+  
+  const int itMax = 20;
+  
+  const int it = 1;
+  double bv;
+  double expo;
+  if (p == 1) {
+    expo = 5.0 / 7.0;
+  } else if (p == 3) {
+    expo = 9.0 / 13.0;
+  }
+  
+  arma::vec gv;
+  double I2;
+  
+  double adjFactor;
+  
+  if (p == 1) {
+    if (mu == 0) {
+      adjFactor = 1.3195;
+    } else if (mu == 1) {
+      adjFactor = 1.4310;      
+    } else if (mu == 2) {
+      adjFactor = 1.4541;      
+    } else if (mu == 3) {
+      adjFactor = 1.4640;      
+    }
+  } else if (p == 3) {
+    if (mu == 0) {
+      adjFactor = 1.2599;      
+    } else if (mu == 1) {
+      adjFactor = 1.2913;      
+    } else if (mu == 2) {
+      adjFactor = 1.3006;      
+    } else if (mu == 3) {
+      adjFactor = 1.3052;      
+    }    
+  }
+  
+  double bAdj;
+  arma::vec resAdj;
+  double cf0;
+  double c3;
+  Rcpp::List cf0List;
+  
+  while (it < itMax + 1 && (std::abs(bopt - boptOld) / bopt !< 1.0 / n || std::abs(bopt - boptOld2) / bopt !< 1.0 / n)) {
+    
+    bv = std::pow(bopt, expo);
+    bv = std::max(bv, bmin);
+    bv = std::min(bv, bmax);
+    
+    gv = DerivativeG(y, s, v, pv, kn, hv);
+    I2 = std::pow(arma::sum(gv.subvec(n1 - 1, n - n1 - 1)), 2.0) / (n - 2 * n1);
+    
+    bAdj = bold * adjFactor;
+    
+    resAdj = gsmoothdeseatsCpp(yt, p, s, mu, bAdj, bb)
+    
+    cf0List = cf0Cpp(resAdj); 
+    cf0 = cf0List[1];
+    
+    c3 = cf0 / I2;
+    
+    boptOld2 = boptOld;
+    boptOld = bopt;
+    bopt = std::pow((c1 * c2 * c3), (1.0 / (2 * k + 1))) * std::pow(n, (-1.0 / (2 * k + 1)));
+    
+    it += 1;
+    
+  }
+  
+  return(bopt);
+}
