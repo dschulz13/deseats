@@ -39,9 +39,73 @@ int factorialCpp(const int k) {
   return fac;
 }
 
+// Autocovariance calculation from given data
+arma::vec acovCpp(const arma::vec& Xt, const int lagMax) {
+  const double meanX = arma::mean(Xt);
+  arma::vec XtDM = Xt - meanX;
+  arma::vec acovOut(lagMax + 1);
+  const int n = Xt.size();
+  for (int i = 0; i < lagMax + 1; ++i) {
+    acovOut(i) = arma::accu(XtDM.subvec(0, n - 1 - i) % XtDM.subvec(i, n - 1));
+  }
+  arma::vec out = acovOut / n;
+  return out;
+}
+
+// Buehlmann algorithm for estimating cf0
+// [[Rcpp::export]]
+double cf0Cpp(const arma::vec& Xt) {
+  const int n = Xt.size();
+  arma::vec ga = acovCpp(Xt, n - 1);
+  const int nit = 20;
+  int runc = 1;
+  arma::vec L(nit + 1);
+  L(0) = std::trunc(n / 2.0 + 0.5);
+  const double c1 = (std::pow(ga(0), 2.0) + 2.0 * arma::accu(arma::pow(ga.subvec(1, n - 1), 2.0))) / (4.0 * M_PI);
+  double c2 = 0;
+  int L1 = 0;
+  int LGopt = 0;
+
+  for(int i = 0; i < nit; i++) {
+    if(runc == 1) {
+      L1 = std::trunc(L(i) / std::pow(n, 2.0 / 21.0)) + 1;
+      arma::vec x1 = seqCpp(0, L1 - 1) / L1;
+      arma::vec w1 = 1.0 - x1;
+      arma::vec gai = seqCpp(0, L1 - 1) % ga.subvec(0, L1 - 1) % w1;
+      c2 = 3.0 * (2.0 * arma::accu(arma::pow(gai.subvec(0, L1 - 1), 2.0))) / (2.0 * M_PI);
+      L(i + 1) = std::trunc(std::pow(n, 1.0 / 3.0) * std::pow(c2 / c1, 1.0 / 3.0)) + 1;
+
+      if (L(i + 1) == L(i)) {
+        runc = 0;
+        LGopt = L(i + 1);
+      }
+
+
+    }
+  }
+  if (runc == 1) {
+    LGopt = L(nit);
+  }
+
+  L1 = std::trunc(LGopt / std::pow(n, 2.0 / 21.0)) + 1;
+  arma::vec x1 = seqCpp(0, L1 - 1) / L1;
+  arma::vec w1 = 1.0 - x1;
+  arma::vec ga1 = seqCpp(0, L1 - 1) % ga.subvec(0, L1 - 1) % w1;
+  const double c20 = 3.0 * std::pow(2.0 * arma::accu((ga1.subvec(0, L1 - 1))), 2.0) / (2.0 * M_PI);
+  const arma::vec w0 = (1.0 + cos(M_PI * x1)) / 2.0;
+  arma::vec ga0 = ga.subvec(0, L1 - 1) % w0;
+  const double c10 = std::pow(2.0 * arma::accu((ga0.subvec(0, L1 - 1))) - ga0(0), 2.0) / (2.0 * M_PI);
+  const int L0opt = std::trunc(std::pow(n, 1.0 / 3.0) * std::pow((c20 / c10) / 2.0, 1.0 / 3.0)) + 1;
+  const arma::vec wacf = arma::reverse(seqCpp(1, L0opt + 1)) / (L0opt + 1.0);
+  const arma::vec acfX = ga.subvec(0, L0opt);
+  const double cf0LW = 2.0 * arma::accu(acfX % wacf) - acfX(0);
+
+  return cf0LW;
+}
+
 // C++ version of deseats smoothing
 // [[Rcpp::export]]
-Rcpp::List gsmoothdeseatsCpp(const arma::vec& y, const int p,
+Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
   const int s, const int mu, const double b, const int bb) {
 
   const int n = y.size();
@@ -147,23 +211,230 @@ Rcpp::List gsmoothdeseatsCpp(const arma::vec& y, const int p,
   grS.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsS.row(bwidthAbs) * ym).t();
   grS.subvec(n - bwidthAbs, n - 1) = wsS.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);  
   
-  arma::vec gr = grG + grS; 
+  arma::vec gr = grG + grS;
+  arma::vec resid = y - gr;
   
   Rcpp::List listOut = List::create(_["Compl"] = gr,
                               _["Trend"] = grG,
-                              _["Season"] = grS);
+                              _["Season"] = grS,
+                              _["Residuals"] = resid);
   
   return listOut;
   
 }
 
+// C++ version of deseats smoothing
+// [[Rcpp::export]]
+arma::vec residdeseatsCpp(const arma::vec& y, const int p,
+  const int s, const int mu, const double b, const int bb) {
+
+  const int n = y.size();
+  arma::vec grG(n);
+  arma::vec grS(n);
+  const int bwidthAbs = std::trunc(n * b + 0.5);
+  const int bwidthMax = 2 * bwidthAbs + 1;
+  
+  arma::mat ws(bwidthMax, bwidthMax);
+  arma::mat wsG = ws;
+  arma::mat wsS = ws;
+  arma::rowvec wk = arma::zeros<arma::rowvec>(bwidthMax);
+  arma::mat xt = arma::zeros<arma::mat>((p + s), bwidthMax);
+  
+  arma::mat xw = xt;
+
+  const arma::vec seqhh = seqCpp(0, bwidthAbs);
+  const arma::vec allLowB = bwidthAbs - seqhh;
+  const arma::vec hr = bwidthAbs + bb * allLowB;
+  const arma::vec hr2 = arma::pow(hr + 1, 2.0);
+  const arma::vec ht = seqhh + hr;
+  arma::mat xa = xt;
+  
+  const arma::rowvec allsequ = rseqCpp(-bwidthAbs, hr(0));
+  const int m = allsequ.size();
+  const arma::rowvec allsequ2 = arma::pow(allsequ, 2.0);
+  const arma::rowvec allsequhh = allsequ / bwidthAbs;
+  
+  arma::mat dataMat = arma::ones<arma::mat>((p + s), m);  
+  dataMat.row(1) = allsequhh;
+  
+  for (int i = 2; i < p + 1; ++i) {
+    dataMat.row(i) = arma::pow(allsequhh, i);
+  }
+  
+  for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
+    dataMat.row(p + 2 * i - 1) = arma::cos(2.0 * i * M_PI * allsequ / s); //look here
+    dataMat.row(p + 2 * i) = arma::sin(2.0 * i * M_PI * allsequ / s);
+  }
+  
+  if ((s / 2.0) == std::trunc(s / 2.0)) {
+    dataMat.row(p + s - 1) = arma::cos(M_PI * allsequ);
+  }  
+  
+  arma::rowvec ej = arma::zeros<arma::rowvec>(p + s);
+  arma::rowvec phi = ej;  
+  arma::rowvec prevec = ej;   
+  
+  ej(0) = 1;
+  
+  for (int i = 1; i < s; i++) {
+    if (i % 2 == 1) {
+      phi(p + i) = 1;
+    }
+  }
+  
+  prevec.subvec(0, p) = ej.subvec(0, p); 
+  
+  prevec.subvec(p + 1, p + s - 1) = ej.subvec(p + 1, p + s - 1);  
+  
+  const arma::vec allUpB = bwidthAbs + hr;
+
+  int lowB;
+  int upB;
+  
+  for (int i = 0; i < bwidthAbs + 1; ++i) {
+
+    lowB = allLowB(i);
+    upB = allUpB(i);
+    
+    if (mu == 0) {
+      wk.subvec(0, ht(i)).fill(1.0);
+    } else if (mu == 1) {
+      wk.subvec(0, ht(i)) = 1.0 - allsequ2.subvec(lowB, upB) / hr2(i);
+    } else {
+      wk.subvec(0, ht(i)) = arma::pow(1.0 - allsequ2.subvec(lowB, upB) / hr2(i), mu);
+    }
+    
+    xt.submat(0, 0, p + s - 1, ht(i)) = dataMat.cols(lowB, upB);
+    xw = xt * diagmat(wk);
+    xa = arma::solve(xw * xt.t(), xw);
+
+    
+    ws.row(i) = prevec * xa;
+    wsG.row(i) = ej * xa;
+    wsS.row(i) = phi * xa;
+    
+  }
+  
+  ws.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(ws.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
+  wsG.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsG.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
+  wsS.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsS.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));  
+  
+  arma::mat ym(bwidthMax, n - bwidthMax + 1);
+  for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
+    ym.col(i - bwidthAbs) = y.subvec(i - bwidthAbs, i + bwidthAbs);
+  }
+  grG.subvec(0, bwidthAbs - 1) = wsG.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
+  grG.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsG.row(bwidthAbs) * ym).t();
+  grG.subvec(n - bwidthAbs, n - 1) = wsG.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);
+  
+  grS.subvec(0, bwidthAbs - 1) = wsS.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
+  grS.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsS.row(bwidthAbs) * ym).t();
+  grS.subvec(n - bwidthAbs, n - 1) = wsS.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);  
+  
+  arma::vec gr = grG + grS;
+  arma::vec resid = y - gr;
+  
+  return resid;
+  
+}
+
+// C++ version of deseats derivative smoothing
+// [[Rcpp::export]]
+arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
+  const int s, const int mu, const double b, const int bb, const int v) {
+
+  const int n = y.size();
+  arma::vec grG(n);
+  const int bwidthAbs = std::trunc(n * b + 0.5);
+  const int bwidthMax = 2 * bwidthAbs + 1;
+  
+  arma::mat wsG(bwidthMax, bwidthMax);
+  arma::rowvec wk = arma::zeros<arma::rowvec>(bwidthMax);
+  arma::mat xt = arma::zeros<arma::mat>((p + s), bwidthMax);
+  
+  arma::mat xw = xt;
+
+  const arma::vec seqhh = seqCpp(0, bwidthAbs);
+  const arma::vec allLowB = bwidthAbs - seqhh;
+  const arma::vec hr = bwidthAbs + bb * allLowB;
+  const arma::vec hr2 = arma::pow(hr + 1, 2.0);
+  const arma::vec ht = seqhh + hr;
+  arma::mat xa = xt;
+  
+  const arma::rowvec allsequ = rseqCpp(-bwidthAbs, hr(0));
+  const int m = allsequ.size();
+  const arma::rowvec allsequ2 = arma::pow(allsequ, 2.0);
+  const arma::rowvec allsequhh = allsequ / bwidthAbs;
+  
+  arma::mat dataMat = arma::ones<arma::mat>((p + s), m);  
+  dataMat.row(1) = allsequhh;
+  
+  for (int i = 2; i < p + 1; ++i) {
+    dataMat.row(i) = arma::pow(allsequhh, i);
+  }
+  
+  for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
+    dataMat.row(p + 2 * i - 1) = arma::cos(2.0 * i * M_PI * allsequ / s); //look here
+    dataMat.row(p + 2 * i) = arma::sin(2.0 * i * M_PI * allsequ / s);
+  }
+  
+  if ((s / 2.0) == std::trunc(s / 2.0)) {
+    dataMat.row(p + s - 1) = arma::cos(M_PI * allsequ);
+  }  
+  
+  arma::rowvec ej = arma::zeros<arma::rowvec>(p + s);
+  
+  ej(v) = 1;
+  
+  const arma::vec allUpB = bwidthAbs + hr;
+
+  int lowB;
+  int upB;
+  
+  for (int i = 0; i < bwidthAbs + 1; ++i) {
+
+    lowB = allLowB(i);
+    upB = allUpB(i);
+    
+    if (mu == 0) {
+      wk.subvec(0, ht(i)).fill(1.0);
+    } else if (mu == 1) {
+      wk.subvec(0, ht(i)) = 1.0 - allsequ2.subvec(lowB, upB) / hr2(i);
+    } else {
+      wk.subvec(0, ht(i)) = arma::pow(1.0 - allsequ2.subvec(lowB, upB) / hr2(i), mu);
+    }
+    
+    xt.submat(0, 0, p + s - 1, ht(i)) = dataMat.cols(lowB, upB);
+    xw = xt * diagmat(wk);
+    xa = arma::solve(xw * xt.t(), xw);
+
+    wsG.row(i) = ej * xa;
+    
+  }
+  
+  wsG.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsG.submat(0, 0, bwidthAbs - 1, bwidthMax - 1))) * std::pow(-1.0, v);
+  wsG = factorialCpp(v) * wsG * std::pow((n / double(bwidthAbs)), v);
+  
+  arma::mat ym(bwidthMax, n - bwidthMax + 1);
+  for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
+    ym.col(i - bwidthAbs) = y.subvec(i - bwidthAbs, i + bwidthAbs);
+  }
+  grG.subvec(0, bwidthAbs - 1) = wsG.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
+  grG.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsG.row(bwidthAbs) * ym).t();
+  grG.subvec(n - bwidthAbs, n - 1) = wsG.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);
+  
+  return grG;
+  
+}
+
+// [[Rcpp::export]]
 double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart) {
   
   double bopt = bStart;
   double boptOld = 0;
   double boptOld2 = 0;
   const int n = yt.size();
-  const int k = p + 1
+  const int k = p + 1;
   
   double bmax = 0.5 - 1 / n;     // The maximum bandwidth 
   double bmin = 1 * s / n;       // The minimum bandwidth 
@@ -179,7 +450,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   const int m = 100000;
   const arma::vec u = seqCpp(-m, m) / (m + 0.5);
   const arma::vec wk = arma::pow((1 - arma::pow(u, 2.0)), mu);
-  const double R2 = arma::sum(arma::pow(wk, 2.0)) / m;  
+  const double R2 = arma::accu(arma::pow(wk, 2.0)) / m;  
   
   arma::vec wkp;
   
@@ -197,17 +468,17 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     }
   }
   
-  const double Rp = arma::sum(arma::pow(wkp, 2.0)) / m;
-  const double mukp = arma::sum(arma::pow(u, 4.0) * wkp) / m;  
+  const double Rp = arma::accu(arma::pow(wkp, 2.0)) / m;
+  const double mukp = arma::accu(arma::pow(u, 4.0) % wkp) / m;  
   
   const double c1 = std::pow(factorialCpp(k), 2.0) / (2 * k);
   const double c2 = (1.0 - 2.0 * cb) * (Rp + (s - 1.0) * R2) / std::pow(mukp, 2.0);  
   
   const int itMax = 20;
   
-  const int it = 1;
+  int it = 1;
   double bv;
-  double expo;
+  double expo = 0;
   if (p == 1) {
     expo = 5.0 / 7.0;
   } else if (p == 3) {
@@ -217,7 +488,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   arma::vec gv;
   double I2;
   
-  double adjFactor;
+  double adjFactor = 0;
   
   if (p == 1) {
     if (mu == 0) {
@@ -245,29 +516,29 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   arma::vec resAdj;
   double cf0;
   double c3;
-  Rcpp::List cf0List;
   
-  while (it < itMax + 1 && (std::abs(bopt - boptOld) / bopt !< 1.0 / n || std::abs(bopt - boptOld2) / bopt !< 1.0 / n)) {
+  while (it < itMax + 1 && (std::abs(bopt - boptOld) / bopt >= 1.0 / n || std::abs(bopt - boptOld2) / bopt >= 1.0 / n)) {
     
     bv = std::pow(bopt, expo);
     bv = std::max(bv, bmin);
     bv = std::min(bv, bmax);
     
-    gv = DerivativeG(y, s, v, pv, kn, hv);
-    I2 = std::pow(arma::sum(gv.subvec(n1 - 1, n - n1 - 1)), 2.0) / (n - 2 * n1);
+    gv = derivdeseatsCpp(yt, pv, s, mu, bv, bb, v);
+  
+    I2 = std::pow(arma::accu(gv.subvec(n1 - 1, n - n1 - 1)), 2.0) / (n - 2 * n1);
     
-    bAdj = bold * adjFactor;
+    bAdj = bopt * adjFactor;
     
-    resAdj = gsmoothdeseatsCpp(yt, p, s, mu, bAdj, bb)
+    resAdj = residdeseatsCpp(yt, p, s, mu, bAdj, bb);
     
-    cf0List = cf0Cpp(resAdj); 
-    cf0 = cf0List[1];
+    cf0 = cf0Cpp(resAdj); 
     
     c3 = cf0 / I2;
     
     boptOld2 = boptOld;
     boptOld = bopt;
     bopt = std::pow((c1 * c2 * c3), (1.0 / (2 * k + 1))) * std::pow(n, (-1.0 / (2 * k + 1)));
+    Rcout << it << ". " << bopt << "\n";
     
     it += 1;
     

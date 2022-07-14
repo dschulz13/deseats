@@ -11,30 +11,19 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// cf0Cpp
-List cf0Cpp(const NumericVector Xt);
-RcppExport SEXP _DeSeaTS_cf0Cpp(SEXP XtSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericVector >::type Xt(XtSEXP);
-    rcpp_result_gen = Rcpp::wrap(cf0Cpp(Xt));
-    return rcpp_result_gen;
-END_RCPP
-}
-// gsmoothdeseatsCpp
-arma::vec gsmoothdeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb);
-RcppExport SEXP _DeSeaTS_gsmoothdeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
+// gsmoothCalcCpp
+arma::vec gsmoothCalcCpp(const arma::vec& y, const int v, const int p, const int mu, const double b, const int bb);
+RcppExport SEXP _DeSeaTS_gsmoothCalcCpp(SEXP ySEXP, SEXP vSEXP, SEXP pSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type v(vSEXP);
     Rcpp::traits::input_parameter< const int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< const int >::type s(sSEXP);
     Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
     Rcpp::traits::input_parameter< const double >::type b(bSEXP);
     Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
-    rcpp_result_gen = Rcpp::wrap(gsmoothdeseatsCpp(y, p, s, mu, b, bb));
+    rcpp_result_gen = Rcpp::wrap(gsmoothCalcCpp(y, v, p, mu, b, bb));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -54,11 +43,57 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cf0Cpp
+List cf0Cpp(const NumericVector Xt);
+RcppExport SEXP _DeSeaTS_cf0Cpp(SEXP XtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector >::type Xt(XtSEXP);
+    rcpp_result_gen = Rcpp::wrap(cf0Cpp(Xt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fitteddeseatsCpp
+Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb);
+RcppExport SEXP _DeSeaTS_fitteddeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
+    rcpp_result_gen = Rcpp::wrap(fitteddeseatsCpp(y, p, s, mu, b, bb));
+    return rcpp_result_gen;
+END_RCPP
+}
+// derivdeseatsCpp
+arma::vec derivdeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb, const int v);
+RcppExport SEXP _DeSeaTS_derivdeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP, SEXP vSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
+    Rcpp::traits::input_parameter< const int >::type v(vSEXP);
+    rcpp_result_gen = Rcpp::wrap(derivdeseatsCpp(y, p, s, mu, b, bb, v));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_DeSeaTS_cf0Cpp", (DL_FUNC) &_DeSeaTS_cf0Cpp, 1},
-    {"_DeSeaTS_gsmoothdeseatsCpp", (DL_FUNC) &_DeSeaTS_gsmoothdeseatsCpp, 6},
+    {"_DeSeaTS_gsmoothCalcCpp", (DL_FUNC) &_DeSeaTS_gsmoothCalcCpp, 6},
     {"_DeSeaTS_gsmoothCalc2Cpp", (DL_FUNC) &_DeSeaTS_gsmoothCalc2Cpp, 6},
+    {"_DeSeaTS_cf0Cpp", (DL_FUNC) &_DeSeaTS_cf0Cpp, 1},
+    {"_DeSeaTS_fitteddeseatsCpp", (DL_FUNC) &_DeSeaTS_fitteddeseatsCpp, 6},
+    {"_DeSeaTS_derivdeseatsCpp", (DL_FUNC) &_DeSeaTS_derivdeseatsCpp, 7},
     {NULL, NULL, 0}
 };
 
