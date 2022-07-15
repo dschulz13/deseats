@@ -538,7 +538,6 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     boptOld2 = boptOld;
     boptOld = bopt;
     bopt = std::pow((c1 * c2 * c3), (1.0 / (2 * k + 1))) * std::pow(n, (-1.0 / (2 * k + 1)));
-    Rcout << it << ". " << bopt << "\n";
     
     it += 1;
     

@@ -1,0 +1,159 @@
+# New S4 class for smoothing options
+
+setClass("smoothing_options",
+  slots = c(
+    order_poly = "numeric",
+    season = "numeric",
+    kernel_fun = "character",
+    bwidth = "numeric",
+    boundary_method = "character"
+  ),
+  prototype = list(
+    order_poly = 1,
+    season = NA_real_,
+    kernel_fun = "epanechnikov",
+    bwidth = NA_real_,
+    boundary_method = "extend"
+  )
+)
+
+#' Specification of Smoothing Options
+#' 
+#' Set the smoothing specifications for locally weighted regression for
+#' identifying the trend and the seasonality in an equidistant time series.
+#' 
+#'@useDynLib DeSeaTS
+#'@importFrom Rcpp sourceCpp
+#' 
+#'@param order_poly the order of the local polynomials used for estimating the
+#' smooth nonparametric trend; the default is \code{1}.
+#'@param season the frequency of observations per time unit, for example per 
+#'year; set to \code{12} for monthly data and to \code{4} for quarterly data
+#'and so on; the default is \code{NA_real_}, which leads to an automated 
+#'frequency selection for time series objects in smoothing functions; if 
+#'the argument is set to \code{NA_real_} and the observations used for smoothing 
+#'are not formatted as time series objects, the frequency \code{1} will be 
+#'used.
+#'@param kernel_fun the weighting function to consider; supported are four
+#'second-order kernel functions with compact support on \eqn{[-1, 1]}; enter
+#'\code{"uniform"} for the uniform kernel, \code{"epanechnikov"} for the 
+#'Epanechnikov kernel, \code{"bisquare"} for the bisquare kernel or 
+#'\code{"triweight"} for the triweight kernel; the default is 
+#'\code{"epanechnikov"}.
+#'@param bwidth a numeric value that indicates the relative bandwidth to 
+#'consider in the smoothing process; the default is \code{NA}, which then
+#'triggers a data-driven selection of an globally optimal bandwidth when
+#'the output of this function is passed to a smoothing function.
+#'@param boundary_method a single character value; it indicates, what method
+#'to use at boundary points; for \code{"extend"}, the default, the smoothing
+#'window around boundary points will be extended towards the center of the data; 
+#'for \code{"shorten"}, the window width will keep decreasing at boundary points 
+#'when approaching the very first and the very last observation.
+#'
+#'@export
+#' 
+#'@details
+#'
+#'Work in progress. Details will be added in the release version of this package.
+#'
+#'@return
+#'
+#'The function returns an S4 object with the following elements (access via 
+#'\code{@}):
+#'
+#'\describe{
+#'\item{order_poly}{identical to the input argument with that name; please see 
+#'the description of that input argument.}
+#'\item{season}{identical to the input argument with that name; please see 
+#'the description of that input argument.}
+#'\item{kernel_fun}{identical to the input argument with that name; please see 
+#'the description of that input argument.}
+#'\item{bwidth}{identical to the input argument with that name; please see 
+#'the description of that input argument.}
+#'\item{boundary_method}{identical to the input argument with that name; please 
+#'see the description of that input argument.}
+#'}
+#' 
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+
+set_options <- function(
+    order_poly = 1,
+    season = NA_real_,
+    kernel_fun = "epanechnikov",
+    bwidth = NA_real_,
+    boundary_method = "extend") {
+  
+      methods::new("smoothing_options",
+        order_poly = order_poly,
+        season = season,
+        kernel_fun = kernel_fun,
+        bwidth = bwidth,
+        boundary_method = boundary_method
+      )
+  
+}
+
+#'@export
+methods::setGeneric("order_poly", function(x) standardGeneric("order_poly"))
+#'@export
+methods::setGeneric("order_poly<-", function(x, value) standardGeneric("order_poly<-"))
+#'@export
+methods::setMethod("order_poly", "smoothing_options", function(x) x@order_poly)
+#'@export
+methods::setMethod("order_poly<-", "smoothing_options", function(x, value) {
+  x@order_poly <- value
+  x
+})
+
+#'@export
+methods::setGeneric("season", function(x) standardGeneric("season"))
+#'@export
+methods::setGeneric("season<-", function(x, value) standardGeneric("season<-"))
+#'@export
+methods::setMethod("season", "smoothing_options", function(x) x@season)
+#'@export
+methods::setMethod("season<-", "smoothing_options", function(x, value) {
+  x@season <- value
+  x
+})
+
+#'@export
+methods::setGeneric("kernel_fun", function(x) standardGeneric("kernel_fun"))
+#'@export
+methods::setGeneric("kernel_fun<-", function(x, value) standardGeneric("kernel_fun<-"))
+#'@export
+methods::setMethod("kernel_fun", "smoothing_options", function(x) x@kernel_fun)
+#'@export
+methods::setMethod("kernel_fun<-", "smoothing_options", function(x, value) {
+  x@kernel_fun <- value
+  x
+})
+
+#'@export
+methods::setGeneric("bwidth", function(x) standardGeneric("bwidth"))
+#'@export
+methods::setGeneric("bwidth<-", function(x, value) standardGeneric("bwidth<-"))
+#'@export
+methods::setMethod("bwidth", "smoothing_options", function(x) x@bwidth)
+#'@export
+methods::setMethod("bwidth<-", "smoothing_options", function(x, value) {
+  x@bwidth <- value
+  x
+})
+
+#'@export
+methods::setGeneric("boundary_method", function(x) standardGeneric("boundary_method"))
+#'@export
+methods::setGeneric("boundary_method<-", function(x, value) standardGeneric("boundary_method<-"))
+#'@export
+methods::setMethod("boundary_method", "smoothing_options", function(x) x@boundary_method)
+#'@export
+methods::setMethod("boundary_method<-", "smoothing_options", function(x, value) {
+  x@boundary_method <- value
+  x
+})

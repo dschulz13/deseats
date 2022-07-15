@@ -1,9 +1,9 @@
 mu_select <- function(kernel_fun) {
   switch(kernel_fun,
-    "Uniform" = 0,
-    "Epanechnikov" = 1,
-    "Bisquare" = 2,
-    "Triweight" = 3
+    "uniform" = 0,
+    "epanechnikov" = 1,
+    "bisquare" = 2,
+    "triweight" = 3
   )
 }
 
@@ -14,137 +14,419 @@ bf_select <- function(boundary_method) {
   )
 }
 
-weights_select <- function(mu) {
-  switch(as.character(mu),
-  "0" = function(lowB, upB, allsequ2, hr2) {rep(1, upB - lowB + 1)},
-  "1" = function(lowB, upB, allsequ2, hr2) {1.0 - allsequ2[lowB:upB] / hr2},
-  function(lowB, upB, allsequ2, hr2) {(1.0 - allsequ2[lowB:upB] / hr2)^mu}
+setClass("deseats",
+  slots = c(
+    decomp = "mts",
+    bwidth = "numeric",
+    ts_name = "character",
+    frequency = "numeric"
   )
+)
+
+create_deseats <- function(decomp, bwidth, ts_name, frequency) {
+  
+  methods::new("deseats",
+    decomp = decomp,
+    bwidth = bwidth,
+    ts_name = ts_name,
+    frequency = frequency
+  )
+  
 }
 
 #------------------------------------------------------------------------------#
 
-smooth_deseats <- function(y, period = 12, order_poly = 1, 
-  kernel_fun = c("Uniform", "Epanechnikov", "Bisquare", "Triweight"), 
-  bwidth = 0.15, boundary_method = c("extend", "shorten")) {
+#' Locally Weighted Regression for Trend and Seasonality in Equidistant Time 
+#' Series under Short Memory
+#' 
+#' Simultaneously estimate the trend and the 
+#' seasonality via locally weighted regression in an equidistant time series 
+#' under short memory. The default setting uses an iterative plug-in algorithm 
+#' for identifying the asymptotically globally optimal bandwidth for smoothing.
+#'
+#'@param y a numerical vector or a time series object of classes \code{ts} or 
+#'that can be transformed with \code{\link[stats]{as.ts}} to an object of class 
+#'\code{ts}; for these observations, trend and seasonality will be obtained.
+#'@param smoothing_options an S4 object of class \code{smoothing_options}, which 
+#'is returned by the function \code{\link{set_options}}; it 
+#'includes details about the
+#'options to consider in the locally weighted regression such as the order of
+#'polynomial and the bandwidth for smoothing among others.
+#'@param bwidth_start a single numeric value that is only relevant if the slot
+#'\code{bwidth} in \code{smoothing_options} is set to \code{NA}; 
+#'as the bandwidth will then
+#'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
+#'the algorithm.
+#'
+#'@export
+#'
+#'@details
+#'
+#'Work in progress. Details will be added in the release version of the package.
+#'
+#'@return
+#'
+#'The function returns and S4 object with the following elements (access them 
+#'via \code{@}):
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'\item Yuanhua Feng (Department of Economics, Paderborn
+#'University), \cr
+#'Author
+#'}
 
-  # Ensure that all observations, even time series, are transformed into
-  # a simple numeric vector
-  y <- as.numeric(y)
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.15) {
+
+  ts_name <- deparse(substitute(y))
+  
+  y <- stats::as.ts(y)
+  att <- attributes(y)
+  
+  if (is.na(smoothing_options@season)) {
+    if (inherits(y, c("ts", "zoo", "xts"))) {
+      s <- frequency(y)
+    } else {
+      s <- 1
+    }
+  } else {
+    s <- smoothing_options@season
+  }
   
   # Number of observations
   n <- length(y)           
 
   # Select numeric values from character input using helper functions
-  bf <- bf_select(boundary_method)
-  mu <- mu_select(kernel_fun)  
-  
-  # Empty vectors for the trend and season estimates
-  G <- rep(0, n)
-  S <- rep(0, n)
-  
-  # Absolute bandwidth obtained from the relative bandwidth
-  bwidth_absolute <- trunc(n * bwidth + 0.5)
-  # Maximum (total) bandwidth to right side
-  bwidth_max <- 2 * bwidth_absolute + 1     
-  
-  # Empty matrices for the weighting systems
-  ws <- matrix(0, nrow = bwidth_max, ncol = bwidth_max)
-  ws_G <- ws
-  ws_S <- ws
+  bf <- bf_select(smoothing_options@boundary_method)
+  mu <- mu_select(smoothing_options@kernel_fun)  
+  p <- smoothing_options@order_poly
+  bwidth <- smoothing_options@bwidth
+  if (is.na(bwidth)) {
+    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start)
+  }
 
-  # Empty matrix for X values
-  X_G <- rep(0, nrow = order_poly + 1, ncol = bwidth_max)
-  X_s <- rep(0, nrow = period - 1, ncol = bwidth_max)
-  
-  seq_bwidth_abs <- 0:bwidth_absolute
-  right_bwidth_extension <- bwidth_absolute - seq_bwidth_abs
-  bwidth_right <- bwidth_absolute + bf * right_bwidth_extension
-  bwidth_right_squared <- (bwidth_right + 1)^2  
-  bwidth_total <- seq_bwidth_abs + bwidth_right + 1  # NOTE: remove + 1 in C++
-
-  # All (centered) t-values to consider for all time points (only a subset is
-  # later considered for each observation time point)
-  all_t_centered <- (-bwidth_absolute):(bwidth_right[[1]])
-  m <- length(all_t_centered)
-  all_t_centered_2 <- all_t_centered^2
-  
-  # All u-values to be considered in the kernel functions
-  all_GX <- all_t_centered / bwidth_absolute
-  all_GX_poly <- rbind(
-    rep(1, m),
-    t(unname(poly(all_GX, degree = order_poly, raw = TRUE)))
+  est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bf)
+  Trend <- est[[2]]
+  Season <- est[[3]]
+  Residuals <- est[[4]]
+  attributes(Trend) <- att
+  attributes(Season) <- att
+  attributes(Residuals) <- att
+  decomp <- cbind(
+    Observations = y,
+    Trend = Trend,
+    Season = Season,
+    Rest = Residuals
   )
   
-  all_SX <- matrix(0, nrow = period - 1, ncol = m)
-  for (i in 1:trunc((period - 1) / 2)) {
-    all_SX[2 * i - 1, ] <- cos(2 * i * pi * all_t_centered / period)
-    all_SX[2 * i, ] <- sin(2 * i * pi * all_t_centered / period)
-  }
+  out <- create_deseats(
+    decomp = decomp,
+    bwidth = bwidth,
+    ts_name = ts_name,
+    frequency = s
+  )
   
-  if (period / 2 == trunc(period / 2)) {
-    all_SX[period - 1, ] <- cos(pi * all_t_centered) 
-  }
-
-  allLowB <- bwidth_absolute - seq_bwidth_abs + 1   # NOTE: remove + 1 in C++
-  allUpB <- bwidth_absolute + bwidth_right + 1
-  
-  # Select the weighting function based on the selected kernel name
-  # This way, some calculations will be faster, especially for the
-  # Uniform and Epanechnikov kernels
-  weight_fun <- weights_select(mu)
-
-  Xt <- rbind(all_GX_poly, all_SX)
-  
-  wk <- rep(0, bwidth_max)
-  
-  dataMat <- matrix(0, nrow = period + order_poly, ncol = bwidth_max)
-  
-  ej <- t(c(1, rep(0, order_poly), rep(0, period - 1)))
-  phi <- t(c(rep(0, order_poly + 1), rep(c(1, 0), period / 2)[-period]))
-  vec <- t(c(ej[1:(order_poly + 1)], phi[(order_poly + 2):(order_poly + period)]))
-  
-  for (i in 1:(bwidth_absolute + 1)) {
-  
-    lowB <- allLowB[[i]]
-    upB <- allUpB[[i]]
-  
-    wk[1:bwidth_total[[i]]] <- weight_fun(lowB = lowB, upB = upB, 
-                       allsequ2 = all_t_centered_2, 
-                       hr2 = bwidth_right_squared[[i]])
-    
-    dataMat[, 1:bwidth_total[[i]]] <- Xt[, lowB:upB]
-    xw <- dataMat %*% diag(wk)
-    xa <- solve(xw %*% t(dataMat), xw)
-    ws_G[i, ] <- ej %*% xa
-    ws_S[i, ] <- phi %*% xa
-    ws[i, ] <- vec %*% xa
-
-  }
-  
-  ws_G[(bwidth_absolute + 2):(bwidth_max), ] <- ws_G[bwidth_absolute:1, bwidth_max:1]
-  ws_S[(bwidth_absolute + 2):(bwidth_max), ] <- ws_S[bwidth_absolute:1, bwidth_max:1]
-  ws[(bwidth_absolute + 2):(bwidth_max), ] <- ws[bwidth_absolute:1, bwidth_max:1]
-  
-  ye_G <- rep(NA, n)
-  ye_S <- ye_G
-  
-  ye_G[1:bwidth_absolute] <- ws_G[1:bwidth_absolute, , drop = FALSE] %*% y[1:(2 * bwidth_absolute + 1)]
-  y_mat <- matrix(0, ncol = 2 * bwidth_absolute + 1, nrow = n - 2 * bwidth_absolute)
-  for (i in 1:(n - 2 * bwidth_absolute)) {
-    y_mat[i, ] <- y[i:(i + 2 * bwidth_absolute)]
-  }
-  ye_G[(bwidth_absolute + 1):(n - bwidth_absolute)] <- y_mat %*% ws_G[bwidth_absolute + 1, , drop = TRUE]
-  ye_G[(n - bwidth_absolute + 1):n] <- ws_G[(bwidth_absolute + 2):(2 * bwidth_absolute + 1), , drop = FALSE] %*% y[(n - 2 * bwidth_absolute):n]
-  
-  ye_S[1:bwidth_absolute] <- ws_S[1:bwidth_absolute, , drop = FALSE] %*% y[1:(2 * bwidth_absolute + 1)] 
-  ye_S[(bwidth_absolute + 1):(n - bwidth_absolute)] <- y_mat %*% ws_S[bwidth_absolute + 1, , drop = TRUE]
-  ye_S[(n - bwidth_absolute + 1):n] <- ws_S[(bwidth_absolute + 2):(2 * bwidth_absolute + 1), , drop = FALSE] %*% y[(n - 2 * bwidth_absolute):n]  
-  
-  
-  cbind(Observations = y, Trend = ye_G, Season = ye_S, Residuals = y - ye_G- ye_S)
+  out
 }
 
-deseats_fit <- function(spec, time_series) {
-  test
+### Base R plot method
+
+#'Plot Method for Smoothing Results in the Style of Base R Plots
+#'
+#'This is method for producing various plots of the smoothing results
+#'returned by \code{\link{deseats}}.
+#'
+#'@param x an object returned by the function \code{\link{deseats}}.
+#'@param which various plots can be selected either via a keyword or a number; 
+#'enter \code{"facets"} or \code{1} to show a facet plot of the estimated
+#'time series components; enter \code{"observations"} or \code{2} to show the
+#'input time series; enter \code{"fitted"} or \code{3} to show the observations 
+#'alongside the estimated trend with seasonality; enter \code{"residuals"} or 
+#'\code{4} to plot the both detrended and seasonally adjusted series; the 
+#'default is \code{which = NULL} which then lets you select a plot 
+#'interactively in the R console.
+#'@param ... further arguments to pass to \code{\link[stats]{plot.ts}} or 
+#'\code{\link[graphics]{matplot}} (depending on whether only one time series
+#'or multiple time series are shown in the plot).
+#'
+#'@details
+#'
+#'Work in progress. Details will be added soon.
+#'
+#'@importFrom ggplot2 autoplot
+#'@export 
+#'
+#'@return
+#'None
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+
+setMethod("plot", "deseats", function(x, which = NULL, ...) {
+  
+  which <- check_which(which)
+  
+  if (which == "0") {
+    return(invisible(NULL))
+  }
+  
+  plot_fun <- switch(
+    which,
+    "facets" = plot_facets,
+    "observations" = plot_obs,
+    "fitted" = plot_fit,
+    "residuals" = plot_resid,
+    "1" = plot_facets,
+    "2" = plot_obs,
+    "3" = plot_fit,
+    "4" = plot_resid    
+  )
+  
+  plot_fun(x, ...)
+  
+})
+
+set_default <- function(obj, repl) {
+  arg_names <- names(repl)
+  for (i in seq_along(arg_names)) {
+    if (is.null(obj[[arg_names[[i]]]])) {
+      obj[[arg_names[[i]]]] <- repl[[i]]
+    }
+  }
+  obj
+}
+
+# Plot subfunctions
+
+plot_facets <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('Decomposition of the time series "', obj@ts_name,'"')
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- obj@decomp
+  
+  do.call(plot.ts, args = dots)
+}
+
+plot_resid <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('The estimated rest in the time series "', obj@ts_name, '"'),
+    ylab = "Residual value"
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- obj@decomp[, 4]
+  
+  do.call(plot.ts, args = dots)  
+}
+
+plot_fit <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('The time series "', obj@ts_name, 
+                  '" together with estimated trend and seasonality'),
+    ylab = obj@ts_name,
+    col = c("grey74", "red"),
+    lty = c(1, 1),
+    type = "ll"
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- c(time(obj@decomp))
+  dots[["y"]] <- cbind(obj@decomp[, 1], obj@decomp[, 2] + obj@decomp[, 3])
+  
+  do.call(graphics::matplot, args = dots)  
+}
+
+plot_obs <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('The observed time series "', obj@ts_name, '"'),
+    ylab = obj@ts_name
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- obj@decomp[, 1]
+  
+  do.call(plot.ts, args = dots)  
+}
+
+### ggplot2 plot method
+
+#'Plot Method for Smoothing Results in the Style of ggplot2
+#'
+#'This is method for producing various plots of the smoothing results
+#'returned by \code{\link{deseats}}.
+#'
+#'@param object an object returned by the function \code{\link{deseats}}.
+#'@param which various plots can be selected either via a keyword or a number; 
+#'enter \code{"facets"} or \code{1} to show a facet plot of the estimated
+#'time series components; enter \code{"observations"} or \code{2} to show the
+#'input time series; enter \code{"fitted"} or \code{3} to show the observations 
+#'alongside the estimated trend with seasonality; enter \code{"residuals"} or 
+#'\code{4} to plot the both detrended and seasonally adjusted series; the 
+#'default is \code{which = NULL} which then lets you select a plot 
+#'interactively in the R console.
+#'@param ... no purpose and only implemented for compatibility.
+#'
+#'@details
+#'
+#'Work in progress. Details will be added soon.
+#'
+#'@importFrom ggplot2 autoplot
+#'@export 
+#'
+#'@return
+#'None
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+
+setMethod("autoplot", "deseats", function(object, which = NULL, ...) {
+  
+  which <- check_which(which)
+  
+  if (which == "0") {
+    return(invisible(NULL))
+  }
+  
+  plot_fun <- switch(
+    which,
+    "facets" = plot_facets_gg,
+    "observations" = plot_obs_gg,
+    "fitted" = plot_fit_gg,
+    "residuals" = plot_resid_gg,
+    "1" = plot_facets_gg,
+    "2" = plot_obs_gg,
+    "3" = plot_fit_gg,
+    "4" = plot_resid_gg    
+  )
+  
+  plot_fun(object, ...)
+  
+})
+
+set_default <- function(obj, repl) {
+  arg_names <- names(repl)
+  for (i in seq_along(arg_names)) {
+    if (is.null(obj[[arg_names[[i]]]])) {
+      obj[[arg_names[[i]]]] <- repl[[i]]
+    }
+  }
+  obj
+}
+
+# Plot subfunctions
+
+plot_facets_gg <- function(obj, ...) {
+  
+    c_names <- colnames(obj@decomp)
+
+    n <- length(obj@decomp[, 1])
+    t <- c(time(obj@decomp))
+
+    df <- data.frame(
+      Time = rep(t, 4),
+      Value = c(as.numeric(obj@decomp[, 1]), as.numeric(obj@decomp[, 2]), as.numeric(obj@decomp[, 3]), as.numeric(obj@decomp[, 4])),
+      Series = factor(c(rep(1:4, each = n)), labels = c_names)
+    )
+    ggplot2::ggplot(df, ggplot2::aes(x = Time, y = Value)) +
+      ggplot2::geom_line() +
+      ggplot2::ggtitle(paste0('Decomposition of the time series "', obj@ts_name, '"')) +
+      ggplot2::xlab("Time") +
+      ggplot2::facet_grid(Series ~ ., scales = "free_y") +
+      ggplot2::theme(axis.title.y = ggplot2::element_blank())
+
+}
+
+plot_resid_gg <- function(obj, ...) {
+  df <- data.frame(
+    Time = c(time(obj@decomp)),
+    Value = c(obj@decomp[, c(4)])
+  )
+
+  ggplot2::ggplot(df, ggplot2::aes(x = Time, y = Value)) +
+    ggplot2::geom_line() +
+    ggplot2::ylab("Residual value") +
+    ggplot2::ggtitle(paste0('The estimated rest in the time series "', obj@ts_name, '"')) 
+}
+
+plot_fit_gg <- function(obj, ...) {
+
+    n <- length(obj@decomp[, 1])
+    t <- c(time(obj@decomp))
+
+    df <- data.frame(
+      Time = rep(t, 2),
+      Value = c(as.numeric(obj@decomp[, 1]), as.numeric(obj@decomp[, 2]) + as.numeric(obj@decomp[, 3])),
+      Series = factor(c(rep(1:2, each = n)), labels = c("Observations", "Fitted values"))
+    )
+    ggplot2::ggplot(df, ggplot2::aes(x = Time, y = Value)) +
+      ggplot2::geom_line(ggplot2::aes(color = Series)) +
+      ggplot2::ggtitle(paste0('The time series "', obj@ts_name, 
+                  '" together with estimated trend and seasonality')) +
+      ggplot2::ylab(obj@ts_name) +
+        ggplot2::scale_color_manual(values = c("grey74", "red"))
+}
+
+plot_obs_gg <- function(obj, ...) {
+  df <- data.frame(
+    Time = c(time(obj@decomp)),
+    Value = c(obj@decomp[, c(1)])
+  )
+
+  ggplot2::ggplot(df, ggplot2::aes(x = Time, y = Value)) +
+    ggplot2::geom_line() +
+    ggplot2::ylab(obj@ts_name) +
+    ggplot2::ggtitle(paste0('The observed time series "', obj@ts_name, '"')) 
+}
+
+##--------------
+
+check_which <-function(which) {
+  
+    if (is.null(which)) {
+    text_prompt <- data.frame(
+      c("facets:", "observations:", "fitted:", "residuals:"),
+      c(
+        "Facet plot of the estimated components",
+        "The observed time series",
+        "The observations together with estimated trend + seasonality",
+        "The both detrended and seasonally adjusted series"
+      )
+    )
+    colnames(text_prompt) <- NULL
+    
+    cat("\nSelect one of the following plots via the keyword or the position number (exit with 0):\n")
+    
+    print.data.frame(text_prompt, row.names = FALSE, right = FALSE)
+    
+    cat("\n")
+    
+    which <- ""
+    
+    while(!(which %in% c(0, 1, 2, 3, 4, "facets", "observations", "fitted",
+                         "residuals"))) {
+    
+        which <- readline("Keyword or position number: ")
+        
+    }
+    cat("\n")
+    }
+  
+    which
 }
