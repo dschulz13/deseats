@@ -19,17 +19,19 @@ setClass("deseats",
     decomp = "mts",
     bwidth = "numeric",
     ts_name = "character",
-    frequency = "numeric"
+    frequency = "numeric",
+    order_poly = "numeric"
   )
 )
 
-create_deseats <- function(decomp, bwidth, ts_name, frequency) {
+create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly) {
   
   methods::new("deseats",
     decomp = decomp,
     bwidth = bwidth,
     ts_name = ts_name,
-    frequency = frequency
+    frequency = frequency,
+    order_poly = order_poly
   )
   
 }
@@ -133,7 +135,8 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.15) {
     decomp = decomp,
     bwidth = bwidth,
     ts_name = ts_name,
-    frequency = s
+    frequency = s,
+    order_poly = p
   )
   
   out
@@ -451,3 +454,27 @@ check_which <-function(which) {
   
     which
 }
+
+#------------
+
+#'@export
+setMethod("show", "deseats",
+  function(object){
+    cat(paste0("\n",
+      "************************************************\n",
+      "*                                              *\n",
+      "*               Smoothing Results              *\n",
+      "*                                              *\n",
+      "************************************************\n\n",
+      " Series: ", object@ts_name, "\n",
+      " Estimated: Trend + Seasonality\n",
+      " Bandwidth: ", sprintf("%.4f", object@bwidth), "\n\n",      
+      " Trend:\n",
+      " ------\n",
+      "   Order of local polynomial: ", object@order_poly, "\n\n",
+      " Seasonality:\n",
+      " ------------\n",
+      "   Frequency: ", object@frequency, "\n\n"
+    ))
+  }
+)

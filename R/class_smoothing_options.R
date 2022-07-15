@@ -158,3 +158,37 @@ methods::setMethod("boundary_method<-", "smoothing_options", function(x, value) 
   x@boundary_method <- value
   x
 })
+
+#------------------
+
+#'@export
+setMethod("show", "smoothing_options",
+  function(object){
+    .df <- data.frame(
+      opt = c(
+        "Order of local polynomials (trend):",
+        "Frequency (seasonality):",
+        "Kernel function:",
+        "Bandwidth:",
+        "Boundary method:"
+      ),
+      setting = c(
+        object@order_poly,
+        object@season,
+        object@kernel_fun,
+        object@bwidth,
+        object@boundary_method
+      )
+    )
+    colnames(.df) <- NULL
+    cat(paste0("\n",
+      "*******************************************************\n",
+      "*                                                     *\n",
+      "*                   Smoothing Options                 *\n",
+      "*                                                     *\n",
+      "*******************************************************\n\n"
+    ))
+    print.data.frame(.df, row.names = FALSE, right = FALSE)
+    cat("\n")
+  }
+)
