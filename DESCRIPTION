@@ -17,9 +17,10 @@ Maintainer: Dominik Schulz <dominik.schulz@uni-paderborn.de>
 Description: Data-driven locally weighted regression for identifying the trend
   and seasonality in an equidistant time series can be implemented under 
   short-memory assumption. This package is currently a work in progress. 
-Imports: methods,
-         Rcpp (>= 1.0.6),
-         ggplot2
+Imports: Rcpp (>= 1.0.6),
+         ggplot2,
+         stats,
+         graphics
 Suggests: smoots
 License: GPL-3
 Encoding: UTF-8

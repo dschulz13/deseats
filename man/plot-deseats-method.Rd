@@ -32,6 +32,13 @@ returned by \code{\link{deseats}}.
 \details{
 Work in progress. Details will be added soon.
 }
+\examples{
+
+Xt <- log(EXPENDITURES)
+est <- deseats(Xt)
+plot(est, which = 3)
+
+}
 \author{
 \itemize{
 \item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn

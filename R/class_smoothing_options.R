@@ -24,6 +24,7 @@ setClass("smoothing_options",
 #' 
 #'@useDynLib DeSeaTS
 #'@importFrom Rcpp sourceCpp
+#'@import methods
 #' 
 #'@param order_poly the order of the local polynomials used for estimating the
 #' smooth nonparametric trend; the default is \code{1}.

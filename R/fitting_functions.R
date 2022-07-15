@@ -78,6 +78,13 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency) {
 #'University), \cr
 #'Author
 #'}
+#'
+#'@examples
+#'
+#'Xt <- log(EXPENDITURES)
+#'est <- deseats(Xt)
+#'est
+#'
 
 deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.15) {
 
@@ -88,7 +95,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.15) {
   
   if (is.na(smoothing_options@season)) {
     if (inherits(y, c("ts", "zoo", "xts"))) {
-      s <- frequency(y)
+      s <- stats::frequency(y)
     } else {
       s <- 1
     }
@@ -168,6 +175,13 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.15) {
 #'University), \cr
 #'Author and Package Creator
 #'}
+#'
+#'@examples
+#'
+#'Xt <- log(EXPENDITURES)
+#'est <- deseats(Xt)
+#'plot(est, which = 3)
+#'
 
 setMethod("plot", "deseats", function(x, which = NULL, ...) {
   
@@ -214,7 +228,7 @@ plot_facets <- function(obj, ...) {
   dots <- set_default(dots, defaults)
   dots[["x"]] <- obj@decomp
   
-  do.call(plot.ts, args = dots)
+  do.call(stats::plot.ts, args = dots)
 }
 
 plot_resid <- function(obj, ...) {
@@ -227,7 +241,7 @@ plot_resid <- function(obj, ...) {
   dots <- set_default(dots, defaults)
   dots[["x"]] <- obj@decomp[, 4]
   
-  do.call(plot.ts, args = dots)  
+  do.call(stats::plot.ts, args = dots)  
 }
 
 plot_fit <- function(obj, ...) {
@@ -242,7 +256,7 @@ plot_fit <- function(obj, ...) {
     type = "ll"
   )
   dots <- set_default(dots, defaults)
-  dots[["x"]] <- c(time(obj@decomp))
+  dots[["x"]] <- c(stats::time(obj@decomp))
   dots[["y"]] <- cbind(obj@decomp[, 1], obj@decomp[, 2] + obj@decomp[, 3])
   
   do.call(graphics::matplot, args = dots)  
@@ -258,7 +272,7 @@ plot_obs <- function(obj, ...) {
   dots <- set_default(dots, defaults)
   dots[["x"]] <- obj@decomp[, 1]
   
-  do.call(plot.ts, args = dots)  
+  do.call(stats::plot.ts, args = dots)  
 }
 
 ### ggplot2 plot method
@@ -295,6 +309,13 @@ plot_obs <- function(obj, ...) {
 #'University), \cr
 #'Author and Package Creator
 #'}
+#'
+#'@examples
+#'
+#'Xt <- log(EXPENDITURES)
+#'est <- deseats(Xt)
+#'autoplot(est, which = 3)
+#'
 
 setMethod("autoplot", "deseats", function(object, which = NULL, ...) {
   
@@ -337,7 +358,7 @@ plot_facets_gg <- function(obj, ...) {
     c_names <- colnames(obj@decomp)
 
     n <- length(obj@decomp[, 1])
-    t <- c(time(obj@decomp))
+    t <- c(stats::time(obj@decomp))
 
     df <- data.frame(
       Time = rep(t, 4),
@@ -355,7 +376,7 @@ plot_facets_gg <- function(obj, ...) {
 
 plot_resid_gg <- function(obj, ...) {
   df <- data.frame(
-    Time = c(time(obj@decomp)),
+    Time = c(stats::time(obj@decomp)),
     Value = c(obj@decomp[, c(4)])
   )
 
@@ -368,7 +389,7 @@ plot_resid_gg <- function(obj, ...) {
 plot_fit_gg <- function(obj, ...) {
 
     n <- length(obj@decomp[, 1])
-    t <- c(time(obj@decomp))
+    t <- c(stats::time(obj@decomp))
 
     df <- data.frame(
       Time = rep(t, 2),
@@ -385,7 +406,7 @@ plot_fit_gg <- function(obj, ...) {
 
 plot_obs_gg <- function(obj, ...) {
   df <- data.frame(
-    Time = c(time(obj@decomp)),
+    Time = c(stats::time(obj@decomp)),
     Value = c(obj@decomp[, c(1)])
   )
 

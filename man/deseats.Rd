@@ -37,6 +37,13 @@ for identifying the asymptotically globally optimal bandwidth for smoothing.
 \details{
 Work in progress. Details will be added in the release version of the package.
 }
+\examples{
+
+Xt <- log(EXPENDITURES)
+est <- deseats(Xt)
+est
+
+}
 \author{
 \itemize{
 \item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
