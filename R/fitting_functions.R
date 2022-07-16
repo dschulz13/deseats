@@ -242,7 +242,7 @@ plot_resid <- function(obj, ...) {
     ylab = "Residual value"
   )
   dots <- set_default(dots, defaults)
-  dots[["x"]] <- obj@decomp[, 4]
+  dots[["x"]] <- residuals(obj)
   
   do.call(stats::plot.ts, args = dots)  
 }
@@ -260,7 +260,7 @@ plot_fit <- function(obj, ...) {
   )
   dots <- set_default(dots, defaults)
   dots[["x"]] <- c(stats::time(obj@decomp))
-  dots[["y"]] <- cbind(obj@decomp[, 1], obj@decomp[, 2] + obj@decomp[, 3])
+  dots[["y"]] <- cbind(obj@decomp[, 1], fitted(obj))
   
   do.call(graphics::matplot, args = dots)  
 }
@@ -344,15 +344,6 @@ setMethod("autoplot", "deseats", function(object, which = NULL, ...) {
   
 })
 
-set_default <- function(obj, repl) {
-  arg_names <- names(repl)
-  for (i in seq_along(arg_names)) {
-    if (is.null(obj[[arg_names[[i]]]])) {
-      obj[[arg_names[[i]]]] <- repl[[i]]
-    }
-  }
-  obj
-}
 
 # Plot subfunctions
 
@@ -380,7 +371,7 @@ plot_facets_gg <- function(obj, ...) {
 plot_resid_gg <- function(obj, ...) {
   df <- data.frame(
     Time = c(stats::time(obj@decomp)),
-    Value = c(obj@decomp[, c(4)])
+    Value = c(residuals(obj))
   )
 
   ggplot2::ggplot(df, ggplot2::aes(x = Time, y = Value)) +
@@ -396,7 +387,7 @@ plot_fit_gg <- function(obj, ...) {
 
     df <- data.frame(
       Time = rep(t, 2),
-      Value = c(as.numeric(obj@decomp[, 1]), as.numeric(obj@decomp[, 2]) + as.numeric(obj@decomp[, 3])),
+      Value = c(as.numeric(obj@decomp[, 1]), as.numeric(fitted(obj))),
       Series = factor(c(rep(1:2, each = n)), labels = c("Observations", "Fitted values"))
     )
     ggplot2::ggplot(df, ggplot2::aes(x = Time, y = Value)) +
