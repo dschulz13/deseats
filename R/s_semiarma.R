@@ -1,21 +1,21 @@
-setClass("s_semiarma",
-  contains = "deseats",
-  slots = c(
-    decomp_detailed = "mts",
-    nonpar_model = "deseats",
-    par_model = "list"
-  )
-)
-
-create_s_semiarma <- function(decomp_detailed, nonpar_model, par_model) {
-  
-  methods::new("deseats",
-    decomp_detailed = decomp_detailed,
-    nonpar_model = nonpar_model,
-    par_model = par_model
-  )
-  
-}
+# setClass("s_semiarma",
+#   contains = "deseats",
+#   slots = c(
+#     decomp = "mts",
+#     nonpar_model = "deseats",
+#     par_model = "Arima"
+#   )
+# )
+# 
+# create_s_semiarma <- function(decomp, nonpar_model, par_model) {
+#   
+#   methods::new("s_semiarma",
+#     decomp = decomp,
+#     nonpar_model = nonpar_model,
+#     par_model = par_model
+#   )
+#   
+# }
 
 #'@export
 s_semiarma <- function(yt, smoothing_options = set_options(),
@@ -69,6 +69,6 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
     "Residuals ARMA"
   )
   
-  out <- create_s_semiarma(decomp, nonpar_model, par_est)
+  out <- list(decomp = decomp, nonpar_model = nonpar_model, par_model = par_est)
   out
 }
