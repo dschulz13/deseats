@@ -1,21 +1,25 @@
-# setClass("s_semiarma",
-#   contains = "deseats",
-#   slots = c(
-#     decomp = "mts",
-#     nonpar_model = "deseats",
-#     par_model = "Arima"
-#   )
-# )
-# 
-# create_s_semiarma <- function(decomp, nonpar_model, par_model) {
-#   
-#   methods::new("s_semiarma",
-#     decomp = decomp,
-#     nonpar_model = nonpar_model,
-#     par_model = par_model
-#   )
-#   
-# }
+setOldClass("Arima")
+
+setClass("s_semiarma",
+  contains = c("deseats", "Arima"),
+  slots = c(
+    decomp = "mts",
+    nonpar_model = "deseats",
+    par_model = "Arima",
+    ts_name = "character"
+  )
+)
+
+create_s_semiarma <- function(decomp, nonpar_model, par_model, ts_name) {
+
+  methods::new("s_semiarma",
+    decomp = decomp,
+    nonpar_model = nonpar_model,
+    par_model = par_model,
+    ts_name = ts_name
+  )
+
+}
 
 #'@export
 s_semiarma <- function(yt, smoothing_options = set_options(),
@@ -25,6 +29,7 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
   ts_name <- deparse(substitute(yt))
   
   nonpar_model <- deseats(yt, smoothing_options, bwidth_start)
+  nonpar_model@ts_name <- ts_name
   
   res <- residuals(nonpar_model)
   
@@ -69,6 +74,31 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
     "Residuals ARMA"
   )
   
-  out <- list(decomp = decomp, nonpar_model = nonpar_model, par_model = par_est)
+  out <- create_s_semiarma(decomp = decomp, nonpar_model = nonpar_model, 
+                           par_model = par_est, ts_name = ts_name)
   out
 }
+
+#---------------
+
+#'@export
+methods::setMethod("predict", "s_semiarma", 
+  function(object, n.ahead = 1, ...) {
+    freq <- object@nonpar_model@frequency
+    trend_e <- tail(trend(object), 2)
+    
+    times <- ceiling(n.ahead / freq)    
+    season_e <- rep(tail(season(object), freq), times)
+    
+    trend_incr <- trend_e[[2]] - trend_e[[1]]
+    
+    trend_fc <- trend_e[[2]] + (1:n.ahead) * trend_incr
+    
+    season_fc <- season_e[1:n.ahead]
+    
+    arma_fc <- predict(object@par_model, n.ahead = n.ahead, se.fit = FALSE)
+    
+    trend_fc + season_fc + arma_fc
+    
+  }
+)

@@ -229,7 +229,7 @@ plot_facets <- function(obj, ...) {
     main = paste0('Decomposition of the time series "', obj@ts_name,'"')
   )
   dots <- set_default(dots, defaults)
-  dots[["x"]] <- obj@decomp
+  dots[["x"]] <- obj@decomp[, 1:4]
   
   do.call(stats::plot.ts, args = dots)
 }
@@ -349,7 +349,7 @@ setMethod("autoplot", "deseats", function(object, which = NULL, ...) {
 
 plot_facets_gg <- function(obj, ...) {
   
-    c_names <- colnames(obj@decomp)
+    c_names <- colnames(obj@decomp)[1:4]
 
     n <- length(obj@decomp[, 1])
     t <- c(stats::time(obj@decomp))
@@ -469,3 +469,12 @@ setMethod("show", "deseats",
     ))
   }
 )
+
+#----------------
+
+#'@export
+methods::setGeneric("trend", function(x) standardGeneric("trend"))
+#'@export
+methods::setMethod("trend", "deseats", function(x) x@decomp[, 2])
+#'@export
+methods::setMethod("season", "deseats", function(x) x@decomp[, 3])
