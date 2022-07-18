@@ -20,8 +20,9 @@ animate_deseats <- function(object, ...) {
     ylim = c(min(object@weights[, , "Combined"]), max(object@weights[, , "Combined"])))
     abline(h = 0, col = "lightgray", lty = "dotted")
     lines(t[1:(2 * habs + 1)], object@weights[frame, , "Combined"], col = "forestgreen")
-    axis(side = 4)      # Add second axis
-    mtext("Active kernel weights", side = 4, line = 3)   
+    axis(side = 4, col = "forestgreen", col.ticks = "forestgreen",
+         col.axis = "forestgreen")       # Add second axis
+    mtext("Active kernel weights", side = 4, line = 3, col = "forestgreen")   
   }
   
 }
