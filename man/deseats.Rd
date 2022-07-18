@@ -5,10 +5,10 @@
 \title{Locally Weighted Regression for Trend and Seasonality in Equidistant Time 
 Series under Short Memory}
 \usage{
-deseats(y, smoothing_options = set_options(), bwidth_start = 0.15)
+deseats(y, smoothing_options = set_options(), bwidth_start = 0.1)
 }
 \arguments{
-\item{y}{a numerical vector or a time series object of classes \code{ts} or 
+\item{y}{a numerical vector or a time series object of class \code{ts} or 
 that can be transformed with \code{\link[stats]{as.ts}} to an object of class 
 \code{ts}; for these observations, trend and seasonality will be obtained.}
 

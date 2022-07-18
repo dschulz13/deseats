@@ -46,7 +46,7 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly) {
 #' under short memory. The default setting uses an iterative plug-in algorithm 
 #' for identifying the asymptotically globally optimal bandwidth for smoothing.
 #'
-#'@param y a numerical vector or a time series object of classes \code{ts} or 
+#'@param y a numerical vector or a time series object of class \code{ts} or 
 #'that can be transformed with \code{\link[stats]{as.ts}} to an object of class 
 #'\code{ts}; for these observations, trend and seasonality will be obtained.
 #'@param smoothing_options an S4 object of class \code{smoothing_options}, which 
@@ -88,7 +88,7 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly) {
 #'est
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.15) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
 
   ts_name <- deparse(substitute(y))
   

@@ -114,9 +114,8 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
   const int bwidthAbs = std::trunc(n * b + 0.5);
   const int bwidthMax = 2 * bwidthAbs + 1;
   
-  arma::mat ws(bwidthMax, bwidthMax);
-  arma::mat wsG = ws;
-  arma::mat wsS = ws;
+  arma::mat wsG(bwidthMax, bwidthMax);
+  arma::mat wsS = wsG;
   arma::rowvec wk = arma::zeros<arma::rowvec>(bwidthMax);
   arma::mat xt = arma::zeros<arma::mat>((p + s), bwidthMax);
   
@@ -188,16 +187,15 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
     xw = xt * diagmat(wk);
     xa = arma::solve(xw * xt.t(), xw);
 
-    
-    ws.row(i) = prevec * xa;
     wsG.row(i) = ej * xa;
     wsS.row(i) = phi * xa;
     
   }
   
-  ws.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(ws.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
   wsG.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsG.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
   wsS.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsS.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));  
+  
+  arma::mat ws = wsG + wsS;  
   
   arma::mat ym(bwidthMax, n - bwidthMax + 1);
   for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
@@ -229,14 +227,12 @@ arma::vec residdeseatsCpp(const arma::vec& y, const int p,
   const int s, const int mu, const double b, const int bb) {
 
   const int n = y.size();
-  arma::vec grG(n);
-  arma::vec grS(n);
+  arma::vec gr(n);
   const int bwidthAbs = std::trunc(n * b + 0.5);
   const int bwidthMax = 2 * bwidthAbs + 1;
   
   arma::mat ws(bwidthMax, bwidthMax);
-  arma::mat wsG = ws;
-  arma::mat wsS = ws;
+
   arma::rowvec wk = arma::zeros<arma::rowvec>(bwidthMax);
   arma::mat xt = arma::zeros<arma::mat>((p + s), bwidthMax);
   
@@ -308,30 +304,20 @@ arma::vec residdeseatsCpp(const arma::vec& y, const int p,
     xw = xt * diagmat(wk);
     xa = arma::solve(xw * xt.t(), xw);
 
-    
     ws.row(i) = prevec * xa;
-    wsG.row(i) = ej * xa;
-    wsS.row(i) = phi * xa;
     
   }
   
   ws.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(ws.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
-  wsG.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsG.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
-  wsS.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsS.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));  
   
   arma::mat ym(bwidthMax, n - bwidthMax + 1);
   for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
     ym.col(i - bwidthAbs) = y.subvec(i - bwidthAbs, i + bwidthAbs);
   }
-  grG.subvec(0, bwidthAbs - 1) = wsG.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
-  grG.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsG.row(bwidthAbs) * ym).t();
-  grG.subvec(n - bwidthAbs, n - 1) = wsG.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);
+  gr.subvec(0, bwidthAbs - 1) = ws.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
+  gr.subvec(bwidthAbs, n - bwidthAbs - 1) = (ws.row(bwidthAbs) * ym).t();
+  gr.subvec(n - bwidthAbs, n - 1) = ws.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);
   
-  grS.subvec(0, bwidthAbs - 1) = wsS.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
-  grS.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsS.row(bwidthAbs) * ym).t();
-  grS.subvec(n - bwidthAbs, n - 1) = wsS.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);  
-  
-  arma::vec gr = grG + grS;
   arma::vec resid = y - gr;
   
   return resid;
@@ -449,7 +435,8 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   
   const int m = 100000;
   const arma::vec u = seqCpp(-m, m) / (m + 0.5);
-  const arma::vec wk = arma::pow((1 - arma::pow(u, 2.0)), mu);
+  arma::vec wk = arma::pow((1 - arma::pow(u, 2.0)), mu);
+  wk = wk / arma::accu(wk);
   const double R2 = arma::accu(arma::pow(wk, 2.0)) / m;  
   
   arma::vec wkp;
@@ -468,8 +455,10 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     }
   }
   
+  wkp = wkp / arma::accu(wkp);
+  
   const double Rp = arma::accu(arma::pow(wkp, 2.0)) / m;
-  const double mukp = arma::accu(arma::pow(u, 4.0) % wkp) / m;  
+  const double mukp = arma::accu(arma::pow(u, k) % wkp) / m;  
   
   const double c1 = std::pow(factorialCpp(k), 2.0) / (2 * k);
   const double c2 = (1.0 - 2.0 * cb) * (Rp + (s - 1.0) * R2) / std::pow(mukp, 2.0);  
