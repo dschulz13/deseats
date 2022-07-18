@@ -151,7 +151,6 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
   
   arma::rowvec ej = arma::zeros<arma::rowvec>(p + s);
   arma::rowvec phi = ej;  
-  arma::rowvec prevec = ej;   
   
   ej(0) = 1;
   
@@ -160,10 +159,6 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
       phi(p + i) = 1;
     }
   }
-  
-  prevec.subvec(0, p) = ej.subvec(0, p); 
-  
-  prevec.subvec(p + 1, p + s - 1) = ej.subvec(p + 1, p + s - 1);  
   
   const arma::vec allUpB = bwidthAbs + hr;
 
@@ -215,7 +210,10 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
   Rcpp::List listOut = List::create(_["Compl"] = gr,
                               _["Trend"] = grG,
                               _["Season"] = grS,
-                              _["Residuals"] = resid);
+                              _["Residuals"] = resid,
+                              _["wsG"] = wsG,
+                              _["wsS"] = wsS,
+                              _["ws"] = ws);
   
   return listOut;
   

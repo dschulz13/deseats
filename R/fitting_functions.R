@@ -20,18 +20,21 @@ setClass("deseats",
     bwidth = "numeric",
     ts_name = "character",
     frequency = "numeric",
-    order_poly = "numeric"
+    order_poly = "numeric",
+    weights = "array"
   )
 )
 
-create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly) {
+create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
+                           weights) {
   
   methods::new("deseats",
     decomp = decomp,
     bwidth = bwidth,
     ts_name = ts_name,
     frequency = frequency,
-    order_poly = order_poly
+    order_poly = order_poly,
+    weights = weights
   )
   
 }
@@ -121,6 +124,9 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
   Trend <- est[[2]]
   Season <- est[[3]]
   Residuals <- est[[4]]
+  hfull <- length(est[[5]][, 1])
+  weights <- array(c(est[[5]], est[[6]], est[[7]]), dim = c(hfull, hfull, 3))
+  dimnames(weights)[[3]] <- c("Trend", "Season", "Combined")
   attributes(Trend) <- att
   attributes(Season) <- att
   attributes(Residuals) <- att
@@ -136,7 +142,8 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
     bwidth = bwidth,
     ts_name = ts_name,
     frequency = s,
-    order_poly = p
+    order_poly = p, 
+    weights = weights 
   )
   
   out
