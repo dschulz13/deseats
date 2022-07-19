@@ -43,9 +43,9 @@ function(object, col.obs = "grey74", col.fit = "red",
                       paste0("cos", (trunc(object@frequency - 1) / 2) + 1))
   mat_reg[["y"]] <- object@decomp[1:(2 * habs + 1), 1]
   
-  ani_opts_old <- animation::ani.options()
-  on.exit(animation::ani.options(ani_opts_old), add = TRUE)
-  animation::ani.options(nmax = 2 * (habs + 1), interval = 0.1, ani.width = 1200)  
+  # ani_opts_old <- animation::ani.options()
+  # on.exit(animation::ani.options(ani_opts_old), add = TRUE)
+  # animation::ani.options(nmax = 2 * (habs + 1), interval = 0.1, ani.width = 1200)  
     
   if (is.null(main)) {
     main <- paste0('Locally weighted regression illustrated for the series "', 
@@ -93,7 +93,7 @@ function(object, col.obs = "grey74", col.fit = "red",
          col.axis = col.weights)       # Add second axis
     mtext(ylab2, side = 4, line = 3, col = col.weights) 
     
-    animation::ani.pause()
+    #animation::ani.pause()
   }
   
   mat_reg[["y"]] <- object@decomp[(n - 2 * habs):n, 1]
@@ -136,7 +136,7 @@ function(object, col.obs = "grey74", col.fit = "red",
     axis(side = 4, col = col.weights, col.ticks = col.weights,
          col.axis = col.weights)       # Add second axis
     mtext(ylab2, side = 4, line = 3, col = col.weights) 
-    animation::ani.pause()
+    #animation::ani.pause()
   }
   
   }
