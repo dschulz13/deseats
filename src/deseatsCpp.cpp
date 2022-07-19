@@ -116,6 +116,7 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
   
   arma::mat wsG(bwidthMax, bwidthMax);
   arma::mat wsS = wsG;
+  arma::mat wsK = wsG;
   arma::rowvec wk = arma::zeros<arma::rowvec>(bwidthMax);
   arma::mat xt = arma::zeros<arma::mat>((p + s), bwidthMax);
   
@@ -178,6 +179,7 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
       wk.subvec(0, ht(i)) = arma::pow(1.0 - allsequ2.subvec(lowB, upB) / hr2(i), mu);
     }
     
+    wsK.row(i) = wk;
     xt.submat(0, 0, p + s - 1, ht(i)) = dataMat.cols(lowB, upB);
     xw = xt * diagmat(wk);
     xa = arma::solve(xw * xt.t(), xw);
@@ -189,6 +191,7 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
   
   wsG.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsG.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
   wsS.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsS.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));  
+  wsK.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsK.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));  
   
   arma::mat ws = wsG + wsS;  
   
@@ -213,7 +216,8 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
                               _["Residuals"] = resid,
                               _["wsG"] = wsG,
                               _["wsS"] = wsS,
-                              _["ws"] = ws);
+                              _["ws"] = ws,
+                              _["wsK"] = wsK);
   
   return listOut;
   

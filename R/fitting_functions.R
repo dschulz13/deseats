@@ -21,12 +21,13 @@ setClass("deseats",
     ts_name = "character",
     frequency = "numeric",
     order_poly = "numeric",
-    weights = "array"
+    weights = "array",
+    weights_wfun = "matrix"
   )
 )
 
 create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
-                           weights) {
+                           weights, weights_wfun) {
   
   methods::new("deseats",
     decomp = decomp,
@@ -34,7 +35,8 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
     ts_name = ts_name,
     frequency = frequency,
     order_poly = order_poly,
-    weights = weights
+    weights = weights,
+    weights_wfun = weights_wfun    
   )
   
 }
@@ -143,7 +145,8 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
     ts_name = ts_name,
     frequency = s,
     order_poly = p, 
-    weights = weights 
+    weights = weights,
+    weights_wfun = est[[8]]
   )
   
   out
