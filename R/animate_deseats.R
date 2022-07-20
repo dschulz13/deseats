@@ -43,9 +43,9 @@ function(object, col.obs = "grey74", col.fit = "red",
                       paste0("cos", (trunc(object@frequency - 1) / 2) + 1))
   mat_reg[["y"]] <- object@decomp[1:(2 * habs + 1), 1]
   
-  # ani_opts_old <- animation::ani.options()
-  # on.exit(animation::ani.options(ani_opts_old), add = TRUE)
-  # animation::ani.options(nmax = 2 * (habs + 1), interval = 0.1, ani.width = 1200)  
+  ani_opts_old <- animation::ani.options()
+  on.exit(animation::ani.options(ani_opts_old), add = TRUE)
+  animation::ani.options(nmax = 2 * (habs) + 7 * 20, interval = 0.1, ani.width = 1200)  
     
   if (is.null(main)) {
     main <- paste0('Locally weighted regression illustrated for the series "', 
@@ -56,7 +56,7 @@ function(object, col.obs = "grey74", col.fit = "red",
   
   par(parNew)    
     
-  for (frame in seq_len(habs + 1)) {
+  for (frame in seq_len(habs)) {
     
     tt <- (tsub[1:(2 * habs + 1)] - tsub[[frame]]) / habs
     for (i in 1:object@order_poly) {
@@ -80,8 +80,8 @@ function(object, col.obs = "grey74", col.fit = "red",
     abline(v = c(t[[1]], t[[2 * habs + 1]]), col = col.window, lwd = 2)
     abline(v = t[[frame]], col = col.spot, lty = "dashed", lwd = 2)
     lines(t[1:frame], fitted(object)[1:frame], col = col.fit, lwd = 1)    
-    lines(t[1:(2 * habs + 1)], lm_fit, col = ggplot2::alpha("forestgreen", 1), lwd = 1, lty = 2)
-    points(t[[frame]], fitted(object)[[frame]], col = ggplot2::alpha("purple", 0.5), pch = 19, cex = 1.5)    
+    lines(t[1:(2 * habs + 1)], lm_fit, col = ggplot2::alpha("black", 0.9), lwd = 1, lty = 3)
+    points(t[[frame]], fitted(object)[[frame]], col = ggplot2::alpha("purple", 0.4), pch = 19, cex = 1.2)    
     
     par(new = TRUE)                             # Add new plot
     plot(0,                                     # Create second plot without axes
@@ -93,12 +93,62 @@ function(object, col.obs = "grey74", col.fit = "red",
          col.axis = col.weights)       # Add second axis
     mtext(ylab2, side = 4, line = 3, col = col.weights) 
     
-    #animation::ani.pause()
+    animation::ani.pause()
   }
   
+  t_in <- floor(seq(from = habs + 1, to = n - habs, length.out = 6))
+  tt <- (tsub[1:(2 * habs + 1)] - tsub[[habs + 1]])  / habs  
+  
+  for (i in 1:object@order_poly) {
+    mat_reg[[paste0("t", i)]] <- tt^i
+  }
+  for (i in 1:((trunc(object@frequency - 1) / 2))) {
+    mat_reg[[paste0("cos", i)]] <- cos(2 * i * pi * tt / (object@frequency / habs))
+    mat_reg[[paste0("sin", i)]] <- sin(2 * i * pi * tt / (object@frequency / habs))      
+  }
+  mat_reg[[paste0("cos", trunc(object@frequency - 1) / 2 + 1)]] <- cos(pi * tt * habs)
+  
+  for (frame in t_in) {
+    
+    for(re in 1:20){
+    
+    mat_reg[["y"]] <- object@decomp[(frame - habs):(frame + habs), 1]
+    
+    lm_fit <- (stats::lm(y ~ ., data = mat_reg, weights = object@weights_wfun[habs + 1, ]))$fitted.values    
+    
+    plot(object@decomp[, 1], col = col.obs,
+         main = main, 
+         ylab = "", xlab = xlab)
+    axis(side = 2, col = col.fit, col.ticks = col.fit, col.axis = col.fit)
+    mtext(ylab1, side = 2, line = 3, col = col.fit)      
+    polygon(c(rep(t[[frame - habs]], 2), rep(t[[frame + habs]], 2)), 
+            c(min_y - 0.1 * d, max_y + 0.1 * d, max_y + 0.1 * d, min_y - 0.1 * d),
+            border = NA, col = ggplot2::alpha(col.window, 0.1))
+    abline(v = c(t[[frame - habs]], t[[frame + habs]]), col = col.window, lwd = 2)
+    abline(v = t[[frame]], col = col.spot, lty = "dashed", lwd = 2)
+    lines(t[1:frame], fitted(object)[1:frame], col = col.fit, lwd = 1)
+    lines(t[(frame - habs):(frame + habs)], lm_fit, col = ggplot2::alpha("black", 0.9), lwd = 1, lty = 3)    
+    points(t[[frame]], fitted(object)[[frame]], col = ggplot2::alpha("purple", 0.4), pch = 19, cex = 1.2)
+    
+    par(new = TRUE)                             # Add new plot
+    plot(0,                                     # Create second plot without axes
+    axes = FALSE, xlab = "", ylab = "", type = "n", xlim = c(min(t), max(t)),
+    ylim = c(min(object@weights[, , "Combined"]), max(object@weights[, , "Combined"])))
+    abline(h = 0, col = "lightgray", lty = "dotted")
+    
+    lines(t[(frame - habs):(frame + habs)], object@weights[habs + 1, , "Combined"], col = ggplot2::alpha(col.weights, 0.9))
+    axis(side = 4, col = col.weights, col.ticks = col.weights,
+         col.axis = col.weights)       # Add second axis
+    mtext(ylab2, side = 4, line = 3, col = col.weights) 
+    animation::ani.pause()    
+    
+    }
+    
+  }
+    
   mat_reg[["y"]] <- object@decomp[(n - 2 * habs):n, 1]
     
-  for (frame in (n - habs):n) {
+  for (frame in c((n - habs + 1):n, rep(n, 20))) {
     
     tt <- (tsub[(n - 2 * habs):n] - tsub[[frame]]) / habs
     for (i in 1:object@order_poly) {
@@ -123,8 +173,8 @@ function(object, col.obs = "grey74", col.fit = "red",
     abline(v = c(t[[n - 2 * habs]], t[[n]]), col = col.window, lwd = 2)
     abline(v = t[[frame]], col = col.spot, lty = "dashed", lwd = 2)
     lines(t[1:frame], fitted(object)[1:frame], col = col.fit, lwd = 1)
-    lines(t[(n - 2 * habs):n], lm_fit, col = ggplot2::alpha("forestgreen", 1), lwd = 1, lty = 2)    
-    points(t[[frame]], fitted(object)[[frame]], col = ggplot2::alpha("purple", 0.5), pch = 19, cex = 1.5)
+    lines(t[(n - 2 * habs):n], lm_fit, col = ggplot2::alpha("black", 0.9), lwd = 1, lty = 3)    
+    points(t[[frame]], fitted(object)[[frame]], col = ggplot2::alpha("purple", 0.4), pch = 19, cex = 1.2)
     
     par(new = TRUE)                             # Add new plot
     plot(0,                                     # Create second plot without axes
@@ -136,8 +186,10 @@ function(object, col.obs = "grey74", col.fit = "red",
     axis(side = 4, col = col.weights, col.ticks = col.weights,
          col.axis = col.weights)       # Add second axis
     mtext(ylab2, side = 4, line = 3, col = col.weights) 
-    #animation::ani.pause()
+    animation::ani.pause()
   }
+  
+  
   
   }
 
