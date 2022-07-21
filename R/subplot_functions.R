@@ -1,0 +1,122 @@
+# Plot subfunctions
+
+plot_facets <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('Decomposition of the time series "', obj@ts_name,'"')
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- obj@decomp[, 1:4]
+  
+  do.call(stats::plot.ts, args = dots)
+}
+
+plot_resid <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('The estimated rest in the time series "', obj@ts_name, '"'),
+    ylab = "Residual value"
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- residuals(obj)
+  
+  do.call(stats::plot.ts, args = dots)  
+}
+
+plot_fit <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('The time series "', obj@ts_name, 
+                  '" together with estimated trend and seasonality'),
+    ylab = obj@ts_name,
+    col = c("grey74", "red"),
+    lty = c(1, 1),
+    type = "ll"
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- c(stats::time(obj@decomp))
+  dots[["y"]] <- cbind(obj@decomp[, 1], fitted(obj))
+  
+  do.call(graphics::matplot, args = dots)  
+}
+
+plot_obs <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('The observed time series "', obj@ts_name, '"'),
+    ylab = obj@ts_name
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- obj@decomp[, 1]
+  
+  do.call(stats::plot.ts, args = dots)  
+}
+
+# Plot subfunctions ggplot2
+
+plot_facets_gg <- function(obj, ...) {
+  
+    c_names <- colnames(obj@decomp)[1:4]
+
+    n <- length(obj@decomp[, 1])
+    t <- c(stats::time(obj@decomp))
+
+    df <- data.frame(
+      Time = rep(t, 4),
+      Value = c(as.numeric(obj@decomp[, 1]), as.numeric(obj@decomp[, 2]), as.numeric(obj@decomp[, 3]), as.numeric(obj@decomp[, 4])),
+      Series = factor(c(rep(1:4, each = n)), labels = c_names)
+    )
+    ggplot2::ggplot(df, ggplot2::aes(x = df$Time, y = df$Value)) +
+      ggplot2::geom_line() +
+      ggplot2::ggtitle(paste0('Decomposition of the time series "', obj@ts_name, '"')) +
+      ggplot2::xlab("Time") +
+      ggplot2::facet_grid(Series ~ ., scales = "free_y") +
+      ggplot2::theme(axis.title.y = ggplot2::element_blank())
+
+}
+
+plot_resid_gg <- function(obj, ...) {
+  df <- data.frame(
+    Time = c(stats::time(obj@decomp)),
+    Value = c(residuals(obj))
+  )
+
+  ggplot2::ggplot(df, ggplot2::aes(x = df$Time, y = df$Value)) +
+    ggplot2::geom_line() +
+    ggplot2::ylab("Residual value") +
+    ggplot2::ggtitle(paste0('The estimated rest in the time series "', obj@ts_name, '"')) 
+}
+
+plot_fit_gg <- function(obj, ...) {
+
+    n <- length(obj@decomp[, 1])
+    t <- c(stats::time(obj@decomp))
+
+    df <- data.frame(
+      Time = rep(t, 2),
+      Value = c(as.numeric(obj@decomp[, 1]), as.numeric(fitted(obj))),
+      Series = factor(c(rep(1:2, each = n)), labels = c("Observations", "Fitted values"))
+    )
+    ggplot2::ggplot(df, ggplot2::aes(x = df$Time, y = df$Value)) +
+      ggplot2::geom_line(ggplot2::aes(color = df$Series)) +
+      ggplot2::ggtitle(paste0('The time series "', obj@ts_name, 
+                  '" together with estimated trend and seasonality')) +
+      ggplot2::ylab(obj@ts_name) +
+        ggplot2::scale_color_manual(values = c("grey74", "red"))
+}
+
+plot_obs_gg <- function(obj, ...) {
+  df <- data.frame(
+    Time = c(stats::time(obj@decomp)),
+    Value = c(obj@decomp[, c(1)])
+  )
+
+  ggplot2::ggplot(df, ggplot2::aes(x = df$Time, y = df$Value)) +
+    ggplot2::geom_line() +
+    ggplot2::ylab(obj@ts_name) +
+    ggplot2::ggtitle(paste0('The observed time series "', obj@ts_name, '"')) 
+}

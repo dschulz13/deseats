@@ -51,3 +51,16 @@
 #'
 #'\url{https://fred.stlouisfed.org/series/HSN1FNSA}
 "HOUSESALES"
+
+#' Monthly Deaths in Germany
+#'
+#' A \code{ts} object that contains the monthly observed deaths in Germany
+#' (in thousands of cases) from January 1990 to April 2022. The object 
+#' contains 388 observations.
+#' 
+#'@source The data was obtained from the databank "Genesis" of the National 
+#'Statistical Office of Germany (accessed: 2022-07-21) and then transformed into 
+#'a time series object using R.
+#'
+#'\url{https://www-genesis.destatis.de/genesis/online?operation=abruftabelleBearbeiten&levelindex=2&levelid=1658407055248&auswahloperation=abruftabelleAuspraegungAuswaehlen&auswahlverzeichnis=ordnungsstruktur&auswahlziel=werteabruf&code=12613-0005&auswahltext=&werteabruf=Werteabruf#abreadcrumb}
+"DEATHS"

@@ -91,6 +91,8 @@ bv_trend_filter_quarterly <- function() {
   weighting1 <- weighting2
   weighting2[[2]] <- 0
   weighting1[[2]] <- 1
+  weighting2[[5]] <- 0
+  weighting1[[5]] <- 1  
   
   ws <- ws1 * weighting1 + ws2 * weighting2
   
@@ -118,10 +120,10 @@ filter_trend_list <- list(
     p = c(rep(3, 5))    
   ),
   quarterly2 = data.frame(
-    k = c(8, NA, 9, 10),
-    h = c(1, NA, 3, 4),
-    q = c(1, NA, 3, 4),
-    p = c(1, NA, 3, 3)    
+    k = c(8, NA, 9, 10, NA),
+    h = c(1, NA, 3, 4, NA),
+    q = c(1, NA, 3, 4, NA),
+    p = c(1, NA, 3, 3, NA)    
   )  
 )
 

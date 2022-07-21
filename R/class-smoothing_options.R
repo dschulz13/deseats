@@ -22,7 +22,6 @@ setClass("smoothing_options",
 #' Set the smoothing specifications for locally weighted regression for
 #' identifying the trend and the seasonality in an equidistant time series.
 #' 
-#'@useDynLib DeSeaTS
 #'@importFrom Rcpp sourceCpp
 #'@import methods
 #' 
@@ -99,10 +98,8 @@ set_options <- function(
   
 }
 
-#'@export
-methods::setGeneric("order_poly", function(x) standardGeneric("order_poly"))
-#'@export
-methods::setGeneric("order_poly<-", function(x, value) standardGeneric("order_poly<-"))
+
+
 #'@export
 methods::setMethod("order_poly", "smoothing_options", function(x) x@order_poly)
 #'@export
@@ -111,10 +108,7 @@ methods::setMethod("order_poly<-", "smoothing_options", function(x, value) {
   x
 })
 
-#'@export
-methods::setGeneric("season", function(x) standardGeneric("season"))
-#'@export
-methods::setGeneric("season<-", function(x, value) standardGeneric("season<-"))
+
 #'@export
 methods::setMethod("season", "smoothing_options", function(x) x@season)
 #'@export
@@ -123,10 +117,7 @@ methods::setMethod("season<-", "smoothing_options", function(x, value) {
   x
 })
 
-#'@export
-methods::setGeneric("kernel_fun", function(x) standardGeneric("kernel_fun"))
-#'@export
-methods::setGeneric("kernel_fun<-", function(x, value) standardGeneric("kernel_fun<-"))
+
 #'@export
 methods::setMethod("kernel_fun", "smoothing_options", function(x) x@kernel_fun)
 #'@export
@@ -135,10 +126,7 @@ methods::setMethod("kernel_fun<-", "smoothing_options", function(x, value) {
   x
 })
 
-#'@export
-methods::setGeneric("bwidth", function(x) standardGeneric("bwidth"))
-#'@export
-methods::setGeneric("bwidth<-", function(x, value) standardGeneric("bwidth<-"))
+
 #'@export
 methods::setMethod("bwidth", "smoothing_options", function(x) x@bwidth)
 #'@export
@@ -147,10 +135,7 @@ methods::setMethod("bwidth<-", "smoothing_options", function(x, value) {
   x
 })
 
-#'@export
-methods::setGeneric("boundary_method", function(x) standardGeneric("boundary_method"))
-#'@export
-methods::setGeneric("boundary_method<-", function(x, value) standardGeneric("boundary_method<-"))
+
 #'@export
 methods::setMethod("boundary_method", "smoothing_options", function(x) x@boundary_method)
 #'@export

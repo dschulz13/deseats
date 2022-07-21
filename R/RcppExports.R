@@ -2,22 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 cf0Cpp <- function(Xt) {
-    .Call('_DeSeaTS_cf0Cpp', PACKAGE = 'DeSeaTS', Xt)
+    .Call('_deseats_cf0Cpp', PACKAGE = 'deseats', Xt)
 }
 
 fitteddeseatsCpp <- function(y, p, s, mu, b, bb) {
-    .Call('_DeSeaTS_fitteddeseatsCpp', PACKAGE = 'DeSeaTS', y, p, s, mu, b, bb)
+    .Call('_deseats_fitteddeseatsCpp', PACKAGE = 'deseats', y, p, s, mu, b, bb)
 }
 
 residdeseatsCpp <- function(y, p, s, mu, b, bb) {
-    .Call('_DeSeaTS_residdeseatsCpp', PACKAGE = 'DeSeaTS', y, p, s, mu, b, bb)
+    .Call('_deseats_residdeseatsCpp', PACKAGE = 'deseats', y, p, s, mu, b, bb)
 }
 
 derivdeseatsCpp <- function(y, p, s, mu, b, bb, v) {
-    .Call('_DeSeaTS_derivdeseatsCpp', PACKAGE = 'DeSeaTS', y, p, s, mu, b, bb, v)
+    .Call('_deseats_derivdeseatsCpp', PACKAGE = 'deseats', y, p, s, mu, b, bb, v)
 }
 
 algorithmCpp <- function(yt, p, s, mu, bStart) {
-    .Call('_DeSeaTS_algorithmCpp', PACKAGE = 'DeSeaTS', yt, p, s, mu, bStart)
+    .Call('_deseats_algorithmCpp', PACKAGE = 'deseats', yt, p, s, mu, bStart)
 }
 

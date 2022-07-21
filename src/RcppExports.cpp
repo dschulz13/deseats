@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // cf0Cpp
 double cf0Cpp(const arma::vec& Xt);
-RcppExport SEXP _DeSeaTS_cf0Cpp(SEXP XtSEXP) {
+RcppExport SEXP _deseats_cf0Cpp(SEXP XtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -24,7 +24,7 @@ END_RCPP
 }
 // fitteddeseatsCpp
 Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb);
-RcppExport SEXP _DeSeaTS_fitteddeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
+RcppExport SEXP _deseats_fitteddeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -40,7 +40,7 @@ END_RCPP
 }
 // residdeseatsCpp
 arma::vec residdeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb);
-RcppExport SEXP _DeSeaTS_residdeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
+RcppExport SEXP _deseats_residdeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -56,7 +56,7 @@ END_RCPP
 }
 // derivdeseatsCpp
 arma::vec derivdeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb, const int v);
-RcppExport SEXP _DeSeaTS_derivdeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP, SEXP vSEXP) {
+RcppExport SEXP _deseats_derivdeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP, SEXP vSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -73,7 +73,7 @@ END_RCPP
 }
 // algorithmCpp
 double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart);
-RcppExport SEXP _DeSeaTS_algorithmCpp(SEXP ytSEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bStartSEXP) {
+RcppExport SEXP _deseats_algorithmCpp(SEXP ytSEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bStartSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,15 +88,15 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_DeSeaTS_cf0Cpp", (DL_FUNC) &_DeSeaTS_cf0Cpp, 1},
-    {"_DeSeaTS_fitteddeseatsCpp", (DL_FUNC) &_DeSeaTS_fitteddeseatsCpp, 6},
-    {"_DeSeaTS_residdeseatsCpp", (DL_FUNC) &_DeSeaTS_residdeseatsCpp, 6},
-    {"_DeSeaTS_derivdeseatsCpp", (DL_FUNC) &_DeSeaTS_derivdeseatsCpp, 7},
-    {"_DeSeaTS_algorithmCpp", (DL_FUNC) &_DeSeaTS_algorithmCpp, 5},
+    {"_deseats_cf0Cpp", (DL_FUNC) &_deseats_cf0Cpp, 1},
+    {"_deseats_fitteddeseatsCpp", (DL_FUNC) &_deseats_fitteddeseatsCpp, 6},
+    {"_deseats_residdeseatsCpp", (DL_FUNC) &_deseats_residdeseatsCpp, 6},
+    {"_deseats_derivdeseatsCpp", (DL_FUNC) &_deseats_derivdeseatsCpp, 7},
+    {"_deseats_algorithmCpp", (DL_FUNC) &_deseats_algorithmCpp, 5},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_DeSeaTS(DllInfo *dll) {
+RcppExport void R_init_deseats(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

@@ -35,11 +35,11 @@ lm_decomp <- function(yt, trend_poly = 1, season = 0) {
     X_mat
     ))
   names(X_df) <- c("yt", name_trend, name_season)
-  reg <- lm(yt ~ ., data = X_df)
+  reg <- stats::lm(yt ~ ., data = X_df)
   out_mat <- 
   if (season > 1) {
     s <- reg$coefficients[(2 + trend_poly):(trend_poly + season)]
-    seasonality <- head(rep(c(s, -sum(s)), diag_N + 1), N)
+    seasonality <- utils::head(rep(c(s, -sum(s)), diag_N + 1), N)
     remainder <- yt - seasonality
     name_s <- "Season"
   } else {

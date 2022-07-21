@@ -1,6 +1,6 @@
 .onAttach <- function(libname, pkgname){
   packageStartupMessage("********************************************************************************")
-  packageStartupMessage("                        Welcome to the package 'DeSeaTS'!")
+  packageStartupMessage("                        Welcome to the package 'deseats'!")
   packageStartupMessage("********************************************************************************")
   packageStartupMessage("")
   packageStartupMessage("This is just a pre-release version of the package and thus a work in progress.")
@@ -18,5 +18,5 @@
 }
 
 .onUnload <- function(libpath) {
-  library.dynam.unload("DeSeaTS", libpath)
+  library.dynam.unload("deseats", libpath)
 }
