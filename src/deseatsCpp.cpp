@@ -141,9 +141,11 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
     dataMat.row(i) = arma::pow(allsequhh, i);
   }
   
+  const double l1 = 2.0 * M_PI / s;
+  
   for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
-    dataMat.row(p + 2 * i - 1) = arma::cos(2.0 * i * M_PI * allsequ / s); //look here
-    dataMat.row(p + 2 * i) = arma::sin(2.0 * i * M_PI * allsequ / s);
+    dataMat.row(p + 2 * i - 1) = arma::cos(i * l1 * allsequ); //look here
+    dataMat.row(p + 2 * i) = arma::sin(i * l1 * allsequ);
   }
   
   if ((s / 2.0) == std::trunc(s / 2.0)) {
@@ -259,9 +261,11 @@ arma::vec residdeseatsCpp(const arma::vec& y, const int p,
     dataMat.row(i) = arma::pow(allsequhh, i);
   }
   
+  const double l1 = 2.0 * M_PI / s;  
+  
   for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
-    dataMat.row(p + 2 * i - 1) = arma::cos(2.0 * i * M_PI * allsequ / s); //look here
-    dataMat.row(p + 2 * i) = arma::sin(2.0 * i * M_PI * allsequ / s);
+    dataMat.row(p + 2 * i - 1) = arma::cos(i * l1 * allsequ); //look here
+    dataMat.row(p + 2 * i) = arma::sin(i * l1 * allsequ);
   }
   
   if ((s / 2.0) == std::trunc(s / 2.0)) {
@@ -361,9 +365,11 @@ arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
     dataMat.row(i) = arma::pow(allsequhh, i);
   }
   
+  const double l1 = 2.0 * M_PI / s;  
+  
   for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
-    dataMat.row(p + 2 * i - 1) = arma::cos(2.0 * i * M_PI * allsequ / s); //look here
-    dataMat.row(p + 2 * i) = arma::sin(2.0 * i * M_PI * allsequ / s);
+    dataMat.row(p + 2 * i - 1) = arma::cos(i * l1 * allsequ); //look here
+    dataMat.row(p + 2 * i) = arma::sin(i * l1 * allsequ);
   }
   
   if ((s / 2.0) == std::trunc(s / 2.0)) {
