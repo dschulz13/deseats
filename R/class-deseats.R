@@ -251,7 +251,7 @@ function(object, col.obs = "grey74", col.fit = "red",
   
   ani_opts_old <- animation::ani.options()
   on.exit(animation::ani.options(ani_opts_old), add = TRUE)
-  animation::ani.options(nmax = 2 * (habs) + 7 * 20, interval = 0.1, ani.width = 1200)  
+  animation::ani.options(nmax = 2 * (habs) + 7 * 10, interval = 0.1, ani.width = 1200)  
     
   if (is.null(main)) {
     main <- paste0('Locally weighted regression illustrated for the series "', 
@@ -316,7 +316,7 @@ function(object, col.obs = "grey74", col.fit = "red",
   
   for (frame in t_in) {
     
-    for(re in 1:20){
+    for(re in 1:10){
     
     mat_reg[["y"]] <- object@decomp[(frame - habs):(frame + habs), 1]
     
@@ -354,7 +354,7 @@ function(object, col.obs = "grey74", col.fit = "red",
     
   mat_reg[["y"]] <- object@decomp[(n - 2 * habs):n, 1]
     
-  for (frame in c((n - habs + 1):n, rep(n, 20))) {
+  for (frame in c((n - habs + 1):n, rep(n, 10))) {
     
     tt <- (tsub[(n - 2 * habs):n] - tsub[[frame]]) / habs
     for (i in 1:object@order_poly) {
