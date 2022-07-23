@@ -285,7 +285,7 @@ arma::vec residdeseatsCpp(const arma::vec& y, const int p,
   }
   
   prevec.subvec(0, p) = ej.subvec(0, p); 
-  
+
   prevec.subvec(p + 1, p + s - 1) = ej.subvec(p + 1, p + s - 1);  
   
   const arma::vec allUpB = bwidthAbs + hr;
@@ -315,7 +315,7 @@ arma::vec residdeseatsCpp(const arma::vec& y, const int p,
   }
   
   ws.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(ws.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
-  
+
   arma::mat ym(bwidthMax, n - bwidthMax + 1);
   for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
     ym.col(i - bwidthAbs) = y.subvec(i - bwidthAbs, i + bwidthAbs);
@@ -527,7 +527,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     bAdj = bopt * adjFactor;
     
     resAdj = residdeseatsCpp(yt, p, s, mu, bAdj, bb);
-    
+      
     cf0 = cf0Cpp(resAdj); 
     
     c3 = cf0 / I2;

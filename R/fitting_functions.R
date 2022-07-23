@@ -60,6 +60,10 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
   if (is.na(smoothing_options@season)) {
     if (inherits(y, c("ts", "zoo", "xts"))) {
       s <- stats::frequency(y)
+      if (s == 1) {
+        stop('A seasonal period is required in the element "@season" of ', 
+             'the argument "smoothing_options".')
+      }
     } else {
       s <- 1
     }
