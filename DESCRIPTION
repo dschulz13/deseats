@@ -23,7 +23,9 @@ Imports: Rcpp (>= 1.0.6),
          graphics,
          animation,
          utils,
-         shiny
+         shiny,
+         tools,
+         zoo
 Suggests: smoots
 License: GPL-3
 Encoding: UTF-8
