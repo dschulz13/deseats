@@ -66,7 +66,7 @@ server <- function(input, output) {
     })
   
     Xt <- reactive({
-      out <- DeSeaTS::HOUSESALES
+      out <- deseats::HOUSESALES
       if (isTRUE(input$logtr)) {
         out <- log(out)
       }
@@ -77,7 +77,7 @@ server <- function(input, output) {
       req(input$opoly)
       req(input$kfun)
       req(input$bwidth)
-      DeSeaTS::set_options(order_poly = input$opoly,
+      deseats::set_options(order_poly = input$opoly,
                            kernel_fun = input$kfun,
                            bwidth = input$bwidth)
     })
@@ -92,7 +92,7 @@ server <- function(input, output) {
       req(opts())
       op <- opts()
       op@bwidth <- NA_real_
-      est <- DeSeaTS::deseats(Xt(), op, bwidth_start = 0.1)
+      est <- deseats::deseats(Xt(), op, bwidth_start = 0.1)
       bopt <- est@bwidth
       updateSliderInput(inputId = "bwidth", value = bopt)
     })
@@ -100,7 +100,7 @@ server <- function(input, output) {
     est_result <- reactive({
         req(input$bwidth)
         req(opts)
-        est <- DeSeaTS::deseats(Xt(), opts())  
+        est <- deseats::deseats(Xt(), opts())  
         est
     })  
   
