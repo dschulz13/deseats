@@ -357,6 +357,7 @@ function(object, col.obs = "grey74", col.fit = "red",
     plot(object@decomp[, 1], col = col.obs,
          main = main, 
          ylab = "", xlab = xlab)
+    graphics::points(0, counter, type = "n")    
     graphics::axis(side = 2, col = col.fit, col.ticks = col.fit, col.axis = col.fit)
     graphics::mtext(ylab1, side = 2, line = 3, col = col.fit)      
     graphics::polygon(c(rep(t[[frame - habs]], 2), rep(t[[frame + habs]], 2)), 
@@ -405,6 +406,7 @@ function(object, col.obs = "grey74", col.fit = "red",
     plot(object@decomp[, 1], col = col.obs,
          main = main, 
          ylab = "", xlab = xlab)
+    graphics::points(0, counter, type = "n")
     graphics::axis(side = 2, col = col.fit, col.ticks = col.fit, col.axis = col.fit)
     graphics::mtext(ylab1, side = 2, line = 3, col = col.fit)      
     graphics::polygon(c(rep(t[[n - 2 * habs]], 2), rep(t[[n]], 2)), 
