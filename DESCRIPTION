@@ -48,4 +48,5 @@ Collate:
     'data_documentation.R'
     'fitting_functions.R'
     'lm_decomp.R'
+    'hamilton_filter.R'
     'runDecomposition.R'

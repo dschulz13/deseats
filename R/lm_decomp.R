@@ -1,3 +1,4 @@
+#'@export
 lm_decomp <- function(yt, trend_poly = 1, season = 0) {
 
   N <- length(yt)

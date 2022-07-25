@@ -29,3 +29,8 @@ methods::setGeneric("trend", function(x) standardGeneric("trend"))
 #'@export
 methods::setGeneric("animate", function(object, ...) standardGeneric("animate"))
 
+#'@export
+methods::setGeneric("deseasonalize", function(x, ...) standardGeneric("deseasonalize"))
+
+#'@export
+methods::setGeneric("detrend", function(x, ...) standardGeneric("detrend"))

@@ -28,12 +28,15 @@ check_which <-function(which) {
   
     if (is.null(which)) {
     text_prompt <- data.frame(
-      c("facets:", "observations:", "fitted:", "residuals:"),
+      c("facets:", "observations:", "fitted:", "residuals:",
+        "deseasonalized:", "detrended:"),
       c(
         "Facet plot of the estimated components",
         "The observed time series",
         "The observations together with estimated trend + seasonality",
-        "The both detrended and seasonally adjusted series"
+        "The both detrended and seasonally adjusted series",
+        "The seasonally adjusted series",
+        "The detrended series"
       )
     )
     colnames(text_prompt) <- NULL
@@ -46,8 +49,8 @@ check_which <-function(which) {
     
     which <- ""
     
-    while(!(which %in% c(0, 1, 2, 3, 4, "facets", "observations", "fitted",
-                         "residuals"))) {
+    while(!(which %in% c(0, 1, 2, 3, 4, 5, 6, "facets", "observations", "fitted",
+                         "residuals", "deseasonalized", "detrended"))) {
     
         which <- readline("Keyword or position number: ")
         

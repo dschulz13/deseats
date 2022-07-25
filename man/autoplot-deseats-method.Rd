@@ -14,7 +14,10 @@ enter \code{"facets"} or \code{1} to show a facet plot of the estimated
 time series components; enter \code{"observations"} or \code{2} to show the
 input time series; enter \code{"fitted"} or \code{3} to show the observations 
 alongside the estimated trend with seasonality; enter \code{"residuals"} or 
-\code{4} to plot the both detrended and seasonally adjusted series; the 
+\code{4} to plot the both detrended and seasonally adjusted series; use 
+\code{5} or \code{"deseasonalized"} to show the seasonally adjusted 
+series; enter \code{6} or \code{"detrended"} to plot the detrended 
+series; the 
 default is \code{which = NULL} which then lets you select a plot 
 interactively in the R console.}
 

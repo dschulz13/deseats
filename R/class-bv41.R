@@ -49,6 +49,22 @@ setMethod("residuals", "bv41", function(object, ...) {
 })
 
 #'@export
+setMethod("deseasonalize", "bv41",
+  function(x, ...){
+    .f <- methods::selectMethod("deseasonalize", "deseats")
+    .f(x)
+  }
+)
+
+#'@export
+setMethod("detrend", "bv41",
+  function(x, ...){
+    .f <- methods::selectMethod("detrend", "deseats")
+    .f(x)
+  }
+)
+
+#'@export
 setMethod("plot", "bv41", function(x, which = NULL, ...) {
   
   .f <- methods::selectMethod("plot", "deseats")

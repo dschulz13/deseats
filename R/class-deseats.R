@@ -42,7 +42,10 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
 #'time series components; enter \code{"observations"} or \code{2} to show the
 #'input time series; enter \code{"fitted"} or \code{3} to show the observations 
 #'alongside the estimated trend with seasonality; enter \code{"residuals"} or 
-#'\code{4} to plot the both detrended and seasonally adjusted series; the 
+#'\code{4} to plot the both detrended and seasonally adjusted series; use 
+#'\code{5} or \code{"deseasonalized"} to show the seasonally adjusted 
+#'series; enter \code{6} or \code{"detrended"} to plot the detrended 
+#'series; the 
 #'default is \code{which = NULL} which then lets you select a plot 
 #'interactively in the R console.
 #'@param ... further arguments to pass to \code{\link[stats]{plot.ts}} or 
@@ -87,10 +90,14 @@ setMethod("plot", "deseats", function(x, which = NULL, ...) {
     "observations" = plot_obs,
     "fitted" = plot_fit,
     "residuals" = plot_resid,
+    "deseasonalized" = plot_deseason,
+    "detrended" = plot_detrend,    
     "1" = plot_facets,
     "2" = plot_obs,
     "3" = plot_fit,
-    "4" = plot_resid    
+    "4" = plot_resid,
+    "5" = plot_deseason,
+    "6" = plot_detrend   
   )
   
   plot_fun(x, ...)
@@ -114,7 +121,10 @@ setMethod("plot", "deseats", function(x, which = NULL, ...) {
 #'time series components; enter \code{"observations"} or \code{2} to show the
 #'input time series; enter \code{"fitted"} or \code{3} to show the observations 
 #'alongside the estimated trend with seasonality; enter \code{"residuals"} or 
-#'\code{4} to plot the both detrended and seasonally adjusted series; the 
+#'\code{4} to plot the both detrended and seasonally adjusted series; use 
+#'\code{5} or \code{"deseasonalized"} to show the seasonally adjusted 
+#'series; enter \code{6} or \code{"detrended"} to plot the detrended 
+#'series; the 
 #'default is \code{which = NULL} which then lets you select a plot 
 #'interactively in the R console.
 #'@param ... no purpose and only implemented for compatibility.
@@ -157,10 +167,14 @@ setMethod("autoplot", "deseats", function(object, which = NULL, ...) {
     "observations" = plot_obs_gg,
     "fitted" = plot_fit_gg,
     "residuals" = plot_resid_gg,
+    "deseasonalized" = plot_deseason_gg,
+    "detrended" = plot_detrend_gg,    
     "1" = plot_facets_gg,
     "2" = plot_obs_gg,
     "3" = plot_fit_gg,
-    "4" = plot_resid_gg    
+    "4" = plot_resid_gg,
+    "5" = plot_deseason_gg,
+    "6" = plot_detrend_gg     
   )
   
   plot_fun(object, ...)
@@ -210,6 +224,20 @@ setMethod("fitted", "deseats",
 setMethod("residuals", "deseats",
   function(object, ...){
     object@decomp[, 4]
+  }
+)
+
+#'@export
+setMethod("deseasonalize", "deseats",
+  function(x, ...){
+    x@decomp[, 1] - season(x)
+  }
+)
+
+#'@export
+setMethod("detrend", "deseats",
+  function(x, ...){
+    x@decomp[, 1] - trend(x)
   }
 )
 
@@ -314,10 +342,14 @@ function(object, col.obs = "grey74", col.fit = "red",
   }
   mat_reg[[paste0("cos", trunc(object@frequency - 1) / 2 + 1)]] <- cos(pi * tt * habs)
   
+  counter <- 0
+  
   for (frame in t_in) {
     
     for(re in 1:10){
     
+    counter <- counter + 1  
+      
     mat_reg[["y"]] <- object@decomp[(frame - habs):(frame + habs), 1]
     
     lm_fit <- (stats::lm(y ~ ., data = mat_reg, weights = object@weights_wfun[habs + 1, ]))$fitted.values    
@@ -355,6 +387,8 @@ function(object, col.obs = "grey74", col.fit = "red",
   mat_reg[["y"]] <- object@decomp[(n - 2 * habs):n, 1]
     
   for (frame in c((n - habs + 1):n, rep(n, 10))) {
+    
+    counter <- counter + 1
     
     tt <- (tsub[(n - 2 * habs):n] - tsub[[frame]]) / habs
     for (i in 1:object@order_poly) {
