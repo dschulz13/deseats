@@ -1,5 +1,31 @@
 library(shiny)
 
+month_f <- function(month) {
+  switch(month,
+    January = 1,
+    February = 2,
+    March = 3,
+    April = 4,
+    May = 5,
+    June = 6,
+    July = 7,
+    August = 8,
+    September = 9,
+    October = 10,
+    November = 11,
+    December = 12
+  )
+}
+
+quarter_f <- function(quarter) {
+  switch(quarter,
+    Q1 = 1,
+    Q2 = 2,
+    Q3 = 3,
+    Q4 = 4
+  )
+}
+
 # Define UI
 ui <- fluidPage(
 
@@ -14,6 +40,8 @@ ui <- fluidPage(
                  fileInput("upload", "Upload a data file", buttonLabel = "Upload...", multiple = FALSE),
                  uiOutput("filesettings"),
                  uiOutput("varselection"),
+                 uiOutput("freq"),
+                 uiOutput("startdate"),
                  uiOutput("logtransf")
               ),
               tabPanel("II. Decomposition",
@@ -21,11 +49,7 @@ ui <- fluidPage(
                  uiOutput("decompsettings")
               ),
               tabPanel("III. Data export",
-                 uiOutput("export")
-              ),
-              tabPanel("Extra: Plot settings",
-                 sliderInput("figheight", "Plot height:", min = 100, max = 1800, step = 20, value = 600),
-                 sliderInput("figwidth", "Plot width:", min = 100, max = 1800, step = 20, value = 1200)      
+                 downloadButton("dlData", label = "Download decomposed data") 
               )
             )#,
             
@@ -37,14 +61,32 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
           tabsetPanel(
-            tabPanel("Data frame",
-              tableOutput("datatable")         
+            tabPanel("Data frames",
+              uiOutput("nentries"),
+              tabsetPanel(
+                tabPanel("Input data",
+                  uiOutput("dfinput")  
+                ),
+                tabPanel("Decomposed data",
+                  uiOutput("dfoutput")  
+                )
+              )
             ),
-            tabPanel("Plot of observations",
-              uiOutput("obsplot")
-            ),
-            tabPanel("Plot of fitted values",
-              uiOutput("fitplot")
+            tabPanel("Plots",
+              sliderInput("figheight", "Plot height:", min = 100, max = 1800, step = 20, value = 500),
+              sliderInput("figwidth", "Plot width:", min = 100, max = 1800, step = 20, value = 1200),                     
+              tabsetPanel(
+                tabPanel("Plot of observations",
+                  uiOutput("obsplot")
+                ),              
+                tabPanel("Fitted values",
+                  uiOutput("fitplot")      
+                ),
+                tabPanel("Residuals",
+                  uiOutput("resplot")
+                )
+              )
+              
             )            
           )
         )
@@ -75,9 +117,20 @@ server <- function(input, output) {
       )
     })    
     
+    output$nentries <- renderUI({
+      req(dataset())
+      sliderInput("nvals", "Entries to show:", min = 1, max = length(dataset()[, 1]), step = 1, value = 5)
+    })
+    
+    output$dfinput <- renderUI({
+      req(dataset())
+      tableOutput("datatable")   
+    })
+    
     output$datatable <- renderTable({
       req(dataset())
-      print.data.frame(dataset())
+      req(input$nvals)
+      print.data.frame(dataset()[1:input$nvals, , drop = FALSE])
     })
     
     choices <- reactive({
@@ -90,25 +143,45 @@ server <- function(input, output) {
       
       list(
         selectInput("tsvar", "Select time series variable:", 
-                    choices = choices(), selected = choices()[[1]]),
-        selectInput("timevar", "Select time variable:", 
-                    choices = choices(), selected = choices()[[1]])        
+                    choices = choices(), selected = choices()[[1]])       
       )
     })
     
-    tseries <- reactive({
+    output$freq <- renderUI({
       req(input$tsvar)
-      req(input$timevar)
       
-      t <- as.character(input$timevar)
+      sliderInput("frequ", "Seasonal period:", min = 4, max = 12, step = 8,
+                  value = 4)
+    })
+    
+    output$startdate <- renderUI({
+      req(input$frequ)
+      
+      a <- sliderInput("year", "Year of the first observation:", min = 1800, max = 2020,
+                  value = 1950, step = 1, sep = "")
+      if (input$frequ == 4) {
+        b <- selectInput("subd", "Quarter of the first observation:",
+                         choices = paste0("Q", 1:4), selected = "Q1")
+      } else if (input$frequ == 12) {
+        b <- selectInput("subd", "Month of the first observation:",
+                         choices = month.name, selected = "January")        
+      }
+      list(a, b)
+    })
+    
+    tseries <- reactive({
+      req(input$subd)
+      
+      subd <- input$subd
+      if (input$frequ == 4) {
+        subd <- quarter_f(subd)
+      } else if (input$frequ == 12) {
+        subd <- month_f(subd)
+      }
       y <- as.character(input$tsvar)
       
-      yt <- dataset()[[y]]
-      tt <- as.Date(dataset()[[t]], 
-                    tryFormats = c("%Y-%m-%d", "%Y/%m/%d", "%d.%m.%Y"))
-      
-      out <- zoo::zoo(yt, tt)
-      out
+      yt <- ts(dataset()[[y]], start = c(input$year, subd), frequency = input$frequ)
+      yt
     })
     
     output$logtransf <- renderUI({
@@ -170,7 +243,9 @@ server <- function(input, output) {
     
     output$decompsettings <- renderUI({
       req(input$method)
-      list(
+      
+      if (input$method == "Data-driven locally weighted regression") {
+        out <- list(
             sliderInput("opoly",
                         "Order of local polynomial (for the trend):",
                         min = 1,
@@ -192,7 +267,12 @@ server <- function(input, output) {
                         value = 0.1,
                         step = 0.005),
             actionButton("automate", "Automatically select optimal bandwidth")        
-      )
+        )        
+      } else if (input$method == "BV4.1") {
+        out <- list()
+      }
+      out
+
     })    
   
     opts <- reactive({
@@ -203,26 +283,29 @@ server <- function(input, output) {
                            kernel_fun = input$kfun,
                            bwidth = input$bwidth)
     })
-  
-    ts_ts <- reactive({
-      #t <- zoo::as.Date.ts(time(ts_tr()))
-      ts(zoo::coredata(ts_tr), frequency = 4, start = 1970)#, start = t[[1]], end = tail(t, 1))
-    })
     
     observeEvent(input$automate, {
       req(ts_tr())
       req(opts())
       op <- opts()
       op@bwidth <- NA_real_
-      est <- deseats::deseats(ts_ts(), op, bwidth_start = 0.1)
+      est <- deseats::deseats(ts_tr(), op, bwidth_start = 0.1)
       bopt <- est@bwidth
       updateSliderInput(inputId = "bwidth", value = bopt)
     })
   
     est_result <- reactive({
-        req(input$bwidth)
-        req(opts)
-        est <- deseats::deseats(ts_ts(), opts())  
+      
+        req(input$method)
+      
+        if (input$method == "Data-driven locally weighted regression") {
+          req(input$bwidth)
+          req(opts)
+          est <- deseats::deseats(ts_tr(), opts())           
+        } else if (input$method == "BV4.1") {
+          est <- deseats::BV4.1(ts_tr())
+        }
+ 
         est
     })  
   
@@ -230,31 +313,75 @@ server <- function(input, output) {
       req(est_result())
       plotOutput("plotfitted", height = paste0(input$figheight, "px"), width = paste0(input$figwidth, "px"))
     })
-    
+
     output$plotfitted <- renderPlot({
 
         req(est_result())
         
-        autoplot(est_result(), which = 3) +
-          ggplot2::ggtitle("Observations together with fitted values") +
+        deseats::autoplot(est_result(), which = 3) +
+          ggplot2::ggtitle(paste0('Observations "', ts_name_tr(), '" togerther with estimated trend and seasonality')) +
           ggplot2::theme_bw() +
           ggplot2::theme(legend.position = "bottom",
-                         plot.title = ggplot2::element_text(hjust = 0.5)) +
-          ggplot2::ylab(" ")
+                         plot.title = ggplot2::element_text(hjust = 0.5, face = "bold")) +
+          ggplot2::ylab("Observation and trend + seasonality")
+
+
+    })    
+    
+    output$resplot <- renderUI({
+      req(est_result())
+      plotOutput("plotresid", height = paste0(input$figheight, "px"), width = paste0(input$figwidth, "px"))
+    })        
+    
+    output$plotresid <- renderPlot({
+
+        req(est_result())
+        
+        deseats::autoplot(est_result(), which = 4) +
+          ggplot2::ggtitle(paste0('Estimated remainder in "', ts_name_tr(), '"')) +
+          ggplot2::theme_bw() +
+          ggplot2::theme(legend.position = "bottom",
+                         plot.title = ggplot2::element_text(hjust = 0.5, face = "bold")) +
+          ggplot2::ylab("Detrended and deseasonalized observation")
 
 
     })
     
+    output$dfoutput <- renderUI({
+      req(est_result())
+      req(input$nvals)
+      
+      tableOutput("outp")
+    })
+    
+    dfout <- reactive({
+      req(est_result)
+      
+      .df <- as.data.frame(est_result()@decomp)
+      if (isTRUE(input$logtransf)) {
+        .df <- exp(.df)
+      } else if (isFALSE(input$logtransf)) {
+        .df <- .df
+      }
+      .df$`Time point` <- stats::time(est_result()@decomp)
+      .df <- .df[c(5, 1:4)]      
+      .df
+    })
+    
+    output$outp <- renderTable({
+      req(dfout())
+      req(input$nvals)
+
+      print.data.frame(dfout()[1:input$nvals, , drop = FALSE])
+    })
+    
     output$dlData <- downloadHandler(
       filename = function() {
-        paste0("decomposed data - ", Sys.Date(), ".csv")
+        paste0("decomposed data - ",  input$tsvar, " - ", Sys.Date(), ".csv")
       },
       content = function(file) {
-        .t <- time(est_result()@decomp)
-        .df <- as.data.frame(est_result()@decomp)
-        .df[["Time"]] <- .t
-        .df <- .df[, c(5, 1:4)]
-        write.table(.df, file, quote = FALSE, sep = ",", row.names = FALSE,
+        req(dfout())
+        write.table(dfout(), file, quote = FALSE, sep = ",", row.names = FALSE,
                     col.names = TRUE)
       }
     )
