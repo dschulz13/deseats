@@ -150,7 +150,7 @@ plot_obs_gg <- function(obj, ...) {
 plot_deseason_gg <- function(obj, ...) {
   df <- data.frame(
     Time = c(stats::time(obj@decomp)),
-    Value = c(deseason(obj))
+    Value = c(deseasonalize(obj))
   )
 
   ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value")) +

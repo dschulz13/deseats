@@ -1,17 +1,17 @@
 #'@export
 hamilton_filter <- function(yt, h = NULL, p = NULL) {
 
-  s <- frequency(yt)
+  s <- stats::frequency(yt)
   h <- 2 * s
   p <- s
   
   n <- length(yt)
   
-  t <- c(time(yt))
-  t_start <- tail(t, n - (h + p - 1))[[1]]
+  t <- c(stats::time(yt))
+  t_start <- utils::tail(t, n - (h + p - 1))[[1]]
   
   # The dependent variable for OLS
-  X.dep <- tail(yt, n - h - (p - 1))
+  X.dep <- utils::tail(yt, n - h - (p - 1))
   
   # Create a matrix with all independent variables
   X.ind <- matrix(NA, ncol = p, nrow = length(X.dep))
@@ -26,11 +26,11 @@ hamilton_filter <- function(yt, h = NULL, p = NULL) {
   
   # Conduct OLS and retrieve the coefficients, the fitted values and
   # the residuals
-  est <- lm(X.dep ~ ., data = dataset)
+  est <- stats::lm(X.dep ~ ., data = dataset)
   coefs <- est[["coefficients"]]
 
-  fit <- ts(est[["fitted.values"]], start = t_start, frequency = s)
-  res <- ts(est[["residuals"]], start = t_start, frequency = s)
+  fit <- stats::ts(est[["fitted.values"]], start = t_start, frequency = s)
+  res <- stats::ts(est[["residuals"]], start = t_start, frequency = s)
   
   # Create and return the output
   out <- list(coefs = coefs, fitted = fit, resid = res, model = est, h = h, p = p)

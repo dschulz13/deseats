@@ -130,7 +130,7 @@ server <- function(input, output) {
     output$datatable <- renderTable({
       req(dataset())
       req(input$nvals)
-      print.data.frame(dataset()[1:input$nvals, , drop = FALSE])
+      dataset()[1:input$nvals, , drop = FALSE]
     })
     
     choices <- reactive({
@@ -237,7 +237,7 @@ server <- function(input, output) {
     output$decompmethod <- renderUI({
       req(tseries())
       selectInput("method", "Decomposition method:",
-                  choices = c("Data-driven locally weighted regression", "BV4.1"),
+                  choices = c("Data-driven locally weighted regression", "Berlin Procedure 4.1"),
                   selected = "Data-driven locally weighted regression")
     })
     
@@ -268,7 +268,7 @@ server <- function(input, output) {
                         step = 0.005),
             actionButton("automate", "Automatically select optimal bandwidth")        
         )        
-      } else if (input$method == "BV4.1") {
+      } else if (input$method == "Berlin Procedure 4.1") {
         out <- list()
       }
       out
@@ -302,7 +302,7 @@ server <- function(input, output) {
           req(input$bwidth)
           req(opts)
           est <- deseats::deseats(ts_tr(), opts())           
-        } else if (input$method == "BV4.1") {
+        } else if (input$method == "Berlin Procedure 4.1") {
           est <- deseats::BV4.1(ts_tr())
         }
  
@@ -372,7 +372,7 @@ server <- function(input, output) {
       req(dfout())
       req(input$nvals)
 
-      print.data.frame(dfout()[1:input$nvals, , drop = FALSE])
+      dfout()[1:input$nvals, , drop = FALSE]
     })
     
     output$dlData <- downloadHandler(
