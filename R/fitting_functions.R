@@ -205,7 +205,7 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
   )
   
   out <- create_s_semiarma(decomp = decomp, nonpar_model = nonpar_model, 
-                           par_model = par_est, ts_name = ts_name)
+                           par_model = par_est)
   out
 }
 
