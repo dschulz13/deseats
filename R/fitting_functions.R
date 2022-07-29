@@ -107,7 +107,9 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
     frequency = s,
     order_poly = p, 
     weights = weights,
-    weights_wfun = est[[8]]
+    weights_wfun = est[[8]],
+    boundary_method = smoothing_options@boundary_method,
+    kernel_fun = smoothing_options@kernel_fun
   )
   
   out

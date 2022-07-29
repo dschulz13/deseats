@@ -25,7 +25,9 @@ Imports: Rcpp (>= 1.0.6),
          utils,
          shiny,
          tools,
-         zoo          
+         zoo,
+         future,
+         furrr
 Suggests: smoots
 License: GPL-3
 Encoding: UTF-8

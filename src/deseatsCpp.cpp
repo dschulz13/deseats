@@ -430,8 +430,8 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   const int n = yt.size();
   const int k = p + 1;
   
-  double bmax = 0.5 - 1 / n;     // The maximum bandwidth 
-  double bmin = 1 * s / n;       // The minimum bandwidth 
+  double bmax = 0.4;        // The maximum bandwidth 
+  double bmin = 0.01;       // The minimum bandwidth 
 
   const int v = k;
   const int pv = k + 1;

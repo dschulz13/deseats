@@ -23,14 +23,26 @@ methods::setGeneric("boundary_method", function(x) standardGeneric("boundary_met
 #'@export
 methods::setGeneric("boundary_method<-", function(x, value) standardGeneric("boundary_method<-"))
 
-#'@export
-methods::setGeneric("trend", function(x) standardGeneric("trend"))
+#------------------------------------------#
 
 #'@export
-methods::setGeneric("animate", function(object, ...) standardGeneric("animate"))
+methods::setGeneric("trend", function(x) standardGeneric("trend"))
 
 #'@export
 methods::setGeneric("deseasonalize", function(x, ...) standardGeneric("deseasonalize"))
 
 #'@export
 methods::setGeneric("detrend", function(x, ...) standardGeneric("detrend"))
+
+#------------------------------------------#
+
+#'@export
+methods::setGeneric("animate", function(object, ...) standardGeneric("animate"))
+
+#------------------------------------------#
+
+methods::setGeneric(".boot_f_generate", function(object, ...) standardGeneric(".boot_f_generate"))
+
+#'@export
+methods::setGeneric("bwidth_interval", function(object, ...) standardGeneric("bwidth_interval"))
+

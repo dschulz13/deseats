@@ -8,12 +8,15 @@ setClass("deseats",
     frequency = "numeric",
     order_poly = "numeric",
     weights = "array",
-    weights_wfun = "matrix"
+    weights_wfun = "matrix",
+    boundary_method = "character",
+    kernel_fun = "character"
   )
 )
 
 create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
-                           weights, weights_wfun) {
+                           weights, weights_wfun, boundary_method,
+                           kernel_fun) {
   
   methods::new("deseats",
     decomp = decomp,
@@ -22,7 +25,9 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
     frequency = frequency,
     order_poly = order_poly,
     weights = weights,
-    weights_wfun = weights_wfun    
+    weights_wfun = weights_wfun,
+    boundary_method = boundary_method,
+    kernel_fun = kernel_fun
   )
   
 }
@@ -440,4 +445,67 @@ if (is.null(save)) {
   .savefun({.f()}, interval = 0.1, ani.width = 1200)
 }
 }
+)
+
+#--------------------------------------#
+
+setMethod(".boot_f_generate", "deseats",
+  function(object, ...){
+    fitted_vals <- fitted(object)
+    resids <- residuals(object)
+    n <- length(fitted_vals)
+    opts <- set_options(
+      order_poly = object@order_poly, season = object@frequency,
+      kernel_fun = object@kernel_fun,
+      boundary_method = object@boundary_method
+    )
+    
+    l <- 10
+    
+    m <- trunc(n / l) + 1 * (n / l != trunc(n / l))
+    
+    k <- n - l + 1
+    
+    blocks <- lapply(
+      1:k,
+      function(.x, Xt, l) {
+        
+        Xt[(.x):(.x + l - 1)]
+        
+      }, Xt = resids, l = l
+    )
+    
+    function(zt) {
+      Zt <- fitted_vals + 
+        head(unname(unlist(sample(blocks, size = m, replace = TRUE))), n)
+      deseats(Zt, opts, bwidth_start = 0.1)@bwidth
+    }
+    
+  }
+)
+
+#'@export
+setMethod("bwidth_interval", "deseats",
+  function(object, ...){
+    .fun <- .boot_f_generate(object)
+    
+    ncores <- future::availableCores() - 1
+    oldPlan <- future::plan()
+    on.exit(future::plan(oldPlan), add = TRUE, after = TRUE)
+    future::plan(future::multisession)
+    bwidths <- furrr::future_map_dbl(
+      1:1000,
+      .f = .fun,
+      .options = furrr::furrr_options(seed = TRUE),
+      .progress = TRUE
+    )
+    
+    cat("\n")
+    
+    q <- stats::quantile(bwidths, probs = c(0.025, 0.975))
+    q_names <- names(q)
+    out <- c(q[[1]], object@bwidth, q[[2]])
+    names(out) <- c(q_names[[1]], "Estimate", q_names[[2]])
+    out
+  }
 )
