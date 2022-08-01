@@ -7,7 +7,10 @@ plot_facets <- function(obj, ...) {
     main = paste0('Decomposition of the time series "', obj@ts_name,'"')
   )
   dots <- set_default(dots, defaults)
-  dots[["x"]] <- obj@decomp[, 1:4]
+  dots[["x"]] <- tryCatch(obj@decomp[, 1:4],
+    error = function(c1) {
+      obj@decomp[, 1:3]
+    })
   
   do.call(stats::plot.ts, args = dots)
 }
@@ -87,15 +90,25 @@ plot_detrend <- function(obj, ...) {
 plot_facets_gg <- function(obj, ...) {
   
     c_names <- colnames(obj@decomp)[1:4]
+    c_names <- c_names[!is.na(c_names)]
 
     n <- length(obj@decomp[, 1])
     t <- c(stats::time(obj@decomp))
 
-    df <- data.frame(
-      Time = rep(t, 4),
-      Value = c(as.numeric(obj@decomp[, 1]), as.numeric(obj@decomp[, 2]), as.numeric(obj@decomp[, 3]), as.numeric(obj@decomp[, 4])),
-      Series = factor(c(rep(1:4, each = n)), labels = c_names)
-    )
+    df <- tryCatch({
+      data.frame(
+        Time = rep(t, 4),
+        Value = c(as.numeric(obj@decomp[, 1:4])),
+        Series = factor(c(rep(1:4, each = n)), labels = c_names)
+      )      
+    }, error = function(c1){
+      data.frame(
+        Time = rep(t, 3),
+        Value = c(as.numeric(obj@decomp[, 1:3])),
+        Series = factor(c(rep(1:3, each = n)), labels = c_names)
+      )       
+    })
+
     ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
       ggplot2::geom_line() +
       ggplot2::ggtitle(paste0('Decomposition of the time series "', obj@ts_name, '"')) +
@@ -121,14 +134,21 @@ plot_fit_gg <- function(obj, ...) {
 
     n <- length(obj@decomp[, 1])
     t <- c(stats::time(obj@decomp))
+    obs <- as.numeric(obj@decomp[, 1])
+    fit <- as.numeric(fitted(obj))
+    lo <- length(obs)
+    lf <- length(fit)
+    if (lo > lf) {
+      fit <- c(rep(NA, lo - lf), fit)
+    }
 
     df <- data.frame(
       Time = rep(t, 2),
-      Value = c(as.numeric(obj@decomp[, 1]), as.numeric(fitted(obj))),
+      Value = c(obs, fit),
       Series = factor(c(rep(1:2, each = n)), labels = c("Observations", "Fitted values"))
     )
-    ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
-      ggplot2::geom_line(ggplot2::aes_string(color = "Series")) +
+    suppressWarnings(ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value"))) + 
+      suppressWarnings(ggplot2::geom_line(ggplot2::aes_string(color = "Series"))) +
       ggplot2::ggtitle(paste0('The time series "', obj@ts_name, 
                   '" together with estimated trend and seasonality')) +
       ggplot2::ylab(obj@ts_name) +
@@ -141,7 +161,7 @@ plot_obs_gg <- function(obj, ...) {
     Value = c(obj@decomp[, c(1)])
   )
 
-  ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value")) +
+  ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value")) + 
     ggplot2::geom_line() +
     ggplot2::ylab(obj@ts_name) +
     ggplot2::ggtitle(paste0('The observed time series "', obj@ts_name, '"')) 

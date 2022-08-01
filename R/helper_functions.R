@@ -61,6 +61,41 @@ check_which <-function(which) {
     which
 }
 
+
+check_which_hf <-function(which) {
+  
+    if (is.null(which)) {
+    text_prompt <- data.frame(
+      c("facets:", "observations:", "fitted:", "residuals:"),
+      c(
+        "Facet plot of the estimated components",
+        "The observed time series",
+        "The observations together with estimated trend + seasonality",
+        "The both detrended and seasonally adjusted series"
+      )
+    )
+    colnames(text_prompt) <- NULL
+    
+    cat("\nSelect one of the following plots via the keyword or the position number (exit with 0):\n")
+    
+    print.data.frame(text_prompt, row.names = FALSE, right = FALSE)
+    
+    cat("\n")
+    
+    which <- ""
+    
+    while(!(which %in% c(0, 1, 2, 3, 4, "facets", "observations", "fitted",
+                         "residuals"))) {
+    
+        which <- readline("Keyword or position number: ")
+        
+    }
+    cat("\n")
+    }
+  
+    which
+}
+
 aniSave <- function(fun) {
   switch(
     fun,

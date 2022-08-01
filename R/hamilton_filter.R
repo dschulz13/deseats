@@ -1,6 +1,8 @@
 #'@export
 hamilton_filter <- function(yt, h = NULL, p = NULL) {
 
+  ts_name <- deparse(substitute(yt))
+  
   s <- stats::frequency(yt)
   h <- 2 * s
   p <- s
@@ -33,7 +35,12 @@ hamilton_filter <- function(yt, h = NULL, p = NULL) {
   res <- stats::ts(est[["residuals"]], start = t_start, frequency = s)
   
   # Create and return the output
-  out <- list(coefs = coefs, fitted = fit, resid = res, model = est, h = h, p = p)
+  out <- create_hfilter(
+    decomp = cbind(Observations = yt, Fitted = fit, Rest = res),
+    ts_name = ts_name,
+    frequency = s,
+    regression_output = est
+  )
   out  
   
 }
