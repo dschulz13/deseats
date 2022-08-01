@@ -147,12 +147,14 @@ plot_fit_gg <- function(obj, ...) {
       Value = c(obs, fit),
       Series = factor(c(rep(1:2, each = n)), labels = c("Observations", "Fitted values"))
     )
-    suppressWarnings(ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value"))) + 
-      suppressWarnings(ggplot2::geom_line(ggplot2::aes_string(color = "Series"))) +
+
+    ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value")) + 
+      ggplot2::geom_line(ggplot2::aes_string(color = "Series")) +
       ggplot2::ggtitle(paste0('The time series "', obj@ts_name, 
                   '" together with estimated trend and seasonality')) +
       ggplot2::ylab(obj@ts_name) +
         ggplot2::scale_color_manual(values = c("grey74", "red"))
+
 }
 
 plot_obs_gg <- function(obj, ...) {
