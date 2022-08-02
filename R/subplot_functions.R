@@ -119,9 +119,12 @@ plot_facets_gg <- function(obj, ...) {
 }
 
 plot_resid_gg <- function(obj, ...) {
+  
+  res <- residuals(obj)
+  
   df <- data.frame(
-    Time = c(stats::time(obj@decomp)),
-    Value = c(residuals(obj))
+    Time = c(stats::time(res)),
+    Value = c(res)
   )
 
   ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
@@ -148,12 +151,14 @@ plot_fit_gg <- function(obj, ...) {
       Series = factor(c(rep(1:2, each = n)), labels = c("Observations", "Fitted values"))
     )
 
-    ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value")) + 
+    p1 <- ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
       ggplot2::geom_line(ggplot2::aes_string(color = "Series")) +
-      ggplot2::ggtitle(paste0('The time series "', obj@ts_name, 
+      ggplot2::ggtitle(paste0('The time series "', obj@ts_name,
                   '" together with estimated trend and seasonality')) +
       ggplot2::ylab(obj@ts_name) +
         ggplot2::scale_color_manual(values = c("grey74", "red"))
+    
+    suppressWarnings(print(p1))
 
 }
 
@@ -163,7 +168,7 @@ plot_obs_gg <- function(obj, ...) {
     Value = c(obj@decomp[, c(1)])
   )
 
-  ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value")) + 
+  ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) + 
     ggplot2::geom_line() +
     ggplot2::ylab(obj@ts_name) +
     ggplot2::ggtitle(paste0('The observed time series "', obj@ts_name, '"')) 

@@ -1,5 +1,7 @@
 library(shiny)
 
+options(warn = -1)
+
 month_f <- function(month) {
   switch(month,
     January = 1,
@@ -226,18 +228,20 @@ server <- function(input, output) {
       req(input$figheight)
       req(input$figwidth)      
       
-      zoo::autoplot.zoo(ts_tr()) +
+      pout <- zoo::autoplot.zoo(ts_tr()) +
         ggplot2::theme_bw() +
         ggplot2::ylab(ts_name_tr()) +
         ggplot2::xlab("Time") +
         ggplot2::ggtitle(paste0('Plot of the time series "', ts_name_tr(), '"')) +
         ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"))
+      suppressWarnings(print(pout))
     })
     
     output$decompmethod <- renderUI({
       req(tseries())
       selectInput("method", "Decomposition method:",
-                  choices = c("Data-driven locally weighted regression", "Berlin Procedure 4.1"),
+                  choices = c("Data-driven locally weighted regression", "Berlin Procedure 4.1",
+                              "Linear regression", "Hamilton filter"),
                   selected = "Data-driven locally weighted regression")
     })
     
@@ -270,6 +274,30 @@ server <- function(input, output) {
         )        
       } else if (input$method == "Berlin Procedure 4.1") {
         out <- list()
+      } else if (input$method == "Linear regression") {
+        out <- list(
+            sliderInput("opoly",
+                        "Order of local polynomial (for the trend):",
+                        min = 1,
+                        max = 3,
+                        value = 1,
+                        step = 2)          
+        )
+      } else if (input$method == "Hamilton filter") {
+        out <- list(
+            sliderInput("bgap",
+                        "Backwards time gap:",
+                        min = 1,
+                        max = 50,
+                        value = 2 * input$frequ,
+                        step = 1),
+            sliderInput("nregr",
+                        "Number of regressors:",
+                        min = 1,
+                        max = 50,
+                        value = input$frequ,
+                        step = 1)            
+        )        
       }
       out
 
@@ -304,6 +332,10 @@ server <- function(input, output) {
           est <- deseats::deseats(ts_tr(), opts())           
         } else if (input$method == "Berlin Procedure 4.1") {
           est <- deseats::BV4.1(ts_tr())
+        } else if (input$method == "Linear regression") {
+          est <- deseats::lm_decomp(ts_tr(), input$opoly, input$frequ)
+        } else if (input$method == "Hamilton filter") {
+          est <- deseats::hamilton_filter(ts_tr(), input$bgap, input$nregr)
         }
  
         est
@@ -364,7 +396,11 @@ server <- function(input, output) {
         .df <- .df
       }
       .df$`Time point` <- stats::time(est_result()@decomp)
-      .df <- .df[c(5, 1:4)]      
+      if (input$method != "Hamilton filter") {
+        .df <- .df[c(5, 1:4)]      
+      } else {
+        .df <- .df[c(4, 1:3)]           
+      }
       .df
     })
     
