@@ -39,7 +39,7 @@ ui <- fluidPage(
         sidebarPanel(
             tabsetPanel(
               tabPanel("I. Data import",
-                 fileInput("upload", "Upload a data file", buttonLabel = "Upload...", multiple = FALSE),
+                 fileInput("upload", "Upload a data file", buttonLabel = "Upload ...", multiple = FALSE),
                  uiOutput("filesettings"),
                  uiOutput("varselection"),
                  uiOutput("freq"),
@@ -279,9 +279,9 @@ server <- function(input, output) {
             sliderInput("opoly",
                         "Order of local polynomial (for the trend):",
                         min = 1,
-                        max = 3,
+                        max = 4,
                         value = 1,
-                        step = 2)          
+                        step = 1)          
         )
       } else if (input$method == "Hamilton filter") {
         out <- list(
