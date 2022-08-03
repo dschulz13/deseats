@@ -180,7 +180,7 @@ plot_deseason_gg <- function(obj, ...) {
     Value = c(deseasonalize(obj))
   )
 
-  ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value")) +
+  ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
     ggplot2::geom_line() +
     ggplot2::ylab("Seasonally adjusted value") +
     ggplot2::ggtitle(paste0('The deseasonalized version of "', obj@ts_name, '"'))   
@@ -192,7 +192,7 @@ plot_detrend_gg <- function(obj, ...) {
     Value = c(detrend(obj))
   )
 
-  ggplot2::ggplot(df, ggplot2::aes(x = "Time", y = "Value")) +
+  ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
     ggplot2::geom_line() +
     ggplot2::ylab("Detrended value") +
     ggplot2::ggtitle(paste0('The detrended version of "', obj@ts_name, '"'))   
