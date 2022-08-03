@@ -10,3 +10,4 @@
 ^.Rhistory\.Rhistory$
 ^CRAN-RELEASE$
 ^Literature, basic code, etc$
+^simulation\.R$
