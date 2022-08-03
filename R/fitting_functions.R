@@ -211,6 +211,8 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
   out
 }
 
+#------------------------------------------------------------------------------#
+
 #'Trend and Seasonality Estimation Using the Berlin Procedure 4.1
 #'
 #'Economic data can be decomposed into a trend, a seasonal and a remainder 
@@ -378,5 +380,180 @@ BV4.1_arma <- function(yt,
   
   out <- create_bv41_arma(decomp = decomp, nonpar_model = nonpar_model, 
                            par_model = par_est, ts_name = ts_name)
+  out
+}
+
+
+#------------------------------------------------------------------------------#
+
+#'Time Series Filtering Using the Hamilton Filter
+#'
+#'A stationary remainder is obtained from a univariate time series using the 
+#'filter proposed by Hamilton. The filter is capable of estimating the trend 
+#'together with the seasonality in a series.
+#'
+#'@param yt a time series object of class \code{ts} or an object that can be 
+#'transformed to that class using \code{\link[stats]{as.ts}}.
+#'@param h the backwards time skip for the first regressor; the default is 
+#'the seasonal period in \code{yt} multiplied by 2.
+#'@param p the number of regressors; the default is the seasonal period in
+#'\code{yt}.
+#'
+#'@details
+#'Soon to be written.
+#'
+#'@export
+#'
+#'@examples
+#'
+#'est <- hamilton_filter(log(EXPENDITURES))
+#'est
+#'
+
+hamilton_filter <- function(yt, h = NULL, p = NULL) {
+
+  ts_name <- deparse(substitute(yt))
+  
+  s <- stats::frequency(yt)
+  h <- 2 * s
+  p <- s
+  
+  n <- length(yt)
+  
+  t <- c(stats::time(yt))
+  t_start <- utils::tail(t, n - (h + p - 1))[[1]]
+  
+  # The dependent variable for OLS
+  X.dep <- utils::tail(yt, n - h - (p - 1))
+  
+  # Create a matrix with all independent variables
+  X.ind <- matrix(NA, ncol = p, nrow = length(X.dep))
+  for (i in 1:p) {
+    X.ind[, i] <- yt[(p - (i - 1)):(n - h - (i - 1))]
+  }
+  
+  # Combine the dependent and independent variables and create 
+  # a dataframe with specific column names
+  dataset <- as.data.frame(cbind(X.dep, X.ind))
+  colnames(dataset) <- c("X.dep", paste0("X.ind", 1:p))
+  
+  # Conduct OLS and retrieve the coefficients, the fitted values and
+  # the residuals
+  est <- stats::lm(X.dep ~ ., data = dataset)
+  coefs <- est[["coefficients"]]
+
+  fit <- stats::ts(est[["fitted.values"]], start = t_start, frequency = s)
+  res <- stats::ts(est[["residuals"]], start = t_start, frequency = s)
+  
+  # Create and return the output
+  out <- create_hfilter(
+    decomp = cbind(Observations = yt, Fitted = fit, Rest = res),
+    ts_name = ts_name,
+    frequency = s,
+    regression_output = est
+  )
+  out  
+  
+}
+
+#------------------------------------------------------------------------------#
+
+#'Decomposition of Time Series Using Linear Regression
+#'
+#'Trend and seasonality are simultaneously modelled by considering a polynomial
+#'for the trend and dummy variables for the different time units (e.g. months).
+#'
+#'@param yt a time series object of class \code{ts} or an object that can be 
+#'transformed to that class using \code{\link[stats]{as.ts}}.
+#'@param order_poly the order of the polynomial considered for the trend; the
+#'default is \code{order_poly = 1}.
+#'@param season the seasonal period in \code{yt}; by default, the seasonal 
+#'period is obtained automatically from \code{yt}.
+#'
+#'@details
+#'Soon to be written.
+#'
+#'@export
+#'
+#'@examples
+#'
+#'est <- lm_decomp(log(EXPENDITURES), order_poly = 4)
+#'est
+#'
+
+lm_decomp <- function(yt, order_poly = 1, season = NULL) {
+
+  ts_name <- deparse(substitute(yt))
+  if (is.null(season)) {
+    season <- frequency(yt)
+  }
+  
+  N <- length(yt)
+  season_add_col <- if (season > 1) {season - 1} else {0}
+  X_mat <- matrix(0, nrow = N, ncol = order_poly + season_add_col)
+  if (season > 1) {
+    diag_N <- floor(N / season)
+    rest_rows <- N - diag_N * season
+    for (i in 1:diag_N) {
+      X_mat[(1:season) + ((i - 1) * season), 
+            (1 + order_poly):(order_poly + season - 1)] <- diag(nrow = season, 
+                                                              ncol = season - 1)
+    }
+    if (rest_rows >= 1) {
+      X_mat[(N - rest_rows + 1):N, 
+          (1 + order_poly):(order_poly + season - 1)] <- diag(nrow = rest_rows, 
+                                                              ncol = season - 1)
+    }
+    X_mat[(1:N) %% season == 0, ] <- rep(-1, order_poly + season - 1)
+    name_season <- paste0("S", 1:(season - 1))
+  } else {
+    name_season <- c()
+  }
+  if (order_poly > 0) {
+    t <- seq_along(yt)
+    for (i in 1:order_poly) {
+      X_mat[, i] <- t^i
+    }
+    name_trend <- paste0("t", 1:order_poly)
+  } else {
+    name_trend <- c()
+  }
+  X_df <- as.data.frame(cbind(
+    as.numeric(yt),
+    X_mat
+    ))
+  names(X_df) <- c("yt", name_trend, name_season)
+  reg <- stats::lm(yt ~ ., data = X_df)
+
+  # if (season > 1) {
+    s <- reg$coefficients[(2 + order_poly):(order_poly + season)]
+    seasonality <- utils::head(rep(c(s, -sum(s)), diag_N + 1), N)
+    remainder <- yt - seasonality
+    name_s <- "Season"
+  # } else {
+  #   seasonality <- c()
+  #   name_s <- seasonality
+  #   remainder <- yt
+  # }
+  # if (order_poly > 1) {
+    # if (season > 1) {
+      X_df[, (2 + order_poly):(1 + order_poly + season_add_col)] <- 0
+    # }
+    trend <- unname(predict(reg, X_df))
+    remainder <- remainder - trend
+    name_t <- "Trend"
+  # } else {
+  #   trend <- c()
+  #   name_t <- trend
+  # }
+  
+  out <- create_lmdecomp(
+    decomp = cbind("Observations" = yt, "Trend" = trend, 
+          "Season" = seasonality, "Rest" = remainder),
+    ts_name = ts_name,
+    frequency = season,
+    regression_output = reg
+  )
+
   out
 }
