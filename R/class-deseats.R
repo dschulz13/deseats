@@ -10,13 +10,14 @@ setClass("deseats",
     weights = "array",
     weights_wfun = "matrix",
     boundary_method = "character",
-    kernel_fun = "character"
+    kernel_fun = "character",
+    sum_autocov = "numeric"
   )
 )
 
 create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
                            weights, weights_wfun, boundary_method,
-                           kernel_fun) {
+                           kernel_fun, sum_autocov) {
   
   methods::new("deseats",
     decomp = decomp,
@@ -27,7 +28,8 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
     weights = weights,
     weights_wfun = weights_wfun,
     boundary_method = boundary_method,
-    kernel_fun = kernel_fun
+    kernel_fun = kernel_fun,
+    sum_autocov = sum_autocov
   )
   
 }

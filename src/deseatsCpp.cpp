@@ -430,7 +430,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   const int n = yt.size();
   const int k = p + 1;
   
-  double bmax = 0.4;        // The maximum bandwidth 
+  double bmax = 0.49;        // The maximum bandwidth 
   double bmin = 0.01;       // The minimum bandwidth 
 
   const int v = k;
@@ -441,7 +441,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
 
   const int n1 = std::trunc(n * cb);  
   
-  const int m = 100000;
+  const int m = 1000000;
   const arma::vec u = seqCpp(-m, m) / (m + 0.5);
   arma::vec wk = arma::pow((1 - arma::pow(u, 2.0)), mu);
   wk = wk / arma::accu(wk);
@@ -522,7 +522,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     
     gv = derivdeseatsCpp(yt, pv, s, mu, bv, bb, v);
   
-    I2 = std::pow(arma::accu(gv.subvec(n1 - 1, n - n1 - 1)), 2.0) / (n - 2 * n1);
+    I2 = arma::accu(arma::pow(gv.subvec(n1, n - n1 - 1), 2.0)) / (n - 2 * n1);
     
     bAdj = bopt * adjFactor;
     
@@ -535,6 +535,8 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     boptOld2 = boptOld;
     boptOld = bopt;
     bopt = std::pow((c1 * c2 * c3), (1.0 / (2 * k + 1))) * std::pow(n, (-1.0 / (2 * k + 1)));
+    bopt = std::max(bopt, bmin);
+    bopt = std::min(bopt, bmax);
     
     it += 1;
     

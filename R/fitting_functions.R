@@ -87,6 +87,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
   Trend <- est[[2]]
   Season <- est[[3]]
   Residuals <- est[[4]]
+  sum_autocov <- cf0Cpp(Residuals)
   hfull <- length(est[[5]][, 1])
   weights <- array(c(est[[5]], est[[6]], est[[7]]), dim = c(hfull, hfull, 3))
   dimnames(weights)[[3]] <- c("Trend", "Season", "Combined")
@@ -109,7 +110,8 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
     weights = weights,
     weights_wfun = est[[8]],
     boundary_method = smoothing_options@boundary_method,
-    kernel_fun = smoothing_options@kernel_fun
+    kernel_fun = smoothing_options@kernel_fun,
+    sum_autocov = sum_autocov
   )
   
   out
