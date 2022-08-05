@@ -1,8 +1,6 @@
 setClass("hfilter",
+  contains = "decomp",
   slots = c(
-    decomp = "mts",
-    ts_name = "character",
-    frequency = "numeric",
     regression_output = "lm"
   )
 )
@@ -21,14 +19,14 @@ create_hfilter <- function(decomp, ts_name, frequency, regression_output) {
 #'@export
 setMethod("fitted", "hfilter", function(object, ...) {
   
-  na.omit(object@decomp[, 2])
+  na.omit(object@decomp[, "Fitted"])
   
 })
 
 #'@export
 setMethod("residuals", "hfilter", function(object, ...) {
   
-  na.omit(object@decomp[, 3])
+  na.omit(object@decomp[, "Rest"])
   
 })
 

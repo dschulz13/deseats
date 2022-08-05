@@ -1,6 +1,6 @@
 sd_e <- 0.04
-ar <- 0.7
-n <- 360
+ar <- 0.4
+n <- 2400
 season <- 12
 order_poly <- 1
 
