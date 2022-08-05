@@ -3,6 +3,7 @@ ar <- 0.4
 n <- 2400
 season <- 12
 order_poly <- 1
+cb <- 0.05
 
 #------------------------
 
@@ -45,7 +46,7 @@ W <- function(u) {0.75 * (1 - u^2)}
 RK <- function(u, Kr) {Kr(u)^2}
 muk <- function(u, k, Kr) {u^k * Kr(u)}
 
-f2_num <- cf * 0.9 * (integrate(RK, -1, 1, Kr = Kr)[[1]] + (season - 1) * integrate(RK, -1, 1, Kr = W)[[1]])
+f2_num <- cf * (1 - 2 * cb) * (integrate(RK, -1, 1, Kr = Kr)[[1]] + (season - 1) * integrate(RK, -1, 1, Kr = W)[[1]])
 
 mxt <- expression(-sin(1.45 * pi * (x + 0.1)) + 2 + 2.3 * x)
 
@@ -60,6 +61,6 @@ DD <- function(expression, deriv = 2, name = "x") {
 
 mk <- function(x) {(eval(DD(mxt, order_poly + 1)))^2}
 
-f2_den <- integrate(mk, 0.05, 0.95)[[1]] * integrate(muk, -1, 1, k = k, Kr = Kr)[[1]]^2
+f2_den <- integrate(mk, cb, 1 - cb)[[1]] * integrate(muk, -1, 1, k = k, Kr = Kr)[[1]]^2
 
 hA <- (f1 * f2_num / f2_den)^(1 / (2 * k + 1)) * n^(-1 / (2 * k + 1))
