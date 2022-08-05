@@ -202,7 +202,7 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
   colnames(decomp) <- c(
     "Observations",
     "Trend",
-    "Seasonality",
+    "Season",
     "Rest",
     "Fitted ARMA",
     "Residuals ARMA"
@@ -374,14 +374,14 @@ BV4.1_arma <- function(yt,
   colnames(decomp) <- c(
     "Observations",
     "Trend",
-    "Seasonality",
+    "Season",
     "Rest",
     "Fitted ARMA",
     "Residuals ARMA"
   )
   
   out <- create_bv41_arma(decomp = decomp, nonpar_model = nonpar_model, 
-                           par_model = par_est, ts_name = ts_name)
+                           par_model = par_est)
   out
 }
 

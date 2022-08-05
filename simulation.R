@@ -1,66 +1,81 @@
-sd_e <- 0.04
-ar <- 0.4
-n <- 2400
+sd_e <- 0.16
+ar <- 0.7
+ma <- -0.3
+n <- 600
 season <- 12
 order_poly <- 1
 cb <- 0.05
+trend_fun <- expression(-sin(1.45 * pi * (x + 0.1)) + 2 + 2.3 * x + exp(1.2 * x))
+season_fun <- expression(rev(0.7 * sin(2 * pi * t / season) - 0.5 * cos(4 * 2 * pi * t / season) + (-0.4) * sin(4 * 2 * pi * t / season)))
 
 #------------------------
 
-t <- 1:n
-xt <- t / n
-m <- ts(-sin(1.45 * pi * (xt + 0.1)), frequency = season) + 2 + 2.3 * xt
-
-a1 <- seq(0.2, 0.4, length.out = n)
-a2 <- seq(0.4, 0.2, length.out = n)
-a3 <- 0.3
-
-s <- ts(rev(0.4 * sin(2 * pi * t / season) - 0.2 * cos(4 * 2 * pi * t / season) + (-0.1) * sin(4 * 2 * pi * t / season)), frequency = season)
-
-set.seed(12345)
-et <- ts(arima.sim(model = list(ar = ar), n = n, sd = sd_e), frequency = season)
-
-Xt <- ts(m + s + et, frequency = season)
-
-plot.ts(Xt)
-
-#est_s <- deseats(Xt, set_options(bwidth = 0.35))
-
-Xt_test <- ts(head(Xt, n - 10), frequency = 12)
-est <- s_semiarma(Xt_test, set_options(order_poly = 3))
-est2 <- BV4.1_arma(Xt_test)
-fc <- predict(est, n.ahead = 10)
-fc2 <- predict(est2, n.ahead = 10)
-measures(fc, Xt)
-measures(fc2, Xt)
-
-#------------------------------------------------------------------------------#
-
-cf <- (1 / (1 - sum(ar)))^2 * sd_e^2
-k <- order_poly + 1
-f1 <- factorial(k)^2 / (2 * k)
-
-Kr <- function(u) {0.75 * (1 - u^2)}
-W <- function(u) {0.75 * (1 - u^2)}
-
-RK <- function(u, Kr) {Kr(u)^2}
-muk <- function(u, k, Kr) {u^k * Kr(u)}
-
-f2_num <- cf * (1 - 2 * cb) * (integrate(RK, -1, 1, Kr = Kr)[[1]] + (season - 1) * integrate(RK, -1, 1, Kr = W)[[1]])
-
-mxt <- expression(-sin(1.45 * pi * (x + 0.1)) + 2 + 2.3 * x)
-
-DD <- function(expression, deriv = 2, name = "x") {
-  if (deriv >= 1) {
-    out <- D(DD(expression, deriv = deriv - 1, name = name), name = name)
-  } else {
-    out <- expression
-  }
+sim_s_semiarma <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), season = 12, n = season * 10 * 5) {
+  
+  t <- 1:n
+  x <- t / n
+  m <- ts(eval(trend_fun), frequency = season)  
+  s <- ts(eval(season_fun), frequency = season)
+  et <- ts(arima.sim(model = list(ar = ar, ma = ma), n = n, sd = sd_e), frequency = season)
+  Xt <- ts(m + s + et, frequency = season)
+  out <- cbind(
+    "Observations" = Xt,
+    "Trend" = m,
+    "Season" = s,
+    "Rest" = et
+  )
   out
 }
 
-mk <- function(x) {(eval(DD(mxt, order_poly + 1)))^2}
+set.seed(12345)
+ts_sim <- sim_s_semiarma(trend_fun, season_fun, arma_model = list(ar = ar, ma = ma, sd = sd_e), season = season, n = n)
+plot(ts_sim)
 
-f2_den <- integrate(mk, cb, 1 - cb)[[1]] * integrate(muk, -1, 1, k = k, Kr = Kr)[[1]]^2
+#est_s <- deseats(Xt, set_options(bwidth = 0.35))
 
-hA <- (f1 * f2_num / f2_den)^(1 / (2 * k + 1)) * n^(-1 / (2 * k + 1))
+# Xt_test <- ts(head(Xt, n - 10), frequency = 12)
+# est <- s_semiarma(Xt_test, set_options(order_poly = 3))
+# est2 <- BV4.1_arma(Xt_test)
+# fc <- predict(est, n.ahead = 10)
+# fc2 <- predict(est2, n.ahead = 10)
+# measures(fc, Xt)
+# measures(fc2, Xt)
+
+#------------------------------------------------------------------------------#
+
+hA_calc <- function(trend_fun, order_poly = 1, season = 12, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), cb = 0.05) {
+
+  ar <- arma_model$ar
+  ma <- arma_model$ma
+  var_e <- arma_model$sd^2
+  cf <- ((1 + sum(ma)) / (1 - sum(ar)))^2 * var_e
+  
+  k <- order_poly + 1
+  f1 <- factorial(k)^2 / (2 * k)
+
+  K_trend <- function(u) {0.75 * (1 - u^2)}
+  K_season <- function(u) {0.75 * (1 - u^2)}
+
+  RK <- function(u, K) {K(u)^2}
+  muk <- function(u, k, K) {u^k * K(u)}
+
+  f2_num <- cf * (1 - 2 * cb) * (integrate(RK, -1, 1, K = K_trend)[[1]] + (season - 1) * integrate(RK, -1, 1, K = K_season)[[1]])
+
+  DD <- function(expression, deriv = 2, name = "x") {
+    if (deriv >= 1) {
+      out <- D(DD(expression, deriv = deriv - 1, name = name), name = name)
+    } else {
+      out <- expression
+    }
+    out
+  }
+
+  mk <- function(x, trend_fun, order_poly) {(eval(DD(trend_fun, order_poly + 1)))^2}
+
+  f2_den <- integrate(mk, cb, 1 - cb, trend_fun = trend_fun, order_poly = order_poly)[[1]] * integrate(muk, -1, 1, k = k, K = K_trend)[[1]]^2
+
+  (f1 * f2_num / f2_den)^(1 / (2 * k + 1)) * n^(-1 / (2 * k + 1))
+  
+}
+
+hA_calc(trend_fun, order_poly, season, list(ar = ar, ma = ma, sd = sd_e), cb = cb)

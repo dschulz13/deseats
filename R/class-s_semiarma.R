@@ -1,11 +1,10 @@
 setOldClass("Arima")
 
 setClass("s_semiarma",
+  contains = "decomp",
   slots = c(
-    decomp = "mts",
     nonpar_model = "deseats",
-    par_model = "Arima",
-    ts_name = "character"
+    par_model = "Arima"
   )
 )
 
@@ -15,93 +14,14 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
     decomp = decomp,
     nonpar_model = nonpar_model,
     par_model = par_model,
-    ts_name = nonpar_model@ts_name
+    ts_name = nonpar_model@ts_name,
+    frequency = nonpar_model@frequency
     
   )
 
 }
 
 #---------------
-
-#'@export
-methods::setMethod("plot", "s_semiarma", 
-  function(x, which = NULL, ...) {
-    
-    .f <- methods::getMethod("plot", "deseats")
-    .f(x, which = which, ...)
-    
-  }
-)
-
-#'@export
-methods::setMethod("autoplot", "s_semiarma", 
-  function(object, which = NULL, ...) {
-    
-    .f <- methods::getMethod("plot", "deseats")
-    .f(object, which = which, ...)
-    
-  }
-)
-
-#'@export
-methods::setMethod("residuals", "s_semiarma", 
-  function(object, ...) {
-    
-    .f <- methods::getMethod("residuals", "deseats")
-    .f(object, ...)
-    
-  }
-)
-
-#'@export
-methods::setMethod("fitted", "s_semiarma", 
-  function(object, ...) {
-    
-    .f <- methods::getMethod("fitted", "deseats")
-    .f(object, ...)
-    
-  }
-)
-
-#'@export
-methods::setMethod("trend", "s_semiarma", 
-  function(x) {
-    
-    .f <- methods::getMethod("trend", "deseats")
-    .f(x)
-    
-  }
-)
-
-#'@export
-methods::setMethod("season", "s_semiarma", 
-  function(x) {
-    
-    .f <- methods::getMethod("season", "deseats")
-    .f(x)
-    
-  }
-)
-
-#'@export
-methods::setMethod("detrend", "s_semiarma", 
-  function(x, ...) {
-    
-    .f <- methods::getMethod("detrend", "deseats")
-    .f(x, ...)
-    
-  }
-)
-
-#'@export
-methods::setMethod("deseasonalize", "s_semiarma", 
-  function(x, ...) {
-    
-    .f <- methods::getMethod("deseasonalize", "deseats")
-    .f(x, ...)
-    
-  }
-)
 
 #'@export
 methods::setMethod("predict", "s_semiarma", 

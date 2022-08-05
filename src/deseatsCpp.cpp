@@ -286,7 +286,7 @@ arma::vec residdeseatsCpp(const arma::vec& y, const int p,
   
   prevec.subvec(0, p) = ej.subvec(0, p); 
 
-  prevec.subvec(p + 1, p + s - 1) = ej.subvec(p + 1, p + s - 1);  
+  prevec.subvec(p + 1, p + s - 1) = phi.subvec(p + 1, p + s - 1);  
   
   const arma::vec allUpB = bwidthAbs + hr;
 
