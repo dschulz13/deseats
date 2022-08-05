@@ -1,7 +1,7 @@
-sd_e <- 0.16
-ar <- 0.7
-ma <- -0.3
-n <- 600
+sd_e <- 0.04
+ar <- 0.4
+ma <- 0
+n <- 480
 season <- 12
 order_poly <- 1
 cb <- 0.05
@@ -9,6 +9,18 @@ trend_fun <- expression(-sin(1.45 * pi * (x + 0.1)) + 2 + 2.3 * x + exp(1.2 * x)
 season_fun <- expression(rev(0.7 * sin(2 * pi * t / season) - 0.5 * cos(4 * 2 * pi * t / season) + (-0.4) * sin(4 * 2 * pi * t / season)))
 
 #------------------------
+
+sd_e <- 0.0086
+ar <- 0.7
+ma <- -0.1
+n <- 480
+season <- 12
+order_poly <- 1
+cb <- 0.05
+trend_fun <- expression(2 + 4 * x + sin(2 * pi * (x - 0.5) / 1.5))
+season_fun <- expression(0.04 * sin(2 * pi * (t - pi - 1.2) / 12) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / 12)  + 0.025 * sin(4 * pi * (t - 1.2) / 12))
+
+#----------------------------------
 
 sim_s_semiarma <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), season = 12, n = season * 10 * 5) {
   
@@ -26,6 +38,26 @@ sim_s_semiarma <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma
   )
   out
 }
+
+sim_bwidth <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), season = 12, n = season * 10 * 5) {
+
+    t <- 1:n
+    x <- t / n
+    m <- ts(eval(trend_fun), frequency = season)  
+    s <- ts(eval(season_fun), frequency = season)
+    ar <- arma_model$ar
+    ma <- arma_model$ma
+    sd_e <- arma_model$sd
+    
+    function(i) {
+      
+      et <- ts(arima.sim(model = list(ar = ar, ma = ma), n = n, sd = sd_e), frequency = season)
+      Xt <- m + s + et
+      deseats::deseats(Xt)@bwidth
+      
+    }
+   
+}  
 
 set.seed(12345)
 ts_sim <- sim_s_semiarma(trend_fun, season_fun, arma_model = list(ar = ar, ma = ma, sd = sd_e), season = season, n = n)
@@ -78,4 +110,31 @@ hA_calc <- function(trend_fun, order_poly = 1, season = 12, arma_model = list(ar
   
 }
 
-hA_calc(trend_fun, order_poly, season, list(ar = ar, ma = ma, sd = sd_e), cb = cb)
+hA <- hA_calc(trend_fun, order_poly, season, list(ar = ar, ma = ma, sd = sd_e), cb = cb)
+hA
+
+#----------------------------------------------------------------
+
+sim_fun <- sim_bwidth(trend_fun, season_fun, list(ar = ar, ma = ma, sd = sd_e), season, n)
+
+library(future)
+library(furrr)
+
+ncor <- availableCores() - 1
+
+oldplan <- plan()
+plan(multisession, workers = ncor)
+
+set.seed(123)
+
+bwidths <- future_map_dbl(
+  1:3000,
+  sim_fun,
+  .options = furrr_options(seed = TRUE),
+  .progress = TRUE
+)
+
+plan(oldplan)
+
+hist(bwidths, freq = FALSE)
+abline(v = hA, col = "red")
