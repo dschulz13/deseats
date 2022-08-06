@@ -1,7 +1,7 @@
 sd_e <- 0.04
 ar <- 0.4
 ma <- 0
-n <- 480
+n <- 600
 season <- 12
 order_poly <- 1
 cb <- 0.05
@@ -18,9 +18,22 @@ season <- 12
 order_poly <- 1
 cb <- 0.05
 trend_fun <- expression(2 + 4 * x + sin(2 * pi * (x - 0.5) / 1.5))
-season_fun <- expression(0.04 * sin(2 * pi * (t - pi - 1.2) / 12) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / 12)  + 0.025 * sin(4 * pi * (t - 1.2) / 12))
+season_fun <- expression(0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season))
 
 #----------------------------------
+
+sd_e <- 0.0086
+ar <- 0.7
+ma <- -0.1
+n <- 600
+season <- 12
+order_poly <- 1
+cb <- 0.05
+trend_fun <- expression(2 + 4 * x - 2 * (dnorm(15 * (x - 0.5))))
+season_fun <- expression(2 * (0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season)))
+
+
+#-------------------------------
 
 sim_s_semiarma <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), season = 12, n = season * 10 * 5) {
   
@@ -59,7 +72,7 @@ sim_bwidth <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0
    
 }  
 
-set.seed(12345)
+set.seed(123456)
 ts_sim <- sim_s_semiarma(trend_fun, season_fun, arma_model = list(ar = ar, ma = ma, sd = sd_e), season = season, n = n)
 plot(ts_sim)
 
@@ -75,7 +88,7 @@ plot(ts_sim)
 
 #------------------------------------------------------------------------------#
 
-hA_calc <- function(trend_fun, order_poly = 1, season = 12, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), cb = 0.05) {
+hA_calc <- function(trend_fun, order_poly = 1, season = 12, mu = 1, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), cb = 0.05, n = n) {
 
   ar <- arma_model$ar
   ma <- arma_model$ma
@@ -85,7 +98,21 @@ hA_calc <- function(trend_fun, order_poly = 1, season = 12, arma_model = list(ar
   k <- order_poly + 1
   f1 <- factorial(k)^2 / (2 * k)
 
-  K_trend <- function(u) {0.75 * (1 - u^2)}
+  if (order_poly == 1) {
+  
+    K_trend <- function(u) {0.75 * (1 - u^2)}
+    
+  } else if (order_poly == 3) {
+    
+    K_trend <- switch(as.character(mu),
+      "0" = function(u) {3 / 8 * (3 - 5 * u^2)},
+      "1" = function(u) {15 / 32 * (3 - 10 * u^2 + 7 * u^4)},
+      "2" = function(u) {105 / 64 * (1 - 5 * u^2 + 7 * u^4 - 3 * u^6)},
+      "3" = function(u) {315 / 512 * (3 - 20 * u^2 + 42 * u^4 - 36 * u^6 + 11 * u^8)}
+    )
+    
+  }
+    
   K_season <- function(u) {0.75 * (1 - u^2)}
 
   RK <- function(u, K) {K(u)^2}
@@ -110,7 +137,7 @@ hA_calc <- function(trend_fun, order_poly = 1, season = 12, arma_model = list(ar
   
 }
 
-hA <- hA_calc(trend_fun, order_poly, season, list(ar = ar, ma = ma, sd = sd_e), cb = cb)
+hA <- hA_calc(trend_fun, order_poly, season, mu = 1, list(ar = ar, ma = ma, sd = sd_e), cb = cb, n = n)
 hA
 
 #----------------------------------------------------------------
