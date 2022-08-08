@@ -10,7 +10,7 @@ season_fun <- expression(rev(0.7 * sin(2 * pi * t / season) - 0.5 * cos(4 * 2 * 
 
 #------------------------
 
-sd_e <- 0.05
+sd_e <- 0.02
 ar <- 0.7
 ma <- 0.65
 n <- 1200
@@ -18,18 +18,18 @@ season <- 12
 order_poly <- 1
 cb <- 0.05
 trend_fun <- expression(2 + 4 * x + sin(2 * pi * (x - 0.5) / 1.5))
-season_fun <- expression(0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season))
+season_fun <- expression(3 * (0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season)))
 
 #----------------------------------
 
-sd_e <- 0.005
-ar <- 0.7
-ma <- -0.1
-n <- 600
+sd_e <- sqrt(7.4298 * 10^(-5))
+ar <- 0.8
+ma <- -0.06
+n <- 1200
 season <- 12
-order_poly <- 1
+order_poly <- 3
 cb <- 0.05
-trend_fun <- expression(2 + 4 * x - 4 * (dnorm(6 * (x - 0.5))))
+trend_fun <- expression(2 + 4 * x - 4 * (dnorm(5 * (x - 0.5))))
 season_fun <- expression(2 * (0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season)))
 
 
@@ -52,7 +52,7 @@ sim_s_semiarma <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma
   out
 }
 
-sim_bwidth <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), season = 12, n = season * 10 * 5) {
+sim_bwidth <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), season = 12, n = season * 10 * 5, order_poly) {
 
     t <- 1:n
     x <- t / n
@@ -61,12 +61,13 @@ sim_bwidth <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0
     ar <- arma_model$ar
     ma <- arma_model$ma
     sd_e <- arma_model$sd
+    force(order_poly)
     
     function(i) {
       
       et <- ts(arima.sim(model = list(ar = ar, ma = ma), n = n, sd = sd_e), frequency = season)
       Xt <- m + s + et
-      deseats::deseats(Xt)@bwidth
+      deseats::deseats(Xt, set_options(order_poly = order_poly))@bwidth
       
     }
    
@@ -142,7 +143,7 @@ hA
 
 #----------------------------------------------------------------
 
-sim_fun <- sim_bwidth(trend_fun, season_fun, list(ar = ar, ma = ma, sd = sd_e), season, n)
+sim_fun <- sim_bwidth(trend_fun, season_fun, list(ar = ar, ma = ma, sd = sd_e), season, n, order_poly)
 
 library(future)
 library(furrr)
