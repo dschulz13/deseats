@@ -10,10 +10,10 @@ season_fun <- expression(rev(0.7 * sin(2 * pi * t / season) - 0.5 * cos(4 * 2 * 
 
 #------------------------
 
-sd_e <- 0.0086
+sd_e <- 0.05
 ar <- 0.7
-ma <- -0.1
-n <- 480
+ma <- 0.65
+n <- 1200
 season <- 12
 order_poly <- 1
 cb <- 0.05
@@ -22,14 +22,14 @@ season_fun <- expression(0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * 
 
 #----------------------------------
 
-sd_e <- 0.0086
+sd_e <- 0.005
 ar <- 0.7
 ma <- -0.1
 n <- 600
 season <- 12
 order_poly <- 1
 cb <- 0.05
-trend_fun <- expression(2 + 4 * x - 2 * (dnorm(15 * (x - 0.5))))
+trend_fun <- expression(2 + 4 * x - 4 * (dnorm(6 * (x - 0.5))))
 season_fun <- expression(2 * (0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season)))
 
 
@@ -155,7 +155,7 @@ plan(multisession, workers = ncor)
 set.seed(123)
 
 bwidths <- future_map_dbl(
-  1:3000,
+  1:1000,
   sim_fun,
   .options = furrr_options(seed = TRUE),
   .progress = TRUE
