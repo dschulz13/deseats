@@ -15,7 +15,7 @@ ar <- 0.7
 ma <- 0.65
 n <- 1200
 season <- 12
-order_poly <- 1
+order_poly <- 3
 cb <- 0.05
 trend_fun <- expression(2 + 4 * x + sin(2 * pi * (x - 0.5) / 1.5))
 season_fun <- expression(3 * (0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season)))
