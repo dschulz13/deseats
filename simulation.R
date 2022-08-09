@@ -13,7 +13,7 @@ season_fun <- expression(rev(0.7 * sin(2 * pi * t / season) - 0.5 * cos(4 * 2 * 
 sd_e <- 0.02
 ar <- 0.7
 ma <- 0.65
-n <- 1200
+n <- 2400
 season <- 12
 order_poly <- 3
 cb <- 0.05
