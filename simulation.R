@@ -1,37 +1,35 @@
-sd_e <- 0.04
-ar <- 0.4
-ma <- 0
-n <- 600
+# Settings to check
+
+trend_FUNs <- list(
+  m1 = expression(-sin(1.45 * pi * (x + 0.1)) + 2 + 2.3 * x + exp(1.2 * x)),
+  m2 = expression(2 + 4 * x + sin(2 * pi * (x - 0.5) / 1.5)),
+  m3 = expression(10),
+  m4 = expression(1.2 + 10.1 * x)
+)
+
+season_FUNs <- list(
+  s1 = expression(rev(0.7 * sin(2 * pi * t / season) - 0.5 * cos(4 * 2 * pi * t / season) + (-0.4) * sin(4 * 2 * pi * t / season))),
+  s2 = expression(2 * (0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season))),
+  s3 = expression(0 * x)
+) 
+
+arma_settings <- list(
+  xi1 = list(ar = 0.4, ma = 0, sd = 0.04),
+  xi2 = list(ar = 0.7, ma = 0.65, sd = 0.02),
+  xi3 = list(ar = 0.8, ma = -0.2, sd = 0.01),
+  xi4 = list(ar = NULL, ma = NULL, sd = 0.1)
+)
+
+nobs_settings <- list(
+  n1 = 250,
+  n2 = 500,
+  n3 = 750,
+  n4 = 1000
+)
+
 season <- 12
 order_poly <- 1
 cb <- 0.05
-trend_fun <- expression(-sin(1.45 * pi * (x + 0.1)) + 2 + 2.3 * x + exp(1.2 * x))
-season_fun <- expression(rev(0.7 * sin(2 * pi * t / season) - 0.5 * cos(4 * 2 * pi * t / season) + (-0.4) * sin(4 * 2 * pi * t / season)))
-
-#------------------------
-
-sd_e <- 0.02
-ar <- 0.7
-ma <- 0.65
-n <- 2400
-season <- 12
-order_poly <- 3
-cb <- 0.05
-trend_fun <- expression(2 + 4 * x + sin(2 * pi * (x - 0.5) / 1.5))
-season_fun <- expression(3 * (0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season)))
-
-#----------------------------------
-
-sd_e <- sqrt(7.4298 * 10^(-5))
-ar <- 0.8
-ma <- -0.06
-n <- 1200
-season <- 12
-order_poly <- 3
-cb <- 0.05
-trend_fun <- expression(2 + 4 * x - 4 * (dnorm(5 * (x - 0.5))))
-season_fun <- expression(2 * (0.04 * sin(2 * pi * (t - pi - 1.2) / season) + 0.005 * sin(2 * pi * (t - 0.5 * pi - 1.2) / season)  + 0.025 * sin(4 * pi * (t - 1.2) / season)))
-
 
 #-------------------------------
 
@@ -74,7 +72,7 @@ sim_bwidth <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0
 }  
 
 set.seed(123456)
-ts_sim <- sim_s_semiarma(trend_fun, season_fun, arma_model = list(ar = ar, ma = ma, sd = sd_e), season = season, n = n)
+ts_sim <- sim_s_semiarma(trend_FUNs[["m3"]], season_FUNs[["s2"]], arma_model = arma_settings[["xi2"]], season = season, n = n)
 plot(ts_sim)
 
 #est_s <- deseats(Xt, set_options(bwidth = 0.35))
