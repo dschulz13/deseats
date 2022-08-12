@@ -24,7 +24,7 @@ nobs_settings <- list(
   n1 = 250,
   n2 = 500,
   n3 = 750,
-  n4 = 1000
+  n4 = 2000
 )
 
 season <- 12
@@ -68,7 +68,7 @@ sim_bwidth <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0
       
       et <- ts(arima.sim(model = list(ar = ar, ma = ma), n = n, sd = sd_e), frequency = season)
       Xt <- m + s + et
-      deseats::deseats(Xt, set_options(order_poly = order_poly))@bwidth
+      deseats::deseats(Xt, deseats::set_options(order_poly = order_poly))@bwidth
       
     }
    
@@ -153,7 +153,7 @@ hA
 
 #----------------------------------------------------------------
 
-sim_fun <- sim_bwidth(trend_fun, season_fun, list(ar = ar, ma = ma, sd = sd_e), season, n, order_poly)
+sim_fun <- sim_bwidth(trend_FUNs[["m1"]], season_FUNs[["s1"]], arma_settings[["xi2"]], season, nobs_settings[["n4"]], order_poly)
 
 library(future)
 library(furrr)
@@ -166,7 +166,7 @@ plan(multisession, workers = ncor)
 set.seed(123)
 
 bwidths <- future_map_dbl(
-  1:1000,
+  1:800,
   sim_fun,
   .options = furrr_options(seed = TRUE),
   .progress = TRUE
