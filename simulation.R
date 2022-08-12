@@ -3,7 +3,7 @@
 trend_FUNs <- list(
   m1 = expression(-sin(1.45 * pi * (x + 0.1)) + 2 + 2.3 * x + exp(1.2 * x)),
   m2 = expression(2 + 4 * x + sin(2 * pi * (x - 0.5) / 1.5)),
-  m3 = expression(10),
+  m3 = expression(0 * x + 10),
   m4 = expression(1.2 + 10.1 * x)
 )
 
@@ -28,18 +28,21 @@ nobs_settings <- list(
 )
 
 season <- 12
-order_poly <- 1
+order_poly <- 3
 cb <- 0.05
 
 #-------------------------------
 
 sim_s_semiarma <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0.4, sd = 0.04), season = 12, n = season * 10 * 5) {
   
+  ar <- arma_model$ar
+  ma <- arma_model$ma
+  sd <- arma_model$sd
   t <- 1:n
   x <- t / n
   m <- ts(eval(trend_fun), frequency = season)  
   s <- ts(eval(season_fun), frequency = season)
-  et <- ts(arima.sim(model = list(ar = ar, ma = ma), n = n, sd = sd_e), frequency = season)
+  et <- ts(arima.sim(model = list(ar = ar, ma = ma), n = n, sd = sd), frequency = season)
   Xt <- ts(m + s + et, frequency = season)
   out <- cbind(
     "Observations" = Xt,
@@ -72,7 +75,7 @@ sim_bwidth <- function(trend_fun, season_fun, arma_model = list(ar = 0.5, ma = 0
 }  
 
 set.seed(123456)
-ts_sim <- sim_s_semiarma(trend_FUNs[["m3"]], season_FUNs[["s2"]], arma_model = arma_settings[["xi2"]], season = season, n = n)
+ts_sim <- sim_s_semiarma(trend_FUNs[["m1"]], season_FUNs[["s2"]], arma_model = arma_settings[["xi2"]], season = season, n = nobs_settings[["n4"]])
 plot(ts_sim)
 
 #est_s <- deseats(Xt, set_options(bwidth = 0.35))
@@ -130,13 +133,22 @@ hA_calc <- function(trend_fun, order_poly = 1, season = 12, mu = 1, arma_model =
 
   mk <- function(x, trend_fun, order_poly) {(eval(DD(trend_fun, order_poly + 1)))^2}
 
-  f2_den <- integrate(mk, cb, 1 - cb, trend_fun = trend_fun, order_poly = order_poly)[[1]] * integrate(muk, -1, 1, k = k, K = K_trend)[[1]]^2
-
-  (f1 * f2_num / f2_den)^(1 / (2 * k + 1)) * n^(-1 / (2 * k + 1))
+  Imk <- tryCatch(
+    {integrate(mk, cb, 1 - cb, trend_fun = trend_fun, order_poly = order_poly)[[1]]},
+    error = function(c1) {0}
+  )
   
+  f2_den <- Imk * integrate(muk, -1, 1, k = k, K = K_trend)[[1]]^2
+
+  hA <- (f1 * f2_num / f2_den)^(1 / (2 * k + 1)) * n^(-1 / (2 * k + 1))
+  if (is.infinite(hA)) {
+    hA <- 0.49      # For a constant trend the best we can do is the highest possible bandwidth of 0.49
+  }
+  hA
 }
 
-hA <- hA_calc(trend_fun, order_poly, season, mu = 1, list(ar = ar, ma = ma, sd = sd_e), cb = cb, n = n)
+hA <- hA_calc(trend_FUNs[["m1"]], order_poly, season, mu = 1, arma_settings[["xi2"]], cb = cb, n = nobs_settings[["n4"]])
+
 hA
 
 #----------------------------------------------------------------
