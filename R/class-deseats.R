@@ -258,6 +258,13 @@ if (is.null(save)) {
 }
 )
 
+#'@export
+setMethod("bwidth", "deseats",
+  function(x){
+    x@bwidth
+  }
+)
+
 #--------------------------------------#
 
 setMethod(".boot_f_generate", "deseats",

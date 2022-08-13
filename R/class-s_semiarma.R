@@ -73,3 +73,10 @@ methods::setMethod("show", "s_semiarma",
   cat(text_out)
 }
 )
+
+#'@export
+setMethod("bwidth", "s_semiarma",
+  function(x){
+    x@nonpar_model@bwidth
+  }
+)
