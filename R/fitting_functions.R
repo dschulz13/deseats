@@ -26,7 +26,83 @@
 #'
 #'@details
 #'
-#'Work in progress. Details will be added in the release version of the package.
+#'The trend is estimated based on the additive
+#'nonparametric regression model for an equidistant time series
+#'\deqn{y_t = m(x_t) + s(x_t) + \epsilon_t,}
+#'where \eqn{y_t} is the observed time series, \eqn{x_t} is the rescaled time
+#'on the interval \eqn{[0, 1]}, \eqn{m(x_t)} is a smooth and deterministic
+#'trend function, \eqn{s(x_t)} is a (slowly changing) seasonal component with 
+#'exact seasonal period \eqn{p_s} and \eqn{\epsilon_t} are stationary errors 
+#'with \eqn{E(\epsilon_t) = 0} and short-range dependence (see for example also 
+#'Feng, 2013, for a similar model, where the stochastic term is however i.i.d.). 
+#'With this function \eqn{m(x_t)} and \eqn{s(x_t)} can be 
+#'estimated without a parametric
+#'model assumption for the error series. Thus, after estimating and removing
+#'the trend and the seasonality, any suitable parametric model, e.g. an 
+#'ARMA(\eqn{p,q}) model, can be fitted to the residuals 
+#'(see \code{\link[stats]{arima}}).
+#'
+#'The iterative-plug-in (IPI) algorithm, which numerically minimizes the
+#'Asymptotic Mean Squared Error (AMISE), was proposed by Feng and Schulz (2022) 
+#'and is 
+#'an extension of Feng (2013) to the short-memory case or of Feng, Gries and 
+#'Fritz (2020) to a model with a seasonal component.
+#'
+#'Define \eqn{I[m^{(k)}] = \int_{c_b}^{d_b} [m^{(k)}(x)]^2 dx}{I[m^(k)] =
+#'int_[c_b]^[d_b] \{m^(k)\}^2 dx}, \eqn{\beta_{(k)} = \int_{-1}^{1} u^k
+#'K(u) du}{\beta_(k) = int_[-1]^[1] u^k K(u) du}
+#'and \eqn{R(K) = \int_{-1}^{1} K^{2}(u) du}{R(K) = int_[-1]^[1]
+#'\{K\}^2 du}, where \eqn{p} is the order of the (local) polynomial 
+#'considered for \eqn{m},
+#'\eqn{k = p + 1} is the order of the asymptotically equivalent kernel \eqn{K} 
+#'for estimating \eqn{m}, \eqn{0 \leq c_{b}< d_{b} \leq 1}{0 \le c_b < d_b \le 1}, and
+#'\eqn{c_f} is the variance factor, i.e. the sum of autocovariances divided by 
+#'\eqn{2\pi}.
+#'
+#'Furthermore, we define
+#'\deqn{C_{1} = \frac{I[m^{(k)}] \beta_{(k)}^2}{(k!)^2}}{C_1 =
+#'[I[m^(k)]\{\beta_(k)\}^2] / (k!)^2}
+#'and
+#'\deqn{C_{2} = \frac{2 \pi c_{f} (d_b - c_b)[R(K) + (p_s - 1) R(W)]}{nh}}{C_2 =
+#'2\pi(d_b - c_b)R(K)c_f / (nh)}
+#'with \eqn{h} being the bandwidth, \eqn{n} being the number of
+#'observations and \eqn{W} being the weighting function considered in the 
+#'weighted least squares approach, for example a second-order kernel function 
+#'with support on \eqn{[-1,1]}. The AMISE is then
+#'\deqn{AMISE(h) = h^{2k}C_{1} + C_{2}.}{AMISE(h) = h^[2k] C_1 +
+#'C_2.}
+#'
+#'The function calculates suitable estimates for \eqn{c_f}, the variance
+#'factor, and \eqn{I[m^{(k)}]}{I[m^(k)]} over different iterations. In each
+#'iteration, a bandwidth is obtained in accordance with the AMISE that once
+#'more serves as an input for the following iteration. The process repeats
+#'until either convergence or the 40th iteration is reached. For further
+#'details on the asymptotic theory or the algorithm, please consult Feng,
+#'Gries and Fritz (2020) or Feng et al. (2019).
+#'
+#'To apply the function, only few arguments are needed: a data input \code{y},
+#'an object with smoothing options \code{smoothing_options} returned by 
+#'\code{\link{set_options}} and 
+#'a starting value for the relative bandwidth
+#'\code{bwidth_start}. Aside from \code{y}, each argument has a default setting.
+#'By default, a local linear trend is considered. In some cases, a local cubic 
+#'trend may, however, be more suitable. For more specific information on the input arguments
+#'consult the section \emph{Arguments}.
+#'
+#'When applying the function, an optimal bandwidth is obtained based on the
+#'IPI algorithm proposed by Feng, Gries and Fritz (2020). In a second step,
+#'the nonparametric trend of the series and the seasonality are calculated with 
+#'respect to the chosen bandwidth.
+#'
+#'The default print method for this function delivers key numbers such as the 
+#'bandwidth considered for smoothing.
+#'
+#'NOTE:
+#'
+#'This function implements C++ code by means
+#'of the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
+#'\code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages for
+#'better performance.
 #'
 #'@return
 #'
@@ -48,6 +124,7 @@
 #'Xt <- log(EXPENDITURES)
 #'est <- deseats(Xt)
 #'est
+#'plot(est, which = 1)
 #'
 
 deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
