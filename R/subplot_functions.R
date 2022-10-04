@@ -15,6 +15,24 @@ plot_facets <- function(obj, ...) {
   do.call(stats::plot.ts, args = dots)
 }
 
+plot_fit_detailed <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('The time series "', obj@ts_name, 
+                  '" together with fitted values and estimated trend'),
+    ylab = obj@ts_name,
+    col = c("grey74", "red", "blue"),
+    lty = c(1, 1, 1),
+    type = "lll"
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- c(stats::time(obj@decomp))
+  dots[["y"]] <- cbind(obj@decomp[, 1], fitted(obj), obj@decomp[, 2])
+  
+  do.call(graphics::matplot, args = dots)    
+}
+
 plot_resid <- function(obj, ...) {
   dots <- list(...)
   defaults <- list(
@@ -157,6 +175,36 @@ plot_fit_gg <- function(obj, ...) {
                   '" together with estimated trend and seasonality')) +
       ggplot2::ylab(obj@ts_name) +
         ggplot2::scale_color_manual(values = c("grey74", "red"))
+    
+    suppressWarnings(print(p1))
+
+}
+
+plot_fit_detailed_gg <- function(obj, ...) {
+
+    n <- length(obj@decomp[, 1])
+    t <- c(stats::time(obj@decomp))
+    obs <- as.numeric(obj@decomp[, 1])
+    fit <- as.numeric(fitted(obj))
+    trend_v <- as.numeric(obj@decomp[, 2])
+    lo <- length(obs)
+    lf <- length(fit)
+    if (lo > lf) {
+      fit <- c(rep(NA, lo - lf), fit)
+    }
+
+    df <- data.frame(
+      Time = rep(t, 3),
+      Value = c(obs, fit, trend_v),
+      Series = factor(c(rep(1:3, each = n)), labels = c("Observations", "Fitted values", "Estimated trend"))
+    )
+
+    p1 <- ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
+      ggplot2::geom_line(ggplot2::aes_string(color = "Series")) +
+      ggplot2::ggtitle(paste0('The time series "', obj@ts_name,
+                  '" together with fitted values and estimated trend')) +
+      ggplot2::ylab(obj@ts_name) +
+        ggplot2::scale_color_manual(values = c("grey74", "red", "blue"))
     
     suppressWarnings(print(p1))
 
