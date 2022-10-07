@@ -33,6 +33,24 @@ plot_fit_detailed <- function(obj, ...) {
   do.call(graphics::matplot, args = dots)    
 }
 
+plot_components <- function(obj, ...) {
+  dots <- list(...)
+  defaults <- list(
+    xlab = "Time",
+    main = paste0('The estimated trend and seasonality in the time series "', 
+                  obj@ts_name, '"'),
+    ylab = obj@ts_name,
+    col = c("grey74", "red", "lightgray", "blue"),
+    lty = c(1, 1, 2, 1),
+    type = "llll"
+  )
+  dots <- set_default(dots, defaults)
+  dots[["x"]] <- c(stats::time(obj@decomp))
+  dots[["y"]] <- cbind(obj@decomp[, 1], trend(obj), rep(0, length(trend(obj))), season(obj))
+  
+  do.call(graphics::matplot, args = dots)   
+}
+
 plot_resid <- function(obj, ...) {
   dots <- list(...)
   defaults <- list(
@@ -208,6 +226,42 @@ plot_fit_detailed_gg <- function(obj, ...) {
     
     suppressWarnings(print(p1))
 
+}
+
+plot_components_gg <- function(obj, ...) {
+    n <- length(obj@decomp[, 1])
+    t <- c(stats::time(obj@decomp))
+    obs <- as.numeric(obj@decomp[, 1])
+    trend_v <- as.numeric(obj@decomp[, 2])
+    middle_v <- rep(0, n)
+    season_v <- as.numeric(season(obj))
+    lo <- length(obs)
+    lf <- length(trend_v)
+    if (lo > lf) {
+      fit <- c(rep(NA, lo - lf), fit)
+    }
+
+    df <- data.frame(
+      Time = rep(t, 3),
+      Value = c(obs, trend_v, season_v),
+      Series = factor(c(rep(1:3, each = n)), labels = c("Observations", "Estimated trend", "Estimated seasonality"))
+    )
+    df2 <- data.frame(
+      Time = t,
+      Line = middle_v
+    )
+
+    p1 <- ggplot2::ggplot(df) +
+      ggplot2::geom_line(data = df2, ggplot2::aes_string(x = "Time", y = "Line"), 
+                         color = "lightgray", inherit.aes = FALSE,
+                         linetype = "dashed") +
+      ggplot2::geom_line(data = df, ggplot2::aes_string(x = "Time", y = "Value", color = "Series"), inherit.aes = FALSE) +
+      ggplot2::ggtitle(paste0('The estimated trend and seasonality in the time series "', 
+                  obj@ts_name, '"')) +
+      ggplot2::ylab(obj@ts_name) +
+      ggplot2::scale_color_manual(values = c("grey74", "red", "blue"))
+    
+    suppressWarnings(print(p1))  
 }
 
 plot_obs_gg <- function(obj, ...) {

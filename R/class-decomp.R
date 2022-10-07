@@ -69,6 +69,7 @@ setMethod("plot", "decomp", function(x, which = NULL, ...) {
     "observations" = plot_obs,
     "fitted" = plot_fit,
     "detailed_fit" = plot_fit_detailed,
+    "trend_season" = plot_components,
     "residuals" = plot_resid,
     "deseasonalized" = plot_deseason,
     "detrended" = plot_detrend,    
@@ -76,9 +77,10 @@ setMethod("plot", "decomp", function(x, which = NULL, ...) {
     "2" = plot_obs,
     "3" = plot_fit,
     "4" = plot_fit_detailed,
-    "5" = plot_resid,
-    "6" = plot_deseason,
-    "7" = plot_detrend   
+    "5" = plot_components,
+    "6" = plot_resid,
+    "7" = plot_deseason,
+    "8" = plot_detrend   
   )
   
   plot_fun(x, ...)
@@ -144,6 +146,7 @@ setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
     "observations" = plot_obs_gg,
     "fitted" = plot_fit_gg,
     "detailed_fit" = plot_fit_detailed_gg,
+    "trend_season" = plot_components_gg,
     "residuals" = plot_resid_gg,
     "deseasonalized" = plot_deseason_gg,
     "detrended" = plot_detrend_gg,    
@@ -151,9 +154,10 @@ setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
     "2" = plot_obs_gg,
     "3" = plot_fit_gg,
     "4" = plot_fit_detailed_gg,
-    "5" = plot_resid_gg,
-    "6" = plot_deseason_gg,
-    "7" = plot_detrend_gg     
+    "5" = plot_components_gg,
+    "6" = plot_resid_gg,
+    "7" = plot_deseason_gg,
+    "8" = plot_detrend_gg     
   )
   
   plot_fun(object, ...)
