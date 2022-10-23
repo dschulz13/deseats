@@ -25,7 +25,18 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 
 #'@export
 methods::setMethod("predict", "s_semiarma", 
-  function(object, n.ahead = 1, ...) {
+  function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"), ...) {
+    
+    if (intervals) {
+    
+      if (!(length(method) %in% c(1, 2)) || !all(!is.na(method)) ||
+          !is.character(method)) {
+        stop("The argument 'method' is defined incorrectly.")
+      }
+      if (all(method == c("norm", "boot"))) method <- "norm"   
+    
+    }
+    
     freq <- object@nonpar_model@frequency
     trend_e <- utils::tail(trend(object), 2)
     
@@ -40,7 +51,48 @@ methods::setMethod("predict", "s_semiarma",
     
     arma_fc <- predict(object@par_model, n.ahead = n.ahead, se.fit = FALSE)
     
-    trend_fc + season_fc + arma_fc
+    fc_total <- trend_fc + season_fc + arma_fc
+    
+    if (intervals) {
+      
+      p <- object@par_model$arma[[1]]
+      q <- object@par_model$arma[[2]]
+      
+      if (method == "norm") {
+        
+        fi <- normCast(model = object@par_model,
+          p = p, q = q, h = n.ahead, alpha = alpha)        
+        
+      } else if (method == "boot") {
+        
+        fi <- bootCast(model = object@par_model, X = object@decomp[, 1],
+          p = p, q = q, h = n.ahead, alpha = alpha)
+
+      }
+      
+      fi_names = colnames(fi)
+
+      fi <- ts(fi, start = c(time(fc_total)[[1]]), frequency = frequency(fc_total))      
+      
+      interv <- fc_total + fi
+
+      
+    } else {
+      
+      interv <- ts(NA_real_)
+      
+    }
+
+    out <- create_deseats_fc(
+      pred = fc_total,
+      interv = interv,
+      obs = object@decomp[, 1],
+      ts_name = object@nonpar_model@ts_name
+    )
+    
+    colnames(out@interv) <- fi_names
+    
+    out
     
   }
 )

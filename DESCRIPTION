@@ -27,7 +27,9 @@ Imports: Rcpp (>= 1.0.6),
          tools,
          zoo,
          future,
-         furrr
+         furrr,
+         future.apply,
+         progressr
 Suggests: smoots
 License: GPL-3
 Encoding: UTF-8
@@ -55,3 +57,5 @@ Collate:
     'data_documentation.R'
     'fitting_functions.R'
     'runDecomposition.R'
+    'class-deseats_fc.R'
+    'forecasting_functions.R'

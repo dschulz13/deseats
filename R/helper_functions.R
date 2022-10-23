@@ -24,6 +24,28 @@ set_default <- function(obj, repl) {
   obj
 }
 
+maInfty <- function(ar, ma, m = 1000) {
+  p <- length(ar)
+  q <- length(ma)
+  if (m - q > 0) {
+    times <- m - q
+  } else {
+    times <- 0
+  }
+  ma.s <- c(ma, rep(0, times = times))
+  c.out <- c(rep(0, times = p - 1), 1, rep(NA, times = m))
+  lc <- length(c.out)
+
+  if (m >= 1) {
+    for (i in (p + 1):(m + p)) {
+      c.out[i] <- ar %*% c.out[(i - 1):(i - p)] + ma.s[i - p]
+    }
+  }
+
+  c.out[p:lc]
+}
+
+
 check_which <-function(which) {
   
     if (is.null(which)) {
@@ -117,9 +139,12 @@ select_arma_orders <- function(xt, ar, ma) {
     P <- Q <- 0:5
     for (p0 in P) {
       for (q0 in Q) {
-        arma <- suppressWarnings(stats::arima(xt,
-                                              order = c(p0, 0, q0),
-                             include.mean = FALSE))
+        arma <- tryCatch({
+          suppressWarnings(stats::arima(xt,
+            order = c(p0, 0, q0),
+            include.mean = FALSE))
+          }, error = function(e1) {data.frame(loglik = -10000000)}
+        )
         bic[p0 + 1, q0 + 1] <- -2 * arma$loglik + (p0 + q0) * log(n)
       }
     }

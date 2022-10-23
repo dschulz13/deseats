@@ -48,4 +48,7 @@ exportMethods(trend)
 import(methods)
 importFrom(Rcpp,sourceCpp)
 importFrom(ggplot2,autoplot)
+importFrom("stats", "frequency", "na.omit", "qnorm", "quantile",
+           "time", "ts")
+importFrom("utils", "head")
 useDynLib(deseats)
