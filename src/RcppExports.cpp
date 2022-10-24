@@ -11,6 +11,37 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// fcastCpp
+arma::vec fcastCpp(const arma::vec& X, const arma::vec& innov, const arma::rowvec& ar, const arma::rowvec& ma, const int h);
+RcppExport SEXP _deseats_fcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP arSEXP, SEXP maSEXP, SEXP hSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type innov(innovSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar(arSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const int >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(fcastCpp(X, innov, ar, ma, h));
+    return rcpp_result_gen;
+END_RCPP
+}
+// tfcastCpp
+arma::vec tfcastCpp(const arma::vec& X, const arma::vec& innov, const arma::vec& epsBoot, const arma::rowvec& ar, const arma::rowvec& ma, const int h);
+RcppExport SEXP _deseats_tfcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP epsBootSEXP, SEXP arSEXP, SEXP maSEXP, SEXP hSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type innov(innovSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type epsBoot(epsBootSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar(arSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const int >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(tfcastCpp(X, innov, epsBoot, ar, ma, h));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cf0Cpp
 double cf0Cpp(const arma::vec& Xt);
 RcppExport SEXP _deseats_cf0Cpp(SEXP XtSEXP) {
@@ -88,6 +119,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_deseats_fcastCpp", (DL_FUNC) &_deseats_fcastCpp, 5},
+    {"_deseats_tfcastCpp", (DL_FUNC) &_deseats_tfcastCpp, 6},
     {"_deseats_cf0Cpp", (DL_FUNC) &_deseats_cf0Cpp, 1},
     {"_deseats_fitteddeseatsCpp", (DL_FUNC) &_deseats_fitteddeseatsCpp, 6},
     {"_deseats_residdeseatsCpp", (DL_FUNC) &_deseats_residdeseatsCpp, 6},
