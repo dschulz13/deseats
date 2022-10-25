@@ -25,7 +25,8 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 
 #'@export
 methods::setMethod("predict", "s_semiarma", 
-  function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"), ...) {
+  function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"), 
+           expo = FALSE, ...) {
     
     if (intervals) {
     
@@ -65,7 +66,7 @@ methods::setMethod("predict", "s_semiarma",
         
       } else if (method == "boot") {
         
-        fi <- bootCast(model = object@par_model, X = object@decomp[, 1],
+        fi <- bootCast(model = object@par_model, X = object@decomp[, 4],
           p = p, q = q, h = n.ahead, alpha = alpha)
 
       }
@@ -83,11 +84,21 @@ methods::setMethod("predict", "s_semiarma",
       
     }
 
+    obs <- object@decomp[, 1]   
+    ts_name <- object@nonpar_model@ts_name    
+    
+    if (expo) {
+      fc_total <- exp(fc_total)
+      interv <- exp(interv)
+      obs <- exp(obs)
+      ts_name <- paste0("exp(", ts_name, ")")
+    }
+    
     out <- create_deseats_fc(
       pred = fc_total,
       interv = interv,
-      obs = object@decomp[, 1],
-      ts_name = object@nonpar_model@ts_name
+      obs = obs,
+      ts_name = ts_name
     )
     
     colnames(out@interv) <- fi_names

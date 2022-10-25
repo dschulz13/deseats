@@ -46,3 +46,7 @@ methods::setGeneric(".boot_f_generate", function(object, ...) standardGeneric(".
 #'@export
 methods::setGeneric("bwidth_interval", function(object, ...) standardGeneric("bwidth_interval"))
 
+#------------------------------------------#
+
+#'@export
+methods::setGeneric("expo", function(object) standardGeneric("expo"))
