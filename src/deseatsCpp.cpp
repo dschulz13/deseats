@@ -425,8 +425,8 @@ arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
 double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart) {
   
   double bopt = bStart;
-  double boptOld = 0;
-  double boptOld2 = 0;
+  double boptOld = -100;
+  double boptOld2 = -100;
   const int n = yt.size();
   const int k = p + 1;
   
