@@ -160,7 +160,8 @@ setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
     "8" = plot_detrend_gg     
   )
   
-  plot_fun(object, ...)
+  P <- plot_fun(object, ...)
+  P
   
 })
 

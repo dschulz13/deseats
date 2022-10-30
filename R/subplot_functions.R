@@ -194,7 +194,7 @@ plot_fit_gg <- function(obj, ...) {
       ggplot2::ylab(obj@ts_name) +
         ggplot2::scale_color_manual(values = c("grey74", "red"))
     
-    suppressWarnings(print(p1))
+    p1
 
 }
 
@@ -224,7 +224,7 @@ plot_fit_detailed_gg <- function(obj, ...) {
       ggplot2::ylab(obj@ts_name) +
         ggplot2::scale_color_manual(values = c("grey74", "red", "blue"))
     
-    suppressWarnings(print(p1))
+    p1
 
 }
 
@@ -261,7 +261,7 @@ plot_components_gg <- function(obj, ...) {
       ggplot2::ylab(obj@ts_name) +
       ggplot2::scale_color_manual(values = c("grey74", "red", "blue"))
     
-    suppressWarnings(print(p1))  
+    p1
 }
 
 plot_obs_gg <- function(obj, ...) {
