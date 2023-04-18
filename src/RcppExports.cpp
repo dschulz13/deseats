@@ -11,6 +11,84 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// FARIMAforecastAR
+arma::vec FARIMAforecastAR(arma::vec& obs, const arma::rowvec& ar_inf, const int meanObs, const int m);
+RcppExport SEXP _deseats_FARIMAforecastAR(SEXP obsSEXP, SEXP ar_infSEXP, SEXP meanObsSEXP, SEXP mSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec& >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar_inf(ar_infSEXP);
+    Rcpp::traits::input_parameter< const int >::type meanObs(meanObsSEXP);
+    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    rcpp_result_gen = Rcpp::wrap(FARIMAforecastAR(obs, ar_inf, meanObs, m));
+    return rcpp_result_gen;
+END_RCPP
+}
+// FARIMAfutureObs
+arma::vec FARIMAfutureObs(arma::vec& obs, const arma::rowvec& ar_inf, const arma::vec& et, const int meanObs);
+RcppExport SEXP _deseats_FARIMAfutureObs(SEXP obsSEXP, SEXP ar_infSEXP, SEXP etSEXP, SEXP meanObsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec& >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar_inf(ar_infSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type et(etSEXP);
+    Rcpp::traits::input_parameter< const int >::type meanObs(meanObsSEXP);
+    rcpp_result_gen = Rcpp::wrap(FARIMAfutureObs(obs, ar_inf, et, meanObs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ARinftySHORT
+arma::vec ARinftySHORT(const arma::vec& ar, const arma::rowvec& ma, const int max_i);
+RcppExport SEXP _deseats_ARinftySHORT(SEXP arSEXP, SEXP maSEXP, SEXP max_iSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type ar(arSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const int >::type max_i(max_iSEXP);
+    rcpp_result_gen = Rcpp::wrap(ARinftySHORT(ar, ma, max_i));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MAinftySHORT
+arma::vec MAinftySHORT(const arma::rowvec& ar, const arma::vec& ma, const int max_i);
+RcppExport SEXP _deseats_MAinftySHORT(SEXP arSEXP, SEXP maSEXP, SEXP max_iSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar(arSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const int >::type max_i(max_iSEXP);
+    rcpp_result_gen = Rcpp::wrap(MAinftySHORT(ar, ma, max_i));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ARinftyLONG
+arma::vec ARinftyLONG(arma::rowvec& ar, const arma::vec& d_coef);
+RcppExport SEXP _deseats_ARinftyLONG(SEXP arSEXP, SEXP d_coefSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::rowvec& >::type ar(arSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type d_coef(d_coefSEXP);
+    rcpp_result_gen = Rcpp::wrap(ARinftyLONG(ar, d_coef));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MAinftyLONG
+arma::rowvec MAinftyLONG(arma::vec& ma, const arma::vec& d_coef);
+RcppExport SEXP _deseats_MAinftyLONG(SEXP maSEXP, SEXP d_coefSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type d_coef(d_coefSEXP);
+    rcpp_result_gen = Rcpp::wrap(MAinftyLONG(ma, d_coef));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fcastCpp
 arma::vec fcastCpp(const arma::vec& X, const arma::vec& innov, const arma::rowvec& ar, const arma::rowvec& ma, const int h);
 RcppExport SEXP _deseats_fcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP arSEXP, SEXP maSEXP, SEXP hSEXP) {
@@ -119,6 +197,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_deseats_FARIMAforecastAR", (DL_FUNC) &_deseats_FARIMAforecastAR, 4},
+    {"_deseats_FARIMAfutureObs", (DL_FUNC) &_deseats_FARIMAfutureObs, 4},
+    {"_deseats_ARinftySHORT", (DL_FUNC) &_deseats_ARinftySHORT, 3},
+    {"_deseats_MAinftySHORT", (DL_FUNC) &_deseats_MAinftySHORT, 3},
+    {"_deseats_ARinftyLONG", (DL_FUNC) &_deseats_ARinftyLONG, 2},
+    {"_deseats_MAinftyLONG", (DL_FUNC) &_deseats_MAinftyLONG, 2},
     {"_deseats_fcastCpp", (DL_FUNC) &_deseats_fcastCpp, 5},
     {"_deseats_tfcastCpp", (DL_FUNC) &_deseats_tfcastCpp, 6},
     {"_deseats_cf0Cpp", (DL_FUNC) &_deseats_cf0Cpp, 1},

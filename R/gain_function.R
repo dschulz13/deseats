@@ -1,0 +1,243 @@
+#' Gain Function Generic
+#' 
+#' @export
+#' 
+#'importFrom methods setGeneric standardGeneric setMethod 
+
+setGeneric(
+  "gain", 
+  function(object, lambda = seq(0, 0.5, 0.01), ...) {
+    standardGeneric("gain")
+  }
+)
+
+#' Obtain gain function values for Semi-ARMA Trend and Detrend Filters
+#' 
+#' @param object an object of class \code{"semiarma"}.
+#' @param ... no current purpose for this ellipsis.
+#' 
+#' @export gain.deseats
+#' @export
+#' 
+#' @examples
+#'xt <- stats::ts(log(smoots::gdpUS$GDP), start = c(1947, 1), frequency = 4)
+#'est <- auto.semiarma(xt)
+#'
+#'lambda <- seq(0, 0.5, 0.01)
+#'gain_values <- gain(est)
+#'m <- length(gain_values$gain_trend[, 1])
+#'k <- (m - 1) / 2
+#' colF <- colorRampPalette(c("deepskyblue4", "deepskyblue"))
+#' cols <- colF(m)
+#'
+#'matplot(lambda, t(gain_values$gain_trend[1:(k + 1), ]), type = paste0(rep("l", k + 1), collapse = ""),
+#'  col = cols, lty = rep(1, k + 1))
+#'title("Gain functions of the trend filters")
+#'
+#'matplot(lambda, t(gain_values$gain_detrend[1:(k + 1), ]), type = paste0(rep("l", k + 1), collapse = ""),
+#'  col = cols, lty = rep(1, k + 1))
+#'title("Gain functions of the detrending filters")
+#' 
+gain.deseats <- function(object, lambda = seq(0, 0.5, 0.01), ...) {
+  
+  ws_trend <- object@weights[, , "Trend"]
+  ws_season <- object@weights[, , "Season"]
+  ws_comb <- object@weights[, , "Combined"]
+  
+  l <- length(lambda)
+  n <- length(ws_trend[, 1])
+  k <- (n - 1) / 2
+  mat_trend <- matrix(0, ncol = l, nrow = n)
+  mat_detrend <- mat_season <- mat_deseason <- mat_trend
+  mat_trendseason <- mat_detrendseason <- mat_trend
+  
+  for (i in 1:k) {
+    
+    ### For trend filters
+    
+    gain_fun <- create.gain(filter.coefs = ws_trend[i, ], zero.at = i)
+   
+    mat_trend[i, ] <- gain_fun(lambda)
+    
+    gain_fun <- create.gain(filter.coefs = ws_trend[n - (i - 1), ], zero.at = n - (i - 1))
+    
+    mat_trend[n - (i - 1), ] <- gain_fun(lambda)
+    
+    ### For seasonality filters
+    
+    gain_fun <- create.gain(filter.coefs = ws_season[i, ], zero.at = i)
+   
+    mat_season[i, ] <- gain_fun(lambda)
+    
+    gain_fun <- create.gain(filter.coefs = ws_season[n - (i - 1), ], zero.at = n - (i - 1))
+    
+    mat_season[n - (i - 1), ] <- gain_fun(lambda)  
+    
+    ### For trend + seasonality filters
+    
+    gain_fun <- create.gain(filter.coefs = ws_comb[i, ], zero.at = i)
+   
+    mat_trendseason[i, ] <- gain_fun(lambda)
+    
+    gain_fun <- create.gain(filter.coefs = ws_comb[n - (i - 1), ], zero.at = n - (i - 1))
+    
+    mat_trendseason[n - (i - 1), ] <- gain_fun(lambda)    
+    
+    ### For detrend filters
+    
+    zero_v <- rep(0, n)
+    zero_v[[i]] <- 1
+    
+    gain_fun <- create.gain(filter.coefs = zero_v - ws_trend[i, ], zero.at = i)
+   
+    mat_out2[i, ] <- gain_fun(lambda)
+    
+    zero_v <- rep(0, n)
+    zero_v[[n - (i - 1)]] <- 1
+    
+    gain_fun <- create.gain(filter.coefs = zero_v - ws[n - (i - 1), ], zero.at = n - (i - 1))
+    
+    mat_out2[n - (i - 1), ] <- gain_fun(lambda)    
+     
+  }
+  
+  gain_fun <- create.gain(filter.coefs = ws[k + 1, ], zero.at = k + 1)
+   
+  mat_out1[k + 1, ] <- gain_fun(lambda)
+  
+  zero_v <- rep(0, n)
+  zero_v[[k + 1]] <- 1  
+  
+  gain_fun <- create.gain(filter.coefs = zero_v - ws[k + 1, ], zero.at = k + 1)
+   
+  mat_out2[k + 1, ] <- gain_fun(lambda)  
+  
+  list(gain_trend = mat_out1, gain_detrend = mat_out2)
+  
+  
+}
+
+#' Create Gain Function from a Linear Time Series Filter
+#' 
+#' This function takes a coefficient series of a linear
+#' time series filter as an input and then returns the 
+#' corresponding gain function as an R function.
+#' 
+#' @param filter.coefs a numeric vector with the filter coefficients ordered 
+#' by coefficient index.
+#' @param zero.at a numeric vector of length one that indicates the position 
+#' of the coefficient for the present observation in \code{filter.coefs};
+#' by default, the position is in the middle or just below the midpoint.
+#' 
+#' @export
+#' 
+#' @details
+#' This is a functional. The function returns a function that 
+#' represents the gain function for the input filter 
+#' \code{filter.coefs}. The returned function only has the 
+#' argument \code{lambda}, which is the frequency for which 
+#' the value of the gain function should be obtained.
+#' 
+#' @importFrom grDevices colorRampPalette
+#' 
+#' @return 
+#' The function returns a "gain function" function that has the numeric 
+#' argument \code{lambda} only that represents frequencies to calculate 
+#' the values of the gain function for.
+#' 
+#' @examples 
+#' # Moving average with smoothing over three values
+#' a <- 1 / 3
+#' gain_ma <- create.gain(rep(a, 3))
+#' lambda <- seq(0, 0.5, 0.001)
+#' GF <- gain_ma(lambda)
+#' plot(lambda, GF, type = "l")
+#' 
+#' # First differences filter
+#' b <- c(1, -1)
+#' gain_diff <- create.gain(b)
+#' lambda <- seq(0, 0.5, 0.001)
+#' GF2 <- gain_diff(lambda)
+#' plot(lambda, GF2, type = "l")
+#' 
+#' # For a fully data-driven local linear trend
+#' # (Note: we get various filters for different observation time points)
+#' 
+#' xt <- ts(log(smoots::gdpUS$GDP), start = c(1947, 1), frequency = 4)
+#' est <- auto.semiarma(xt)
+#' ws <- est$nonpar_model$ws
+#' l <- (length(ws[, 1]) - 1) / 2
+#' 
+#' lambda <- seq(0, 0.5, 0.001)
+#' mat <- matrix(0, ncol = length(lambda), nrow = l)
+#' colF <- colorRampPalette(c("deepskyblue4", "deepskyblue"))
+#' cols <- colF(l)
+#' 
+#' for (j in 1:(l + 1)) {
+#' 
+#'   gainF <- create.gain(ws[j, ], zero.at = j)
+#'   mat[j, ] <- gainF(lambda)
+#' 
+#' }
+#' 
+#' matplot(lambda, t(mat), type = paste0(rep("l", l + 1), collapse = ""),
+#'         lty = rep(1, l + 1), col = cols)
+#' title(
+#'   main = paste0(
+#'     "Gain functions for the applied data-driven local linear trend ",
+#'     "estimation\napproach at boundary points and the first interior ",
+#'     "point"
+#'   )
+#' )
+#' 
+#' # Same example as before but not for the trend but for the detrending filters
+#' # (Note: we get various filters for different observation time points)
+#' 
+#' ll <- l * 2 + 1
+#' mat2 <- mat
+#' 
+#' for (j in 1:(l + 1)) {
+#' 
+#'   zero.vec <- rep(0, ll)
+#'   zero.vec[[j]] <- 1
+#'   gainF <- create.gain(zero.vec - ws[j, ], zero.at = j)
+#'   mat2[j, ] <- gainF(lambda)
+#' 
+#' }
+#' 
+#' matplot(lambda, t(mat2), type = paste0(rep("l", l + 1), collapse = ""),
+#'         lty = rep(1, l + 1), col = cols)
+#' title(
+#'   main = paste0(
+#'     "Gain functions for the applied data-driven detrending filter\n",
+#'     "at boundary points and the first interior ",
+#'     "point"
+#'   )
+#' )
+#' 
+
+create.gain <- function(filter.coefs = c(1), 
+                        zero.at = ceiling(length(filter.coefs) / 2)
+) {
+  
+  u <- seq_along(filter.coefs) - zero.at
+  
+  i <- 0 + 1i
+  
+  function(lambda = 0) {
+    
+    l <- length(lambda)
+    
+    out <- rep(0, l)
+    
+    for (s in 1:l) {
+      
+      out[[s]] <- sum(filter.coefs * exp(i * 2 * pi * lambda[[s]] * u))
+      
+    }
+    
+    abs(out)
+    
+  }
+  
+}
