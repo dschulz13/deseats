@@ -23,7 +23,29 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 
 #---------------
 
+#'Point and Interval Forecasts for Seasonal Semi-ARMA Models
+#'
+#'@param object 
+#'@param n.ahead
+#'@param intervals
+#'@param alpha 
+#'@param method 
+#'@param bootMethod
+#'@param quant.type 
+#'@param expo
+#'@param ...
+#'
 #'@export
+#'
+#'@examples
+#'xt <- log(EXPENDITURES)
+#'est <- s_semiarma(xt)
+#'predict(est, n.ahead = 10)
+#'
+#'
+#'
+#'
+
 methods::setMethod("predict", "s_semiarma", 
   function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"),
            bootMethod = c("predRoot", "futureObs"), quant.type = 8,
