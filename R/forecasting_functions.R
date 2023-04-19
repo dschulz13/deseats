@@ -2,7 +2,8 @@
 
 bootCast <- function(model, X, p = NULL, q = NULL,
   n.start = 1000, h = 5, it = 5000, pb = TRUE,
-  cores = future::availableCores() - 1, alpha = c(0.95, 0.99), ...) {
+  cores = future::availableCores() - 1, alpha = c(0.95, 0.99), 
+  quant.type = 8, ...) {
 
   bootF <- bootSetup(model = model, X, p = p, q = q, h = h, n.start = n.start)
 
@@ -36,7 +37,7 @@ bootCast <- function(model, X, p = NULL, q = NULL,
   q_check <- sort(c(alpha.s / 2, 1 - alpha.s / 2))
   
   quants <- t(apply(err.mat, MARGIN = 2, quantile,
-                  probs = q_check))
+                  probs = q_check, type = quant.type))
 
   quants
 
@@ -98,6 +99,15 @@ bootSetup <- function(model, X, p, q, h, n.start) {
   }
 }
 
+#' Forecasting function with simpler bootstrap for intervals
+
+bootCast_simple <- function() {   # !!!!!
+  
+  
+  
+}
+
+
 #' Forecasting Function for ARMA Models under Normally Distributed Innovations
 
 normCast <- function(model, p = NULL, q = NULL, h = 1,
@@ -120,7 +130,7 @@ normCast <- function(model, p = NULL, q = NULL, h = 1,
   innov <- model$residuals
   sig2 <- model$sigma2
 
-  c.coef <- maInfty(ar = ar, ma = ma, m = h - 1)
+  c.coef <- arma_to_ma(ar = ar, ma = ma, max_i = h - 1)
   sd.fcast <- sqrt(sig2 * cumsum(c.coef^2))
   alpha.s <- 1 - alpha
   q_check <- sort(c(alpha.s / 2, 1 - alpha.s / 2))

@@ -25,16 +25,13 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 
 #'@export
 methods::setMethod("predict", "s_semiarma", 
-  function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"), 
+  function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"),
+           bootMethod = c("predRoot", "futureObs"), quant.type = 8,
            expo = FALSE, ...) {
     
     if (intervals) {
     
-      if (!(length(method) %in% c(1, 2)) || !all(!is.na(method)) ||
-          !is.character(method)) {
-        stop("The argument 'method' is defined incorrectly.")
-      }
-      if (all(method == c("norm", "boot"))) method <- "norm"   
+      method <- match.arg(method)
     
     }
     
@@ -66,8 +63,18 @@ methods::setMethod("predict", "s_semiarma",
         
       } else if (method == "boot") {
         
-        fi <- bootCast(model = object@par_model, X = object@decomp[, 4],
-          p = p, q = q, h = n.ahead, alpha = alpha)
+        bootMethod <- match.arg(bootMethod)
+        
+        if (bootMethod == "predRoot") {
+        
+          fi <- bootCast(model = object@par_model, X = object@decomp[, 4],
+            p = p, q = q, h = n.ahead, alpha = alpha, quant.type = quant.type)
+        
+        } else if (bootMethod == "futureObs") {
+          
+          fi <- bootCast_simple(model = object@par_model)   # !!!!!
+          
+        }
 
       }
       
