@@ -15,7 +15,7 @@ acov_matrix <- function(xt, M) {
 
 #' BV4.1 Outlier Component
 
-outlier_comp.bv41 <- function(xt) {
+outlier_comp.bv41 <- function(xt, tau = 3, M = NULL) {
   
   freq <- frequency(xt)
   stopifnot(freq %in% c(4, 12))
@@ -23,15 +23,17 @@ outlier_comp.bv41 <- function(xt) {
   xt <- c(xt)
   n <- length(xt)
   
-  tau <- 3
+  if (is.null(M)) {
   
-  if (freq == 4) {
+    if (freq == 4) {
     
-    M <- 8
+      M <- 8
     
-  } else if (freq == 12) {
+    } else if (freq == 12) {
     
-    M <- 24
+      M <- 24
+    
+    }
     
   }
   

@@ -11,6 +11,7 @@
 ^CRAN-RELEASE$
 ^Literature, basic code, etc$
 ^simulation\.R$
+^BV41 Trend_Cycle - Gain Functions\.R$
 ^CivLabor\.png$
 ^CivLaborAnim\.gif$
 ^CivLaborBV41\.png$
