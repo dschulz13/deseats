@@ -64,6 +64,7 @@ legend("topright",
 
 l_t2 <- (length(ws_t[1,]) - 1) / 2
 
+
 l_s <- length(ws_s[1, ])
 
 l_s2 <- l_s + l_t2
