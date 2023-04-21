@@ -64,7 +64,11 @@ legend("topright",
 
 l_t2 <- (length(ws_t[1,]) - 1) / 2
 
-ws_c <- 
+l_s <- length(ws_s[1, ])
+
+l_s2 <- l_s + l_t2
+
+ws_detrend <- matrix(0, ncol = l_s2, nrow = l_s)
 
 l_s <- (l_t - 1) / 2
 
@@ -73,14 +77,17 @@ ll <- length(ws_t[1, ])
 for (i in 1:(l_s)) {
   zero_v <- rep(0, ll)
   zero_v[[i]] <- 1
-  ws_detrend[i, ] <- zero_v - ws_detrend[i, ]
-  zero_v <- rep(0, ll)
-  zero_v[[l_t - (i - 1)]] <- 1
-  ws_detrend[l_t - (i - 1), ] <- zero_v - ws_detrend[l_t - (i - 1), ]
+  ws_detrend[i, 1:ll] <- zero_v - ws_t[i, ]
 }
 
 zero_v <- rep(0, ll)
 zero_v[[t_mid]] <- 1
+detrend_f_mid <- zero_v - ws_t[t_mid, ]
+for (i in ((l_s + 1):length(ws_s[1, ])) - l_s) {
+  
+  ws_detrend[i + l_s, i:(i + ll - 1)] <- detrend_f_mid
+  
+}
 ws_detrend[t_mid, ] <- zero_v - ws_detrend[t_mid, ]
 
 ws_detrend <- rbind(
