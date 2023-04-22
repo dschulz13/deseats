@@ -64,3 +64,4 @@ Collate:
     'linear_filters.R'
     'ts_conversion.R'
     'functions_for_comparison.R'
+    'bv41_subfunctionalities.R'

@@ -6,7 +6,7 @@ l_s <- length(ws_s[, 1])
 
 t_mid <- (l_t - 1) / 2 + 1
 
-freq <- seq(0, 0.5, 0.001)
+freq <- seq(0, 0.5, 0.0001)
 
 gt_1 <- deseats::create.gain(ws_t[1, ], zero.at = 1)
 gt_2 <- deseats::create.gain(ws_t[2, ], zero.at = 2)

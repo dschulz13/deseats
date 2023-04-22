@@ -164,7 +164,7 @@ filter_season_list <- list(
   quarterly1 = data.frame(
     k = c(8:15),
     h = c(1:8),
-    q = c(1, 5, 5, 6, 6, 7, 7, 8),
+    q = c(2, 5, 5, 6, 6, 7, 7, 8),
     p = c(rep(1, 8)),
     weights = c(0.5, 2 / 5, 4 / 5, 4 / 5, 0.5, 0.5, 0.5, 0.5)
   ),
