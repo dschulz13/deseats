@@ -5,7 +5,7 @@
 
 methods::setGeneric(
   "gain", 
-  function(object, lambda = seq(0, 0.5, 0.01), ...) {
+  function(object, lambda = seq(0, 0.5, 0.0001), ...) {
     standardGeneric("gain")
   }
 )
@@ -43,7 +43,7 @@ methods::setGeneric(
 #'title("Gain functions of the seasonal adjustment filters")
 #' 
 
-methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.01), ...) {
+methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.0001), ...) {
   
   ws_trend <- object@weights[, , "Trend"]
   ws_season <- object@weights[, , "Season"]
