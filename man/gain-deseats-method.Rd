@@ -4,7 +4,7 @@
 \alias{gain,deseats-method}
 \title{Obtain gain function values for Semi-ARMA Trend and Detrend Filters}
 \usage{
-\S4method{gain}{deseats}(object, lambda = seq(0, 0.5, 0.01), ...)
+\S4method{gain}{deseats}(object, lambda = seq(0, 0.5, 1e-04), ...)
 }
 \arguments{
 \item{object}{an object of class \code{"deseats"}.}

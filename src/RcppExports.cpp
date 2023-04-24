@@ -11,6 +11,23 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// BV41filterCpp
+Rcpp::List BV41filterCpp(const arma::vec& xt, const arma::mat& wst, const arma::mat& wss, const int nrowst, const int nrowss, const int maxt, const int maxs);
+RcppExport SEXP _deseats_BV41filterCpp(SEXP xtSEXP, SEXP wstSEXP, SEXP wssSEXP, SEXP nrowstSEXP, SEXP nrowssSEXP, SEXP maxtSEXP, SEXP maxsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type xt(xtSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type wst(wstSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type wss(wssSEXP);
+    Rcpp::traits::input_parameter< const int >::type nrowst(nrowstSEXP);
+    Rcpp::traits::input_parameter< const int >::type nrowss(nrowssSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxt(maxtSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxs(maxsSEXP);
+    rcpp_result_gen = Rcpp::wrap(BV41filterCpp(xt, wst, wss, nrowst, nrowss, maxt, maxs));
+    return rcpp_result_gen;
+END_RCPP
+}
 // FARIMAforecastAR
 arma::vec FARIMAforecastAR(arma::vec& obs, const arma::rowvec& ar_inf, const int meanObs, const int m);
 RcppExport SEXP _deseats_FARIMAforecastAR(SEXP obsSEXP, SEXP ar_infSEXP, SEXP meanObsSEXP, SEXP mSEXP) {
@@ -197,6 +214,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_deseats_BV41filterCpp", (DL_FUNC) &_deseats_BV41filterCpp, 7},
     {"_deseats_FARIMAforecastAR", (DL_FUNC) &_deseats_FARIMAforecastAR, 4},
     {"_deseats_FARIMAfutureObs", (DL_FUNC) &_deseats_FARIMAfutureObs, 4},
     {"_deseats_ARinftySHORT", (DL_FUNC) &_deseats_ARinftySHORT, 3},

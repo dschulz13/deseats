@@ -386,31 +386,18 @@ BV4.1 <- function(yt, type = NULL) {
   trend_mat <- bv_mats[[type]][["trend"]]
   season_mat <- bv_mats[[type]][["season"]]
   
-  n <- length(yt)
-  trend_e <- rep(NA, n)
-  season_e <- trend_e
+  results <- BV41filterCpp(
+    xt = c(yt),
+    wst = trend_mat,
+    wss = season_mat,
+    nrowst = n_rows,
+    nrowss = n_rows2,
+    maxt = max_vals,
+    maxs = max_vals2
+  )
   
-  N <- 2 * n_rows + 1
-  N2 <- 2 * n_rows2 + 1
-  
-  trend_e[1:n_rows] <- trend_mat[1:n_rows, ] %*% utils::head(yt, max_vals)
-  ymd <- matrix(0, ncol = n - 2 * n_rows, nrow = N)
-  ymd2 <- matrix(0, ncol = n - 2 * n_rows2, nrow = N2)
-  for (i in (n_rows + 1):(n - n_rows)) {
-    ymd[, i - n_rows] <- yt[(i - n_rows):(i + n_rows)]
-  }
-  trend_e[(n_rows + 1):(n - n_rows)] <- t(trend_mat[(n_rows + 1), 1:N]) %*% ymd
-  trend_e[(n - (n_rows - 1)):n] <- trend_mat[(n_rows + 2):N, ] %*% utils::tail(yt, max_vals)
-  
-  detrend <- yt - trend_e
-  
-  for (i in (n_rows2 + 1):(n - n_rows2)) {
-    ymd2[, i - n_rows2] <- detrend[(i - n_rows2):(i + n_rows2)]
-  } 
-  
-  season_e[1:n_rows2] <- season_mat[1:n_rows2, ] %*% utils::head(detrend, max_vals2)  
-  season_e[(n_rows2 + 1):(n - n_rows2)] <- t(season_mat[(n_rows2 + 1), 1:N2]) %*% ymd2
-  season_e[(n - (n_rows2 - 1)):n] <- season_mat[(n_rows2 + 2):N2, ] %*% utils::tail(detrend, max_vals2)
+  trend_e <- results$trend_e
+  season_e <- results$season_e
   
   attributes(trend_e) <- att
   attributes(season_e) <- att  

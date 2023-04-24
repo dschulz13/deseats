@@ -4,7 +4,7 @@
 \alias{gain}
 \title{Gain Function Generic}
 \usage{
-gain(object, lambda = seq(0, 0.5, 0.01), ...)
+gain(object, lambda = seq(0, 0.5, 1e-04), ...)
 }
 \description{
 Gain Function Generic
