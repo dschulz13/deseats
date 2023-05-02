@@ -13,6 +13,10 @@ FARIMAfutureObs <- function(obs, ar_inf, et, meanObs) {
     .Call('_deseats_FARIMAfutureObs', PACKAGE = 'deseats', obs, ar_inf, et, meanObs)
 }
 
+JumpVarsBV41Cpp <- function(jumpPoints, n) {
+    .Call('_deseats_JumpVarsBV41Cpp', PACKAGE = 'deseats', jumpPoints, n)
+}
+
 ARinftySHORT <- function(ar, ma, max_i) {
     .Call('_deseats_ARinftySHORT', PACKAGE = 'deseats', ar, ma, max_i)
 }
@@ -27,6 +31,22 @@ ARinftyLONG <- function(ar, d_coef) {
 
 MAinftyLONG <- function(ma, d_coef) {
     .Call('_deseats_MAinftyLONG', PACKAGE = 'deseats', ma, d_coef)
+}
+
+acovmatCpp <- function(xt, M) {
+    .Call('_deseats_acovmatCpp', PACKAGE = 'deseats', xt, M)
+}
+
+kappaCpp <- function(acovmat) {
+    .Call('_deseats_kappaCpp', PACKAGE = 'deseats', acovmat)
+}
+
+calendarCondValsCpp <- function(xt, M, v, kappa) {
+    .Call('_deseats_calendarCondValsCpp', PACKAGE = 'deseats', xt, M, v, kappa)
+}
+
+outlierDetectBV41Cpp <- function(xt, tau = 3, M = 0L, forward = 1L) {
+    .Call('_deseats_outlierDetectBV41Cpp', PACKAGE = 'deseats', xt, tau, M, forward)
 }
 
 fcastCpp <- function(X, innov, ar, ma, h) {

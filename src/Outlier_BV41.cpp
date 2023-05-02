@@ -5,7 +5,7 @@
 using namespace Rcpp;
 
 // Autocovariance calculation from given data
-arma::vec acovCpp(const arma::vec& Xt, const int lagMax) {
+arma::vec acovCpp2(const arma::vec& Xt, const int lagMax) {
   const double meanX = arma::mean(Xt);
   arma::vec XtDM = Xt - meanX;
   arma::vec acovOut(lagMax + 1);
@@ -21,7 +21,7 @@ arma::vec acovCpp(const arma::vec& Xt, const int lagMax) {
 // [[Rcpp::export]]
 arma::mat acovmatCpp(const arma::vec& xt, const int M) {
   
-  arma::vec acov = acovCpp(xt, M);
+  arma::vec acov = acovCpp2(xt, M);
   arma::vec acov2 = arma::join_cols(arma::reverse(acov.subvec(1, M)), acov);
   
   arma::mat out = arma::zeros<arma::mat>(M + 1, M + 1);
@@ -72,91 +72,6 @@ Rcpp::List calendarCondValsCpp(const arma::vec& xt, const int M, const double v,
   
 }
   
-// [[Rcpp::export]]    
-arma::vec outlierDetectBV41(arma::vec& xt, const double tau = 3, const int M, const int forward = 1) {
-  
-  arma::vec xtcopy = xt;
-  
-  // freq <- frequency(xt)
-  // stopifnot(freq %in% c(4, 12))
-  
-  const int n = xt.size();
-  
-  // if (is.null(M)) {
-  // 
-  //   if (freq == 4) {
-  //   
-  //     M <- 8
-  //   
-  //   } else if (freq == 12) {
-  //   
-  //     M <- 24
-  //   
-  //   }
-  //   
-  // }
-  
-  
-  
-  const arma::vec kappa = kappaCpp(acovmatCpp(xt, M));
-  const double v = arma::mean(xt);
-  
-  Rcpp::List condvals = calendarCondValsCpp(xt, M, v, kappa);
-  arma::vec condmean = condvals[];
-  double condsd = std::sqrt(condvals[]);
-  
-  arma::vec outlier = arma::zeros<arma::vec>(n);
-  
-  bool test1;
-  bool test2;
-  
-  for (int i = M; i < n; ++i) {
-    
-    test1 = (xtcopy(i) < (condmean(i) - tau * condsd));
-    test2 = (xtcopy(i) > (condmean(i) + tau * condsd));
-    
-    if (test1 | test2) {
-      
-      outlier(i) = 1;
-      
-      if (test1) {
-        
-        xtcopy(i) = condmean(i) - tau * condsd;
-        
-      } else if (test2) {
-        
-        xtcopy(i) = condmean(i) - tau * condsd;
-        
-      }
-      
-      condvals = calendarCondValsCpp(xtcopy, M, v, kappa);
-      condmean = condvalues[];
-      condsd = std::sqrt(condvalues[]);
-      
-    }
-    
-
-    
-  }
-  
-  if (forward == 1) {
-    
-    arma::vec yt = arma::reverse(xt);
-    
-    arma::vec outlierbackw = arma::reverse(outlierDetectBV41(yt, tau, M, 0));
-    
-    outlier = arma::clamp(outlier + outlierbackw, 0, 1);
-    
-  }
-  
-  
-  
-  return outlier;
-  
-}
- 
-// [[Rcpp::export]] 
-
 arma::mat outlierdummies(arma::vec& outlier) {
   
   const int n = outlier.size();
@@ -173,7 +88,7 @@ arma::mat outlierdummies(arma::vec& outlier) {
       
       j = j + 1;
       
-      outmat.submat(i, j, n - 1, j) = arma::ones<arma::vec>(n - i);
+      outmat.submat(i, j, i, j) = 1;
       
     }
     
@@ -181,17 +96,92 @@ arma::mat outlierdummies(arma::vec& outlier) {
   
   return outmat;
   
-}
+}  
+  
+// [[Rcpp::export]]    
+Rcpp::List outlierDetectBV41Cpp(arma::vec xt, const double tau = 3, const int M = 0, const int forward = 1) {
+  
+  const int n = xt.size();
+  
+  arma::vec yt;
+  
+  if (forward == 1) {
     
+    yt = arma::reverse(xt);
+    
+  }
   
-/*** R
-set.seed(123)
-M <- 10
-xt <- arima.sim(model = list(ar = 0.75), n = 1000, sd = 100)
-test <- acovmatCpp(xt, M)
-test2 <- kappaCpp(test)
-me <- mean(xt)
-test3 <- calendarCondValsCpp(xt, M, me, test2)
-test3
-*/  
+  const arma::vec kappa = kappaCpp(acovmatCpp(xt, M));
+  const double v = arma::mean(xt);
   
+  Rcpp::List condvals = calendarCondValsCpp(xt, M, v, kappa);
+  arma::vec condmean = condvals["cond_mean"];
+  double condvar = condvals["cond_var"];
+  double condsd = std::sqrt(condvar);
+  
+  arma::vec outlier = arma::zeros<arma::vec>(n);
+  arma::vec direc = arma::zeros<arma::vec>(n);
+  
+  bool test1;
+  bool test2;
+  
+  for (int i = M; i < n; ++i) {
+    
+    test1 = (xt(i) < (condmean(i) - tau * condsd));
+    test2 = (xt(i) > (condmean(i) + tau * condsd));
+    
+    if (test1 | test2) {
+      
+      outlier(i) = 1;
+      
+      if (test1) {
+        
+        xt(i) = condmean(i) - tau * condsd;
+        direc(i) = -1.0;
+        
+      } else if (test2) {
+        
+        xt(i) = condmean(i) - tau * condsd;
+        direc(i) = 1.0;        
+        
+      }
+      
+      condvals = calendarCondValsCpp(xt, M, v, kappa);
+      arma::vec condmean = condvals["cond_mean"];
+      condvar = condvals["cond_var"];
+      condsd = std::sqrt(condvar);
+      
+    }
+    
+
+    
+  }
+  
+  if (forward == 1) {
+    
+    Rcpp::List backw = outlierDetectBV41Cpp(yt, tau, M, 0);
+    
+    arma::vec out2 = backw["outlier"];
+    arma::vec sign2 = backw["sign"];
+    
+    
+    outlier = arma::clamp(outlier + arma::reverse(out2), 0, 1);
+    
+    direc = arma::clamp(direc + arma::reverse(sign2), -1, 1);
+    
+  }
+  
+  if (forward == 0) {
+  
+    return Rcpp::List::create(_["outlier"] = outlier, _["sign"] = direc);
+  
+  } else {
+    
+    arma::mat dummy = outlierdummies(outlier);
+    
+    return Rcpp::List::create(_["outlier_dummy"] = dummy, _["sign"] = direc);
+    
+  }
+  
+}
+ 

@@ -12,7 +12,10 @@ Authors@R:
              family = "Schulz",
              role = c("aut", "cre"),
              email = "dominik.schulz@uni-paderborn.de",
-             comment = "Paderborn University, Germany"))
+             comment = "Paderborn University, Germany"),
+      person(given = "Destatis", 
+             family = "(Federal Statistical Office of Germany)",
+             role = "ctb"))
 Maintainer: Dominik Schulz <dominik.schulz@uni-paderborn.de>
 Description: Data-driven locally weighted regression for identifying the trend
   and seasonality in an equidistant time series can be implemented under 

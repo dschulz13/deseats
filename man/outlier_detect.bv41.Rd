@@ -4,7 +4,7 @@
 \alias{outlier_detect.bv41}
 \title{BV4.1 Outlier Component}
 \usage{
-outlier_detect.bv41(xt, tau = 3, M = NULL, forward = TRUE)
+outlier_detect.bv41(xt, tau = 3, M = NULL)
 }
 \description{
 BV4.1 Outlier Component
