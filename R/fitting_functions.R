@@ -342,7 +342,7 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'est <- BV4.1(Xt)
 #'est
 #'
-BV4.1 <- function(yt, type = NULL) {
+BV4.1_base <- function(yt, type = NULL) {
   
   ts_name <- deparse(substitute(yt))
   
