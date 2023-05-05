@@ -45,18 +45,86 @@ BV4.1 <- function(
     calendar = c("none", "weekdays", "workdaysMonFri", "workdaysMonSat"),
     shifts = NULL,
     user = NULL,
-    calendar_data = NULL
+    calendar_data = NULL,
+    tau = 3
 ) {
   
   ts_name <- deparse(substitute(yt))
   
+  freq <- frequency(yt)
+  
+  calendar <- match.arg(calendar)
+  
+  if (freq == 4) {
+    prev <- "quarterly"
+  } else if (freq == 12) {
+    prev <- "monthly"
+  }
+  
+  df <- data.frame(
+    Fx = residuals(BV4.1_base(yt, type = type))
+  )
+  
   if (outlier) {
-    outlier_comp <- outlier_detect.bv41(yt, tau = 3, M = NULL)
+    outl <- outlier_detect.bv41(yt, tau = tau, M = NULL)
+    outl_signs <- outl$sign
+    outl_signs <- outl_signs[outl_signs != 0]
+    outlier_comp1 <- outl$outlier_dummy
+    outlier_comp <- as.data.frame(lapply(
+      as.data.frame(outlier_comp1),
+      MARGIN = 2,
+      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
+      type = prev
+    ))
+    names(outlier_comp) <- paste0("outlier", seq_len(outlier_comp))
+    df <- cbind(df, outlier_comp)
   } else {
     outlier_comp <- NULL
   }
   
+  if (!is.null(shifts)) {
+    
+    shift_comp1 <- jump_dummy.bv41(yt, shifts)
+    shift_comp <- as.data.frame(lapply(
+      as.data.frame(shift_comp1),
+      MARGIN = 2,
+      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
+      type = prev
+    ))
+    names(shift_comp) <- paste0("shift", seq_len(outlier_comp))    
+    df <- cbind(df, shift_comp)
+  } else {
+    shift_comp <- NULL
+  }
   
+  if (!is.null(user)) {
+    
+    user_comp <- as.data.frame(lapply(
+      user,
+      MARGIN = 2,
+      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
+      type = prev
+    ))
+    names(user_comp) <- paste0("user", seq_len(outlier_comp))     
+    df <- cbind(df, user_comp)
+    
+  } else {
+    
+    user_comp <- NULL
+    
+  }
+  
+  if (outlier | !is.null(shifts) | !is.null(user) | calendar != "None") {
+     
+     ols <- stats::lm(Fx ~ . - 1, data = df)
+     outl_coef <- ols$coefficients[paste0("outlier", seq_len(outlier_comp))]
+     outl_effects <- c(t(outl_coef) %*% outlier_comp1)
+     check_signs <- all(sign(outl_effects) == sign(outl_signs)) #???
+     
+     
+     
+    
+  }
   
   yt <- stats::as.ts(yt)
   att <- attributes(yt)
