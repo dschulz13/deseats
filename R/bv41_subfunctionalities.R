@@ -39,6 +39,104 @@ jump_dummy.bv41 <- function(xt, jump_points) {
   
 }
 
+###############################
+
+create_outlier_comp <- function(yt, tau, outlier = FALSE) {
+  
+  if (outlier) {
+    outl <- outlier_detect.bv41(yt, tau = tau, M = NULL)
+    outl_signs <- outl$sign
+    outl_signs <- outl_signs[outl_signs != 0]
+    outlier_comp1 <- outl$outlier_dummy
+    outlier_comp <- as.data.frame(lapply(
+      as.data.frame(outlier_comp1),
+      MARGIN = 2,
+      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
+      type = prev
+    ))
+    names(outlier_comp) <- paste0("outlier", seq_len(outlier_comp))
+    df <- cbind(df, outlier_comp)
+  } else {
+    outlier_comp <- NULL
+  }  
+  
+  list(dummies = outlier_comp, signs = outl_signs)
+  
+}
+
+##############################
+
+create_shift_comp <- function(yt, shifts = NULL) {
+  
+  if (!is.null(shifts)) {
+    
+    shift_comp1 <- jump_dummy.bv41(yt, shifts)
+    shift_comp <- as.data.frame(lapply(
+      as.data.frame(shift_comp1),
+      MARGIN = 2,
+      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
+      type = prev
+    ))
+    names(shift_comp) <- paste0("shift", seq_len(outlier_comp))    
+    df <- cbind(df, shift_comp)
+  } else {
+    shift_comp <- NULL
+  }
+  
+  shift_comp
+  
+}
+
+##############################
+
+create_user_comp <- function(yt, shifts = NULL) {
+  
+  if (!is.null(user)) {
+    
+    user_comp <- as.data.frame(lapply(
+      user,
+      MARGIN = 2,
+      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
+      type = prev
+    ))
+    names(user_comp) <- paste0("user", seq_len(outlier_comp))     
+    df <- cbind(df, user_comp)
+    
+  } else {
+    
+    user_comp <- NULL
+    
+  }
+  
+}
+
+##############################
+
+bv41_ols <- function(df, outlier_comp) {
+  
+  ols <- stats::lm(Fx ~ . - 1, data = df)
+  outl_coef <- ols$coefficients[paste0("outlier", seq_len(outlier_comp))]
+  outl_effects <- c(t(outl_coef) %*% as.matrix(outlier_comp))
+  check_signs <- all(sign(outl_effects) == sign(outlier_signs)) #???
+  
+  if (!check_signs) {
+    
+    which_sign_diff <- which(sign(outl_effects) != sign(outlier_signs))
+    
+    df[paste0("outlier", which_sign_diff)] <- NULL
+    
+    outlier_comp[paste0("outlier", which_sign_diff)] <- NULL
+    
+    ols <- bv41_ols(df = df, outlier_comp = outlier_comp)
+    
+  }
+  
+  list(ols = ols, outlier_comp = outlier_comp) #???
+  
+}
+
+##############################
+
 BV4.1 <- function(
     yt, 
     outlier = FALSE, 
@@ -61,68 +159,59 @@ BV4.1 <- function(
     prev <- "monthly"
   }
   
-  df <- data.frame(
-    Fx = residuals(BV4.1_base(yt, type = type))
+  outlier_info <- create_outlier_comp(yt, tau = tau)
+  outlier_comp <- outlier_info$dummies
+  outlier_signs <- outlier_info$signs
+  
+  shift_comp <- create_shift_comp(yt, shifts = shifts)
+  
+  user_comp <- create_user_comp(user)
+  
+  df <- cbind(
+    Fx = residuals(BV4.1_base(yt, type = type)),
+    outlier = outlier_comp,
+    shift = shift_comp,
+    user = user_comp
   )
   
   if (outlier) {
-    outl <- outlier_detect.bv41(yt, tau = tau, M = NULL)
-    outl_signs <- outl$sign
-    outl_signs <- outl_signs[outl_signs != 0]
-    outlier_comp1 <- outl$outlier_dummy
-    outlier_comp <- as.data.frame(lapply(
-      as.data.frame(outlier_comp1),
-      MARGIN = 2,
-      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
-      type = prev
-    ))
-    names(outlier_comp) <- paste0("outlier", seq_len(outlier_comp))
-    df <- cbind(df, outlier_comp)
-  } else {
-    outlier_comp <- NULL
+    n_o <- length(outlier_comp[1, ])
+    F_outlier_comp <- outlier_comp
+    
+    for (i in 1:n_o) {
+      F_outlier_comp[, i] <- residuals(BV4.1_base(outlier_comp[, i], type = type))
+    }
+    
+    df <- cbind(df, residuals(BV4.1_base(F_outlier_comp, type = type)))
   }
-  
   if (!is.null(shifts)) {
     
-    shift_comp1 <- jump_dummy.bv41(yt, shifts)
-    shift_comp <- as.data.frame(lapply(
-      as.data.frame(shift_comp1),
-      MARGIN = 2,
-      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
-      type = prev
-    ))
-    names(shift_comp) <- paste0("shift", seq_len(outlier_comp))    
-    df <- cbind(df, shift_comp)
-  } else {
-    shift_comp <- NULL
+    n_s <- length(shift_comp[1, ])
+    
+    F_shift_comp <- shift_comp
+    
+    for (i in 1:n_s) {
+      F_shift_comp[, i] <- residuals(BV4.1_base(shift_comp[, i], type = type))
+    }    
+    
+    df <- cbind(df, F_shift_comp)
   }
-  
   if (!is.null(user)) {
     
-    user_comp <- as.data.frame(lapply(
-      user,
-      MARGIN = 2,
-      FUN = function(x, type){residuals(BV4.1_base(x, type = type))},
-      type = prev
-    ))
-    names(user_comp) <- paste0("user", seq_len(outlier_comp))     
-    df <- cbind(df, user_comp)
+    n_u <- length(user_comp[1, ])
     
-  } else {
+    F_user_comp <- user_comp
     
-    user_comp <- NULL
+    for (i in 1:n_u) {
+      F_user_comp[, i] <- residuals(BV4.1_base(user_comp[, i], type = type))
+    }      
     
+    df <- cbind(df, F_user_comp)
   }
   
   if (outlier | !is.null(shifts) | !is.null(user) | calendar != "None") {
      
-     ols <- stats::lm(Fx ~ . - 1, data = df)
-     outl_coef <- ols$coefficients[paste0("outlier", seq_len(outlier_comp))]
-     outl_effects <- c(t(outl_coef) %*% outlier_comp1)
-     check_signs <- all(sign(outl_effects) == sign(outl_signs)) #???
-     
-     
-     
+    ols <- bv41_ols(df = df, outlier_comp = outlier_comp)
     
   }
   
