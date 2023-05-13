@@ -491,23 +491,23 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     
     if (p == 1) {
       if (mu == 0) {
-        adjFactor = 0.8998;
+        adjFactor = 1.3195;
       } else if (mu == 1) {
-        adjFactor = 1.3419;
+        adjFactor = 1.4310;
       } else if (mu == 2) {
         adjFactor = 1.4541;
       } else if (mu == 3) {
-        adjFactor = 1.5140;
+        adjFactor = 1.4640;
       }
     } else if (p == 3) {
       if (mu == 0) {
-        adjFactor = 1.0705;
+        adjFactor = 1.2599;
       } else if (mu == 1) {
-        adjFactor = 1.2703;
+        adjFactor = 1.3077;
       } else if (mu == 2) {
         adjFactor = 1.3188;
       } else if (mu == 3) {
-        adjFactor = 1.3432;
+        adjFactor = 1.3239;
       }
     }    
     
@@ -515,23 +515,23 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     
     if (p == 1) {
       if (mu == 0) {
-        adjFactor = 0.8155;
+        adjFactor = 1.3195;
       } else if (mu == 1) {
-        adjFactor = 1.3267;
+        adjFactor = 1.4310;
       } else if (mu == 2) {
         adjFactor = 1.4541;
       } else if (mu == 3) {
-        adjFactor = 1.5275;
+        adjFactor = 1.4640;
       }
     } else if (p == 3) {
       if (mu == 0) {
-        adjFactor = 0.9936;
+        adjFactor = 1.2599;
       } else if (mu == 1) {
-        adjFactor = 1.2637;
+        adjFactor = 1.3140;
       } else if (mu == 2) {
         adjFactor = 1.3257;
       } else if (mu == 3) {
-        adjFactor = 1.3596;
+        adjFactor = 1.3307;
       }
     }    
     
