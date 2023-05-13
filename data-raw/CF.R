@@ -101,7 +101,7 @@ names(CFs) <- c("4", "12")
 CFs$`4` <- mat1
 CFs$`12` <- mat1
 
-s_all <- c(4, 12)
+s_all <- 1#c(4, 12)
 mu_all <- 0:3
 
 p_all <- c(1, 3)
