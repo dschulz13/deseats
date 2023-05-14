@@ -486,56 +486,56 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   double I2;
   
   double adjFactor = 1.0;
-// 
-//   if (s == 4) {
-// 
-//     if (p == 1) {
-//       if (mu == 0) {
-//         adjFactor = 1.3195;
-//       } else if (mu == 1) {
-//         adjFactor = 1.4310;
-//       } else if (mu == 2) {
-//         adjFactor = 1.4541;
-//       } else if (mu == 3) {
-//         adjFactor = 1.4640;
-//       }
-//     } else if (p == 3) {
-//       if (mu == 0) {
-//         adjFactor = 1.2599;
-//       } else if (mu == 1) {
-//         adjFactor = 1.3077;
-//       } else if (mu == 2) {
-//         adjFactor = 1.3188;
-//       } else if (mu == 3) {
-//         adjFactor = 1.3239;
-//       }
-//     }
-// 
-//   } else if (s == 12) {
-// 
-//     if (p == 1) {
-//       if (mu == 0) {
-//         adjFactor = 1.3195;
-//       } else if (mu == 1) {
-//         adjFactor = 1.4310;
-//       } else if (mu == 2) {
-//         adjFactor = 1.4541;
-//       } else if (mu == 3) {
-//         adjFactor = 1.4640;
-//       }
-//     } else if (p == 3) {
-//       if (mu == 0) {
-//         adjFactor = 1.2599;
-//       } else if (mu == 1) {
-//         adjFactor = 1.3140;
-//       } else if (mu == 2) {
-//         adjFactor = 1.3257;
-//       } else if (mu == 3) {
-//         adjFactor = 1.3307;
-//       }
-//     }
-// 
-//   }
+
+if (s == 4) {
+
+  if (p == 1) {
+    if (mu == 0) {
+      adjFactor = 1.3195;
+    } else if (mu == 1) {
+      adjFactor = 1.4310;
+    } else if (mu == 2) {
+      adjFactor = 1.4541;
+    } else if (mu == 3) {
+      adjFactor = 1.4640;
+    }
+  } else if (p == 3) {
+    if (mu == 0) {
+      adjFactor = 1.2599;
+    } else if (mu == 1) {
+      adjFactor = 1.3077;
+    } else if (mu == 2) {
+      adjFactor = 1.3188;
+    } else if (mu == 3) {
+      adjFactor = 1.3239;
+    }
+  }
+
+} else if (s == 12) {
+
+  if (p == 1) {
+    if (mu == 0) {
+      adjFactor = 1.3195;
+    } else if (mu == 1) {
+      adjFactor = 1.4310;
+    } else if (mu == 2) {
+      adjFactor = 1.4541;
+    } else if (mu == 3) {
+      adjFactor = 1.4640;
+    }
+  } else if (p == 3) {
+    if (mu == 0) {
+      adjFactor = 1.2599;
+    } else if (mu == 1) {
+      adjFactor = 1.3140;
+    } else if (mu == 2) {
+      adjFactor = 1.3257;
+    } else if (mu == 3) {
+      adjFactor = 1.3307;
+    }
+  }
+
+}
   
   double bAdj;
   arma::vec resAdj;
