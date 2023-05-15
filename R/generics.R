@@ -23,6 +23,11 @@ methods::setGeneric("boundary_method", function(x) standardGeneric("boundary_met
 #'@export
 methods::setGeneric("boundary_method<-", function(x, value) standardGeneric("boundary_method<-"))
 
+#'@export
+methods::setGeneric("correction_factor", function(x) standardGeneric("correction_factor"))
+#'@export
+methods::setGeneric("correction_factor<-", function(x, value) standardGeneric("correction_factor<-"))
+
 #------------------------------------------#
 
 #'@export

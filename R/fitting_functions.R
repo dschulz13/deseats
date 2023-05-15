@@ -156,15 +156,27 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
   mu <- mu_select(smoothing_options@kernel_fun)  
   p <- smoothing_options@order_poly
   bwidth <- smoothing_options@bwidth
+  CF <- smoothing_options@correction_factor
+  if (CF) {
+    CF01 <- 1
+  } else {
+    CF01 <- 0
+  }
   if (is.na(bwidth)) {
-    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start)
+    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01)
   }
 
   est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bf)
   Trend <- est[[2]]
   Season <- est[[3]]
   Residuals <- est[[4]]
-  sum_autocov <- cf0Cpp(Residuals)
+  if (CF) {
+    adjfactor <- CF_table$CF[CF_table$s == s & CF_table$p == p & CF_table$mu == mu]
+    ResidsAdj <- residdeseatsCpp(y, p, s, mu, bwidth * adjfactor, bf)
+    sum_autocov <- cf0Cpp(ResidsAdj)
+  } else {
+    sum_autocov <- cf0Cpp(Residuals)
+  }
   hfull <- length(est[[5]][, 1])
   weights <- array(c(est[[5]], est[[6]], est[[7]]), dim = c(hfull, hfull, 3))
   dimnames(weights)[[3]] <- c("Trend", "Season", "Combined")

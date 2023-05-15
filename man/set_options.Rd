@@ -9,7 +9,8 @@ set_options(
   season = NA_real_,
   kernel_fun = "epanechnikov",
   bwidth = NA_real_,
-  boundary_method = "extend"
+  boundary_method = "extend",
+  correction_factor = TRUE
 )
 }
 \arguments{
@@ -41,6 +42,11 @@ to use at boundary points; for \code{"extend"}, the default, the smoothing
 window around boundary points will be extended towards the center of the data; 
 for \code{"shorten"}, the window width will keep decreasing at boundary points 
 when approaching the very first and the very last observation.}
+
+\item{correction_factor}{A logical vector of length one; theoretically, a 
+larger bandwidth to estimate the sum of autocovariances from residuals of 
+pilot trend and seasonality estimates is advisable than for estimating trend
+and seasonality; for \code{correction_factor = TRUE}, this is implemented.}
 }
 \value{
 The function returns an S4 object with the following elements (access via 
@@ -56,6 +62,8 @@ the description of that input argument.}
 \item{bwidth}{identical to the input argument with that name; please see 
 the description of that input argument.}
 \item{boundary_method}{identical to the input argument with that name; please 
+see the description of that input argument.}
+\item{correction_factor}{identical to the input argument with that name; please 
 see the description of that input argument.}
 }
 }

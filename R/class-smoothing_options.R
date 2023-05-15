@@ -6,14 +6,16 @@ setClass("smoothing_options",
     season = "numeric",
     kernel_fun = "character",
     bwidth = "numeric",
-    boundary_method = "character"
+    boundary_method = "character",
+    correction_factor = "logical"
   ),
   prototype = list(
     order_poly = 1,
     season = NA_real_,
     kernel_fun = "epanechnikov",
     bwidth = NA_real_,
-    boundary_method = "extend"
+    boundary_method = "extend",
+    correction_factor = TRUE
   )
 )
 
@@ -49,6 +51,10 @@ setClass("smoothing_options",
 #'window around boundary points will be extended towards the center of the data; 
 #'for \code{"shorten"}, the window width will keep decreasing at boundary points 
 #'when approaching the very first and the very last observation.
+#'@param correction_factor A logical vector of length one; theoretically, a 
+#'larger bandwidth to estimate the sum of autocovariances from residuals of 
+#'pilot trend and seasonality estimates is advisable than for estimating trend
+#'and seasonality; for \code{correction_factor = TRUE}, this is implemented.
 #'
 #'@export
 #' 
@@ -72,6 +78,8 @@ setClass("smoothing_options",
 #'the description of that input argument.}
 #'\item{boundary_method}{identical to the input argument with that name; please 
 #'see the description of that input argument.}
+#'\item{correction_factor}{identical to the input argument with that name; please 
+#'see the description of that input argument.}
 #'}
 #' 
 #'@author
@@ -86,14 +94,16 @@ set_options <- function(
     season = NA_real_,
     kernel_fun = "epanechnikov",
     bwidth = NA_real_,
-    boundary_method = "extend") {
+    boundary_method = "extend",
+    correction_factor = TRUE) {
   
       methods::new("smoothing_options",
         order_poly = order_poly,
         season = season,
         kernel_fun = kernel_fun,
         bwidth = bwidth,
-        boundary_method = boundary_method
+        boundary_method = boundary_method,
+        correction_factor = correction_factor
       )
   
 }
@@ -141,6 +151,14 @@ methods::setMethod("boundary_method", "smoothing_options", function(x) x@boundar
 #'@export
 methods::setMethod("boundary_method<-", "smoothing_options", function(x, value) {
   x@boundary_method <- value
+  x
+})
+
+#'@export
+methods::setMethod("correction_factor", "smoothing_options", function(x) x@correction_factor)
+#'@export
+methods::setMethod("correction_factor<-", "smoothing_options", function(x, value) {
+  x@correction_factor <- value
   x
 })
 
