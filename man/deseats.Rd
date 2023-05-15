@@ -5,7 +5,12 @@
 \title{Locally Weighted Regression for Trend and Seasonality in Equidistant Time 
 Series under Short Memory}
 \usage{
-deseats(y, smoothing_options = set_options(), bwidth_start = 0.1)
+deseats(
+  y,
+  smoothing_options = set_options(),
+  bwidth_start = 0.1,
+  correction_factor = TRUE
+)
 }
 \arguments{
 \item{y}{a numerical vector or a time series object of class \code{ts} or 
@@ -23,6 +28,11 @@ polynomial and the bandwidth for smoothing among others.}
 as the bandwidth will then
 be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
 the algorithm.}
+
+\item{correction_factor}{A logical vector of length one; theoretically, a 
+larger bandwidth to estimate the sum of autocovariances from residuals of 
+pilot trend and seasonality estimates is advisable than for estimating trend
+and seasonality; for \code{correction_factor = TRUE}, this is implemented.}
 }
 \value{
 The function returns and S4 object with the following elements (access them 

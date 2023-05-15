@@ -19,6 +19,10 @@
 #'as the bandwidth will then
 #'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
 #'the algorithm.
+#'@param correction_factor A logical vector of length one; theoretically, a 
+#'larger bandwidth to estimate the sum of autocovariances from residuals of 
+#'pilot trend and seasonality estimates is advisable than for estimating trend
+#'and seasonality; for \code{correction_factor = TRUE}, this is implemented.
 #'
 #'@export
 #'
@@ -127,7 +131,7 @@
 #'plot(est, which = 1)
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE) {
 
   ts_name <- deparse(substitute(y))
   
@@ -156,7 +160,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1) {
   mu <- mu_select(smoothing_options@kernel_fun)  
   p <- smoothing_options@order_poly
   bwidth <- smoothing_options@bwidth
-  CF <- smoothing_options@correction_factor
+  CF <- correction_factor
   if (CF) {
     CF01 <- 1
   } else {
