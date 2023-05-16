@@ -52,38 +52,38 @@ Kp_u <- function(u, p, mu, Np) {
   
 }
 
-RK_f <- function(u, p, mu, Mp, Np) {
-  (Kp_u(u = u, p = p, mu = mu, Np = Np))^2
-}
-
 m <- 1000000
 u_vals <- seq(-m, m) / (m + 0.5)
-RKp_vals <- u_vals
+Kp_vals <- u_vals
 
 l <- 2 * m + 1
 
 for (i in 1:l) {
-  RKp_vals[[i]] <- RK_f(u_vals[[i]], p = p, mu = mu, Np = Np)
+  Kp_vals[[i]] <- Kp_u(u_vals[[i]], p = p, mu = mu, Np = Np)
 }
 
-RKp <- sum(RKp_vals) / m
+Kp_vals <- Kp_vals / sum(Kp_vals)
+RKp <- sum(Kp_vals^2) / m
 
-RK <- sum(Ku(u_vals, mu = mu)^2) / m
+Ku_v <- Ku(u_vals, mu = mu)
+Ku_v <- Ku_v / sum(Ku_v)
+RK <- sum(Ku_v^2) / m
 
-K0 <- Kp_u(u = 0, p = p, mu = mu, Np = Np)
+K0 <- Kp_vals[[m + 1]]
+Ks0 <- Ku_v[[m + 1]]
 
 C <- RKp + (s - 1) * RK
 
 
 out <- list(
-  CF = round((2 * k * (2 * (K0 + (s - 1) * Ku(0, mu)) / C - 1))^(1 / (2 * k + 1)), 4),
+  CF = round((2 * k * (2 * (K0 + (s - 1) * Ks0) / C - 1))^(1 / (2 * k + 1)), 4),
   K_p_mu_0 = round(K0, 4),
   K_0 = round(Ku(0, mu), 4),
   RKp = round(RKp, 4),
   RK = round(RK, 4),
   C1 = round(K0 + (s - 1) * Ku(0, mu), 4),
   C2 = round(C, 4),
-  C3 = round((2 * (K0 + (s - 1) * Ku(0, mu)) / C - 1), 4)
+  C3 = round((2 * (K0 + (s - 1) * Ks0) / C - 1), 4)
 )
 
 out
@@ -101,7 +101,7 @@ names(CFs) <- c("4", "12")
 CFs$`4` <- mat1
 CFs$`12` <- mat1
 
-s_all <- 1#c(4, 12)
+s_all <- c(4, 12)
 mu_all <- 0:3
 
 p_all <- c(1, 3)
