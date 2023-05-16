@@ -443,6 +443,16 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   
   const int m = 1000000;
   const arma::vec u = seqCpp(-m, m) / (m + 0.5);
+  // double c = 0.0;
+  // if (mu == 0) {
+  //   c = 0.5;
+  // } else if (mu == 1) {
+  //   c = 0.75;
+  // } else if (mu == 2) {
+  //   c = 15.0 / 16.0;
+  // } else if (mu == 3) {
+  //   c = 35.0 / 32.0;
+  // }
   arma::vec wk = arma::pow((1 - arma::pow(u, 2.0)), mu);
   wk = wk / arma::accu(wk);
   const double R2 = arma::accu(arma::pow(wk, 2.0)) / m;  
