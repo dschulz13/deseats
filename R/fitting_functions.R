@@ -1,3 +1,69 @@
+#'Optimal Bandwidth Estimation for Locally Weighted Regression in Equidistant 
+#'Time Series under Short Memory
+#'
+#'@param y a numerical vector or a time series object of class \code{ts} or 
+#'that can be transformed with \code{\link[stats]{as.ts}} to an object of class 
+#'\code{ts}; for these observations, trend and seasonality will be obtained.
+#'@param smoothing_options an S4 object of class \code{smoothing_options}, which 
+#'is returned by the function \code{\link{set_options}}; it 
+#'includes details about the
+#'options to consider in the locally weighted regression such as the order of
+#'polynomial and the bandwidth for smoothing among others.
+#'@param bwidth_start a single numeric value that is only relevant if the slot
+#'\code{bwidth} in \code{smoothing_options} is set to \code{NA}; 
+#'as the bandwidth will then
+#'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
+#'the algorithm.
+#'@param correction_factor A logical vector of length one; theoretically, a 
+#'larger bandwidth to estimate the sum of autocovariances from residuals of 
+#'pilot trend and seasonality estimates is advisable than for estimating trend
+#'and seasonality; for \code{correction_factor = TRUE}, this is implemented.
+#'@param drop a numeric vector of length one that indicates the proportion of 
+#'the observations to not include at each boundary in the bandwidth estimation 
+#'process, if a bandwidth is selected automatically; the default is 
+#'\code{drop = 0.1}.
+#'
+#'@export
+#'
+#'@examples
+#'Xt <- log(EXPENDITURES)
+#'select_bwidth(Xt)
+#'
+
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, drop = 0.1) {
+  
+  if (is.na(smoothing_options@season)) {
+    if (inherits(y, c("ts", "zoo", "xts"))) {
+      s <- stats::frequency(y)
+      if (s == 1) {
+        stop('A seasonal period is required in the element "@season" of ', 
+             'the argument "smoothing_options".')
+      }
+    } else {
+      s <- 1
+    }
+  } else {
+    s <- smoothing_options@season
+  }
+  
+  # Number of observations
+  n <- length(y)           
+
+  # Select numeric values from character input using helper functions
+  bf <- bf_select(smoothing_options@boundary_method)
+  mu <- mu_select(smoothing_options@kernel_fun)  
+  p <- smoothing_options@order_poly
+  CF <- correction_factor
+  if (CF) {
+    CF01 <- 1
+  } else {
+    CF01 <- 0
+  }
+  
+  algorithmCpp(y, p, s, mu, bwidth_start, CF01, drop)
+  
+}
+
 #' Locally Weighted Regression for Trend and Seasonality in Equidistant Time 
 #' Series under Short Memory
 #' 
@@ -171,7 +237,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
     CF01 <- 0
   }
   if (is.na(bwidth)) {
-    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, cb = drop)
+    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, drop)
   }
 
   est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bf)
