@@ -73,7 +73,7 @@ derivdeseatsCpp <- function(y, p, s, mu, b, bb, v) {
     .Call('_deseats_derivdeseatsCpp', PACKAGE = 'deseats', y, p, s, mu, b, bb, v)
 }
 
-algorithmCpp <- function(yt, p, s, mu, bStart, CF, cb) {
-    .Call('_deseats_algorithmCpp', PACKAGE = 'deseats', yt, p, s, mu, bStart, CF, cb)
+algorithmCpp <- function(yt, p, s, mu, bStart, CF, errors, cb) {
+    .Call('_deseats_algorithmCpp', PACKAGE = 'deseats', yt, p, s, mu, bStart, CF, errors, cb)
 }
 

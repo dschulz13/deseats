@@ -30,7 +30,7 @@
 #'select_bwidth(Xt)
 #'
 
-select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, drop = 0.1) {
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, errors = c("autocor", "iid"), drop = 0.1) {
   
   if (is.na(smoothing_options@season)) {
     if (inherits(y, c("ts", "zoo", "xts"))) {
@@ -53,6 +53,12 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
   bf <- bf_select(smoothing_options@boundary_method)
   mu <- mu_select(smoothing_options@kernel_fun)  
   p <- smoothing_options@order_poly
+  err_type <- match.arg(errors)
+  err <- switch(
+    err_type,
+    "autocor" = 1,
+    "iid" = 0
+  )
   CF <- correction_factor
   if (CF) {
     CF01 <- 1
@@ -60,7 +66,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
     CF01 <- 0
   }
   
-  algorithmCpp(y, p, s, mu, bwidth_start, CF01, drop)
+  algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop)
   
 }
 
@@ -201,7 +207,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'plot(est, which = 1)
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, drop = 0.1) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, errors = c("autocor", "iid"), drop = 0.1) {
 
   ts_name <- deparse(substitute(y))
   
@@ -230,6 +236,12 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
   mu <- mu_select(smoothing_options@kernel_fun)  
   p <- smoothing_options@order_poly
   bwidth <- smoothing_options@bwidth
+  err_type <- match.arg(errors)
+  err <- switch(
+    err_type,
+    "autocor" = 1,
+    "iid" = 0
+  )  
   CF <- correction_factor
   if (CF) {
     CF01 <- 1
@@ -237,7 +249,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
     CF01 <- 0
   }
   if (is.na(bwidth)) {
-    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, drop)
+    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop)
   }
 
   est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bf)
@@ -247,9 +259,18 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
   if (CF) {
     adjfactor <- CF_table$CF[CF_table$s == s & CF_table$p == p & CF_table$mu == mu]
     ResidsAdj <- residdeseatsCpp(y, p, s, mu, bwidth * adjfactor, bf)
-    sum_autocov <- cf0Cpp(ResidsAdj)
+    if (err == 1) {
+      sum_autocov <- cf0Cpp(ResidsAdj)
+    } else if (err == 0) {
+      sum_autocov <- mean(ResidsAdj^2)
+    }
   } else {
-    sum_autocov <- cf0Cpp(Residuals)
+    if (err == 1) {
+      sum_autocov <- cf0Cpp(Residuals)      
+    } else if (err == 0) {
+      sum_autocov <- mean(Residuals^2) 
+    }
+
   }
   hfull <- length(est[[5]][, 1])
   weights <- array(c(est[[5]], est[[6]], est[[7]]), dim = c(hfull, hfull, 3))

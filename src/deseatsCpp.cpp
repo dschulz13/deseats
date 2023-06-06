@@ -422,7 +422,7 @@ arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
 }
 
 // [[Rcpp::export]]
-double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const double cb) {
+double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb) {
   
   double bopt = bStart;
   double boptOld = -100;
@@ -543,6 +543,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   arma::vec resAdj;
   double cf0;
   double c3;
+  arma::vec resAdj2;
   
   while (it < itMax + 1 && (std::abs(bopt - boptOld) / bopt >= 1.0 / n || std::abs(bopt - boptOld2) / bopt >= 1.0 / n)) {
     
@@ -558,7 +559,16 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     
     resAdj = residdeseatsCpp(yt, p, s, mu, bAdj, bb);
       
-    cf0 = cf0Cpp(resAdj); 
+    if (errors == 1) {  
+      
+      cf0 = cf0Cpp(resAdj);
+      
+    } else if (errors == 0) {
+      
+      resAdj2 = arma::pow(resAdj, 2.0);
+      cf0 = arma::mean(resAdj2);
+      
+    }
     
     c3 = cf0 / I2;
     

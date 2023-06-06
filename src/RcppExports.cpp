@@ -261,8 +261,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // algorithmCpp
-double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const double cb);
-RcppExport SEXP _deseats_algorithmCpp(SEXP ytSEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bStartSEXP, SEXP CFSEXP, SEXP cbSEXP) {
+double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb);
+RcppExport SEXP _deseats_algorithmCpp(SEXP ytSEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bStartSEXP, SEXP CFSEXP, SEXP errorsSEXP, SEXP cbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -272,8 +272,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
     Rcpp::traits::input_parameter< const double >::type bStart(bStartSEXP);
     Rcpp::traits::input_parameter< const int >::type CF(CFSEXP);
+    Rcpp::traits::input_parameter< const int >::type errors(errorsSEXP);
     Rcpp::traits::input_parameter< const double >::type cb(cbSEXP);
-    rcpp_result_gen = Rcpp::wrap(algorithmCpp(yt, p, s, mu, bStart, CF, cb));
+    rcpp_result_gen = Rcpp::wrap(algorithmCpp(yt, p, s, mu, bStart, CF, errors, cb));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -297,7 +298,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_deseats_fitteddeseatsCpp", (DL_FUNC) &_deseats_fitteddeseatsCpp, 6},
     {"_deseats_residdeseatsCpp", (DL_FUNC) &_deseats_residdeseatsCpp, 6},
     {"_deseats_derivdeseatsCpp", (DL_FUNC) &_deseats_derivdeseatsCpp, 7},
-    {"_deseats_algorithmCpp", (DL_FUNC) &_deseats_algorithmCpp, 7},
+    {"_deseats_algorithmCpp", (DL_FUNC) &_deseats_algorithmCpp, 8},
     {NULL, NULL, 0}
 };
 
