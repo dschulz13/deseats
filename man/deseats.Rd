@@ -10,6 +10,7 @@ deseats(
   smoothing_options = set_options(),
   bwidth_start = 0.1,
   correction_factor = TRUE,
+  errors = c("autocor", "iid"),
   drop = 0.1
 )
 }
@@ -35,6 +36,10 @@ larger bandwidth to estimate the sum of autocovariances from residuals of
 pilot trend and seasonality estimates is advisable than for estimating trend
 and seasonality; for \code{correction_factor = TRUE}, this is implemented.}
 
+\item{errors}{a character vector of length one; indicates whether to consider
+autocorrelated errors (\code{"autocor"}) or independent but identically 
+distributed errors (\code{"iid"}); the default is \code{errors = "autocor"}.}
+
 \item{drop}{a numeric vector of length one that indicates the proportion of 
 the observations to not include at each boundary in the bandwidth estimation 
 process, if a bandwidth is selected automatically; the default is 
@@ -54,24 +59,24 @@ for identifying the asymptotically globally optimal bandwidth for smoothing.
 The trend is estimated based on the additive
 nonparametric regression model for an equidistant time series
 \deqn{y_t = m(x_t) + s(x_t) + \epsilon_t,}
-where \eqn{y_t} is the observed time series, \eqn{x_t} is the rescaled time
+where \eqn{y_t} is the observed time series with \eqn{t=1,...\n}, \eqn{x_t} is the rescaled time
 on the interval \eqn{[0, 1]}, \eqn{m(x_t)} is a smooth and deterministic
 trend function, \eqn{s(x_t)} is a (slowly changing) seasonal component with 
-exact seasonal period \eqn{p_s} and \eqn{\epsilon_t} are stationary errors 
+seasonal period \eqn{p_s} and \eqn{\epsilon_t} are stationary errors 
 with \eqn{E(\epsilon_t) = 0} and short-range dependence (see for example also 
-Feng, 2013, for a similar model, where the stochastic term is however i.i.d.). 
-With this function \eqn{m(x_t)} and \eqn{s(x_t)} can be 
-estimated without a parametric
-model assumption for the error series. Thus, after estimating and removing
-the trend and the seasonality, any suitable parametric model, e.g. an 
-ARMA(\eqn{p,q}) model, can be fitted to the residuals 
-(see \code{\link[stats]{arima}}).
+Feng, 2013, for a similar model, where the stochastic term is however i.i.d.).
+
+It is assumed that \eqn{m} and \eqn{s} can be approximated by a polynomial of
+small order and by a trigonometric polynomial, respectively. Through locally
+weighted regression, \eqn{m} and \eqn{s} can therefore be estimated given 
+a suitable bandwidth.
 
 The iterative-plug-in (IPI) algorithm, which numerically minimizes the
-Asymptotic Mean Squared Error (AMISE), was proposed by Feng and Schulz (2022) 
+Asymptotic Mean Squared Error (AMISE) to select a bandwidth, was proposed 
+by Feng and Schulz (2023) 
 and is 
-an extension of Feng (2013) to the short-memory case or of Feng, Gries and 
-Fritz (2020) to a model with a seasonal component.
+an extension of Feng (2013) to the case with autocorrelation or of 
+Feng, Gries and Fritz (2020) to a model with a seasonal component.
 
 Define \eqn{I[m^{(k)}] = \int_{c_b}^{d_b} [m^{(k)}(x)]^2 dx}{I[m^(k)] =
 int_[c_b]^[d_b] \{m^(k)\}^2 dx}, \eqn{\beta_{(k)} = \int_{-1}^{1} u^k
@@ -118,6 +123,13 @@ When applying the function, an optimal bandwidth is obtained based on the
 IPI algorithm proposed by Feng, Gries and Fritz (2020). In a second step,
 the nonparametric trend of the series and the seasonality are calculated with 
 respect to the chosen bandwidth.
+
+Note that with this function \eqn{m(x_t)} and \eqn{s(x_t)} can be 
+estimated without a parametric
+model assumption for the error series. Thus, after estimating and removing
+the trend and the seasonality, any suitable parametric model, e.g. an 
+ARMA(\eqn{p,q}) model for \code{errors = "autocor"}, can be fitted to the 
+residuals (see \code{\link[stats]{arima}}).
 
 The default print method for this function delivers key numbers such as the 
 bandwidth considered for smoothing.
