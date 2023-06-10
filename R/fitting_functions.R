@@ -74,7 +74,17 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
     CF01 <- 0
   }
   
-  algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop)
+  tryCatch({
+    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop)
+  }, error = function(e1) {
+    stop(paste0(
+      "Convergence of the bandwidth selection algorithm failed. Please try ",
+      "other settings or select a bandwidth manually."
+    ), call. = FALSE)
+  }
+  ) 
+  
+  out
   
 }
 
@@ -267,7 +277,17 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
     CF01 <- 0
   }
   if (is.na(bwidth)) {
-    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop)
+    
+    
+    tryCatch({
+      bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop)
+    }, error = function(e1) {
+      stop(paste0(
+        "Convergence of the bandwidth selection algorithm failed. Please try ",
+        "other settings or select a bandwidth manually."
+      ), call. = FALSE)
+    }
+    )    
   }
 
   est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bf)
@@ -323,7 +343,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
 #' 
 #' Fit a seasonal semiparamteric autoregressive moving-average 
 #' (S-Semi-ARMA) model to a univariate time series. The estimation is 
-#' in two steps: firstly, the is detrended and seasonally adjusted using the
+#' in two steps: firstly, the series is detrended and seasonally adjusted using the
 #' function \code{\link{deseats}}. Then an ARMA model is fitted to the 
 #' residuals using \code{\link[stats]{arima}}. 
 #'
@@ -345,12 +365,31 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
 #'as the bandwidth will then
 #'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
 #'the algorithm.
+#'@param correction_factor A logical vector of length one; theoretically, a 
+#'larger bandwidth to estimate the sum of autocovariances from residuals of 
+#'pilot trend and seasonality estimates is advisable than for estimating trend
+#'and seasonality; for \code{correction_factor = TRUE}, this is implemented.
+#'@param drop a numeric vector of length one that indicates the proportion of 
+#'the observations to not include at each boundary in the bandwidth estimation 
+#'process, if a bandwidth is selected automatically; the default is 
+#'\code{drop = 0.1}.
 #'
 #'@export
 #'
 #'@details
 #'
-#'Work in progress. Details will be added in the release version of the package.
+#'For information on the nonparametric regression step, see 
+#'\code{\link[deseats]{deseats}}. After the trend and the seasonality have 
+#'been removed from the data, an autoregressive moving-average (ARMA) model
+#'is fitted to the residuals either with orders selected by the Bayesian
+#'information criterion (BIC) or with manually selected orders. The ARMA
+#'model is fitted using \code{\link[stats]{arima}}.
+#'
+#'All function arguments except for \code{arma_options} are identical to 
+#'those in \code{\link[deseats]{deseats}}. If all elements in 
+#'\code{arma_options} are set to \code{NULL}, the ARMA model orders are 
+#'selected from \eqn{p, q = 0, 1, 2, 3} according to the BIC.
+#'
 #'
 #'@return
 #'
@@ -375,7 +414,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
 #'
 s_semiarma <- function(yt, smoothing_options = set_options(),
                        arma_options = list(ar_order = NULL, ma_order = NULL),
-                       bwidth_start = 0.1) {
+                       bwidth_start = 0.1, correction_factor = TRUE, drop = 0.1) {
   
   ts_name <- deparse(substitute(yt))
   

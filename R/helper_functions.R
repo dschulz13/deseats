@@ -135,8 +135,8 @@ select_arma_orders <- function(xt, ar, ma) {
   
   if (is.null(ar) && is.null(ma)) {
     n <- length(xt)
-    bic <- matrix(NA, nrow = 6, ncol = 6)
-    P <- Q <- 0:5
+    bic <- matrix(NA, nrow = 4, ncol = 4)
+    P <- Q <- 0:3
     for (p0 in P) {
       for (q0 in Q) {
         arma <- tryCatch({

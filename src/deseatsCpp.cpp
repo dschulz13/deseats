@@ -541,7 +541,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   
   double bAdj;
   arma::vec resAdj;
-  double cf0;
+  double cf0 = 0;
   double c3;
   arma::vec resAdj2;
   
