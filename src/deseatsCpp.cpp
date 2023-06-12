@@ -557,9 +557,28 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     
     resAdj = residdeseatsCpp(yt, p, s, mu, bAdj, bb);
       
-    if (errors == 1) {  
+    if (errors == 1) {
       
-      cf0 = cf0Cpp(resAdj);
+      if (errm == 1) {
+      
+        cf0 = cf0Cpp(resAdj);
+        
+      } else if (errm == 0) {
+        
+        const int pmax = 3;
+        const int qmax = 3;
+        
+        for (int p0 = 0; p0 < pmax + 1; ++p0) {
+          
+          for (int q0 = 0; q0 < qmax + 1; ++q0) {
+            
+            
+            
+          }
+          
+        }
+        
+      }
       
     } else if (errors == 0) {
       
