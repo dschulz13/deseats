@@ -422,7 +422,7 @@ arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
 }
 
 // [[Rcpp::export]]
-double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb) {
+double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm) {
   
   double bopt = bStart;
   double boptOld = -100;
@@ -430,13 +430,11 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   const int n = yt.size();
   const int k = p + 1;
   
-  double bmax = 0.49;        // The maximum bandwidth 
+  double bmax = 0.45;       // The maximum bandwidth 
   double bmin = 0.01;       // The minimum bandwidth 
 
   const int v = k;
   const int pv = k + 1;
-  
-  const int bb = 1;              // Default
 
   const int n1 = std::trunc(n * cb);  
   

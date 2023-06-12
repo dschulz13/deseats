@@ -18,13 +18,18 @@
 #'larger bandwidth to estimate the sum of autocovariances from residuals of 
 #'pilot trend and seasonality estimates is advisable than for estimating trend
 #'and seasonality; for \code{correction_factor = TRUE}, this is implemented.
-#'@param errors a character vector of length one; indicates whether to consider
-#'autocorrelated errors (\code{"autocor"}) or independent but identically 
-#'distributed errors (\code{"iid"}); the default is \code{errors = "autocor"}.
+#'@param autocor a logical vector of length one; indicates whether to consider
+#'autocorrelated errors (\code{TRUE}) or independent but identically 
+#'distributed errors (\code{FALSE}); the default is \code{autocor = TRUE}.
 #'@param drop a numeric vector of length one that indicates the proportion of 
 #'the observations to not include at each boundary in the bandwidth estimation 
 #'process, if a bandwidth is selected automatically; the default is 
 #'\code{drop = 0.1}.
+#'@param error_model a character vector of length one that indicates whether
+#'for \code{autocor = TRUE} the sum of autocovariances of the errors is 
+#'obtained purely nonparametrically (\code{"free"}) or whether an
+#'autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
+#'default is \code{error_model = "free"}.
 #'
 #'@export
 #'
@@ -38,7 +43,7 @@
 #'select_bwidth(Xt)
 #'
 
-select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, errors = c("autocor", "iid"), drop = 0.1) {
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
   
   if (is.na(smoothing_options@season)) {
     if (inherits(y, c("ts", "zoo", "xts"))) {
@@ -61,12 +66,16 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
   bf <- bf_select(smoothing_options@boundary_method)
   mu <- mu_select(smoothing_options@kernel_fun)  
   p <- smoothing_options@order_poly
-  err_type <- match.arg(errors)
-  err <- switch(
-    err_type,
-    "autocor" = 1,
-    "iid" = 0
-  )
+  
+  bound_method <- smoothing_options@boundary_method
+  bb <- switch(
+    bound_method,
+    "extend" = 1,
+    "shorten" = 0
+  )  
+  
+  err <- as.numeric(autocor)
+  
   CF <- correction_factor
   if (CF) {
     CF01 <- 1
@@ -74,8 +83,16 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
     CF01 <- 0
   }
   
+  error_model <- match.arg(error_model)
+  err_m <- switch(
+    error_model,
+    "free" = 1,
+    "ARMA" = 0
+  )
+  
+  
   tryCatch({
-    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop)
+    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m)
   }, error = function(e1) {
     stop(paste0(
       "Convergence of the bandwidth selection algorithm failed. Please try ",
@@ -113,13 +130,18 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'larger bandwidth to estimate the sum of autocovariances from residuals of 
 #'pilot trend and seasonality estimates is advisable than for estimating trend
 #'and seasonality; for \code{correction_factor = TRUE}, this is implemented.
-#'@param errors a character vector of length one; indicates whether to consider
-#'autocorrelated errors (\code{"autocor"}) or independent but identically 
-#'distributed errors (\code{"iid"}); the default is \code{errors = "autocor"}.
+#'@param autocor a logical vector of length one; indicates whether to consider
+#'autocorrelated errors (\code{TRUE}) or independent but identically 
+#'distributed errors (\code{FALSE}); the default is \code{autocor = TRUE}.
 #'@param drop a numeric vector of length one that indicates the proportion of 
 #'the observations to not include at each boundary in the bandwidth estimation 
 #'process, if a bandwidth is selected automatically; the default is 
 #'\code{drop = 0.1}.
+#'@param error_model a character vector of length one that indicates whether
+#'for \code{autocor = TRUE} the sum of autocovariances of the errors is 
+#'obtained purely nonparametrically (\code{"free"}) or whether an
+#'autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
+#'default is \code{error_model = "free"}.
 #'
 #'@export
 #'
@@ -235,7 +257,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'plot(est, which = 1)
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, errors = c("autocor", "iid"), drop = 0.1) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
 
   ts_name <- deparse(substitute(y))
   
@@ -263,24 +285,36 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
   bf <- bf_select(smoothing_options@boundary_method)
   mu <- mu_select(smoothing_options@kernel_fun)  
   p <- smoothing_options@order_poly
+  
+  bound_method <- smoothing_options@boundary_method
+  bb <- switch(
+    bound_method,
+    "extend" = 1,
+    "shorten" = 0
+  )
+  
   bwidth <- smoothing_options@bwidth
-  err_type <- match.arg(errors)
-  err <- switch(
-    err_type,
-    "autocor" = 1,
-    "iid" = 0
-  )  
-  CF <- correction_factor
-  if (CF) {
-    CF01 <- 1
-  } else {
-    CF01 <- 0
-  }
+  
+
   if (is.na(bwidth)) {
     
+    err <- as.numeric(autocor)
+  
+    CF <- correction_factor
+    if (CF) {
+      CF01 <- 1
+    } else {
+      CF01 <- 0
+    }    
+    
+    err_m <- switch(
+      error_model,
+      "free" = 1,
+      "ARMA" = 0
+    )    
     
     tryCatch({
-      bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop)
+      bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m)
     }, error = function(e1) {
       stop(paste0(
         "Convergence of the bandwidth selection algorithm failed. Please try ",
