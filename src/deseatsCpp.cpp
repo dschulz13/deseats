@@ -39,8 +39,9 @@ int factorialCpp(const int k) {
   return fac;
 }
 
+
 // Fit ARMA
-Rcpp::List armaCpp(const Rcpp::NumericVector Xt, const int p, const int q) {
+Rcpp::List armaCpp(const arma::vec& Xt, const int p, const int q) {
   Rcpp::Environment pkg = Rcpp::Environment::namespace_env("stats");
   Rcpp::Function f = pkg["arima"];    
   
@@ -50,7 +51,7 @@ Rcpp::List armaCpp(const Rcpp::NumericVector Xt, const int p, const int q) {
   
 }
 
-double BICarmaCpp(const Rcpp::NumericVector Xt, const int p, const int q) {
+double BICarmaCpp(const arma::vec& Xt, const int p, const int q) {
   
   Rcpp::List arma = armaCpp(Xt, p, q);
   const double llhood = arma["loglik"];
@@ -59,7 +60,7 @@ double BICarmaCpp(const Rcpp::NumericVector Xt, const int p, const int q) {
   
 } 
 
-arma::mat selectOrderBIC(const Rcpp::NumericVector Xt, const int pmax, const int qmax) {
+Rcpp::NumericVector selectOrderBIC(const arma::vec& Xt, const int pmax, const int qmax) {
   
   arma::mat bicmat = arma::zeros<arma::mat>(pmax + 1, qmax + 1);
   
@@ -71,9 +72,53 @@ arma::mat selectOrderBIC(const Rcpp::NumericVector Xt, const int pmax, const int
     }
   }
   
-  return bicmat
+  arma::uvec ind = arma::find(bicmat == bicmat.min());
+  
+  int popt = (int)ind(0);  
+  int qopt = popt / 4;
+
+  for (int j = 0; popt >= 4; ++j) {
+    popt = popt - 4;
+  }
+
+  return Rcpp::NumericVector::create(popt, 0, qopt);
   
 }
+
+Rcpp::List armaoptCpp(const arma::vec& Xt) {
+  
+  Rcpp::NumericVector order = selectOrderBIC(Xt, 3, 3);
+  
+  Rcpp::Environment pkg = Rcpp::Environment::namespace_env("stats");
+  Rcpp::Function f = pkg["arima"];    
+  
+  return f(Xt, order);  
+  
+}
+  
+double arma_sumacovCpp(Rcpp::List arma) {
+  
+  const arma::vec info = arma["arma"];
+  
+  const int p = info(0);
+  const int q = info(1);
+  
+  const arma::vec coef = arma["coef"];
+  const double sig2 = arma["sigma2"];
+  
+  arma::vec ar = arma::zeros<arma::vec>(1);
+  arma::vec ma = arma::zeros<arma::vec>(1);  
+  
+  if (p >= 1) {
+    ar = coef.subvec(0, p - 1);
+  }
+  if (q >= 1) {
+    ma = coef.subvec(p, p + q - 1);
+  }
+  
+  return std::pow((1 + arma::accu(ma)) / (1 - arma::accu(ar)), 2.0) * sig2;
+  
+}  
   
 // Autocovariance calculation from given data
 arma::vec acovCpp(const arma::vec& Xt, const int lagMax) {
@@ -601,22 +646,8 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
         
       } else if (errm == 0) {
         
-        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("stats");
-        Rcpp::Function f = pkg["arima"];        
-        
-        const int pmax = 3;
-        const int qmax = 3;
-        
-        for (int p0 = 0; p0 < pmax + 1; ++p0) {
-          
-          for (int q0 = 0; q0 < qmax + 1; ++q0) {
-            
-            Rcpp::NumericVector order = Rcpp::NumericVector::create(p0, 0, q0);
-            Rcpp::List arma = f(resAdj, order);
-            
-          }
-          
-        }
+        Rcpp::List arma = armaoptCpp(resAdj);
+        cf0 = arma_sumacovCpp(arma);
         
       }
       
