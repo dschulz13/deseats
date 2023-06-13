@@ -39,6 +39,42 @@ int factorialCpp(const int k) {
   return fac;
 }
 
+// Fit ARMA
+Rcpp::List armaCpp(const Rcpp::NumericVector Xt, const int p, const int q) {
+  Rcpp::Environment pkg = Rcpp::Environment::namespace_env("stats");
+  Rcpp::Function f = pkg["arima"];    
+  
+  Rcpp::NumericVector order = Rcpp::NumericVector::create(p, 0, q);
+  
+  return f(Xt, order);
+  
+}
+
+double BICarmaCpp(const Rcpp::NumericVector Xt, const int p, const int q) {
+  
+  Rcpp::List arma = armaCpp(Xt, p, q);
+  const double llhood = arma["loglik"];
+  int n = Xt.size();
+  return -2.0 * llhood + std::log(n) * (p + q);
+  
+} 
+
+arma::mat selectOrderBIC(const Rcpp::NumericVector Xt, const int pmax, const int qmax) {
+  
+  arma::mat bicmat = arma::zeros<arma::mat>(pmax + 1, qmax + 1);
+  
+  for (int p0 = 0; p0 < pmax + 1; ++p0) {
+    for (int q0 = 0; q0 < qmax + 1; ++q0) {
+      
+      bicmat(p0, q0) = BICarmaCpp(Xt, p0, q0);
+      
+    }
+  }
+  
+  return bicmat
+  
+}
+  
 // Autocovariance calculation from given data
 arma::vec acovCpp(const arma::vec& Xt, const int lagMax) {
   const double meanX = arma::mean(Xt);
@@ -565,6 +601,9 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
         
       } else if (errm == 0) {
         
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("stats");
+        Rcpp::Function f = pkg["arima"];        
+        
         const int pmax = 3;
         const int qmax = 3;
         
@@ -572,7 +611,8 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
           
           for (int q0 = 0; q0 < qmax + 1; ++q0) {
             
-            
+            Rcpp::NumericVector order = Rcpp::NumericVector::create(p0, 0, q0);
+            Rcpp::List arma = f(resAdj, order);
             
           }
           
