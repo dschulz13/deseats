@@ -339,7 +339,15 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
   Residuals <- est[[4]]
   if (CF) {
     adjfactor <- CF_table$CF[CF_table$s == s & CF_table$p == p & CF_table$mu == mu]
-    ResidsAdj <- residdeseatsCpp(y, p, s, mu, bwidth * adjfactor, bf)
+    ResidsAdj <- tryCatch({
+      residdeseatsCpp(y, p, s, mu, bwidth * adjfactor, bf)
+    }, error = function (e1){
+      stop(paste0(
+        "Convergence of the bandwidth selection algorithm failed. Please try ",
+        "other settings or select a bandwidth manually."
+      ), call. = FALSE)      
+    }
+    )
     if (err == 1) {
       sum_autocov <- cf0Cpp(ResidsAdj)
     } else if (err == 0) {
