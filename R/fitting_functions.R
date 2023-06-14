@@ -129,7 +129,9 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'@param correction_factor A logical vector of length one; theoretically, a 
 #'larger bandwidth to estimate the sum of autocovariances from residuals of 
 #'pilot trend and seasonality estimates is advisable than for estimating trend
-#'and seasonality; for \code{correction_factor = TRUE}, this is implemented.
+#'and seasonality; for \code{correction_factor = TRUE}, this is implemented;
+#'for \code{error_model = "ARMA"}, \code{correction_factor = FALSE} is 
+#'enforced.
 #'@param autocor a logical vector of length one; indicates whether to consider
 #'autocorrelated errors (\code{TRUE}) or independent but identically 
 #'distributed errors (\code{FALSE}); the default is \code{autocor = TRUE}.
@@ -316,6 +318,10 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
       "ARMA" = 0
     )    
     
+    if (err_m == 0) {
+      CF01 <- 0
+    }
+    
     tryCatch({
       bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m)
     }, error = function(e1) {
@@ -405,11 +411,18 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
 #'@param correction_factor A logical vector of length one; theoretically, a 
 #'larger bandwidth to estimate the sum of autocovariances from residuals of 
 #'pilot trend and seasonality estimates is advisable than for estimating trend
-#'and seasonality; for \code{correction_factor = TRUE}, this is implemented.
+#'and seasonality; for \code{correction_factor = TRUE}, this is implemented;
+#'for \code{error_model = "ARMA"}, \code{correction_factor = FALSE} is 
+#'enforced.
 #'@param drop a numeric vector of length one that indicates the proportion of 
 #'the observations to not include at each boundary in the bandwidth estimation 
 #'process, if a bandwidth is selected automatically; the default is 
 #'\code{drop = 0.1}.
+#'@param error_model a character vector of length one that indicates whether
+#'for \code{autocor = TRUE} the sum of autocovariances of the errors is 
+#'obtained purely nonparametrically (\code{"free"}) or whether an
+#'autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
+#'default is \code{error_model = "free"}.
 #'
 #'@export
 #'
@@ -451,11 +464,13 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
 #'
 s_semiarma <- function(yt, smoothing_options = set_options(),
                        arma_options = list(ar_order = NULL, ma_order = NULL),
-                       bwidth_start = 0.2, correction_factor = TRUE, drop = 0.1) {
+                       bwidth_start = 0.2, correction_factor = TRUE, drop = 0.1,
+                       error_model = c("free", "ARMA")) {
   
   ts_name <- deparse(substitute(yt))
   
-  nonpar_model <- deseats(yt, smoothing_options, bwidth_start, autocor = TRUE)
+  nonpar_model <- deseats(yt, smoothing_options, bwidth_start, autocor = TRUE,
+                          error_model = error_model)
   nonpar_model@ts_name <- ts_name
   
   res <- residuals(nonpar_model)

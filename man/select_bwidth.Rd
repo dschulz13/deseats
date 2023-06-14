@@ -8,7 +8,7 @@ Time Series under Short Memory}
 select_bwidth(
   y,
   smoothing_options = set_options(),
-  bwidth_start = 0.1,
+  bwidth_start = 0.2,
   correction_factor = TRUE,
   autocor = TRUE,
   drop = 0.1,

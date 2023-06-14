@@ -8,9 +8,10 @@ s_semiarma(
   yt,
   smoothing_options = set_options(),
   arma_options = list(ar_order = NULL, ma_order = NULL),
-  bwidth_start = 0.1,
+  bwidth_start = 0.2,
   correction_factor = TRUE,
-  drop = 0.1
+  drop = 0.1,
+  error_model = c("free", "ARMA")
 )
 }
 \arguments{
@@ -39,12 +40,20 @@ the algorithm.}
 \item{correction_factor}{A logical vector of length one; theoretically, a 
 larger bandwidth to estimate the sum of autocovariances from residuals of 
 pilot trend and seasonality estimates is advisable than for estimating trend
-and seasonality; for \code{correction_factor = TRUE}, this is implemented.}
+and seasonality; for \code{correction_factor = TRUE}, this is implemented;
+for \code{error_model = "ARMA"}, \code{correction_factor = FALSE} is 
+enforced.}
 
 \item{drop}{a numeric vector of length one that indicates the proportion of 
 the observations to not include at each boundary in the bandwidth estimation 
 process, if a bandwidth is selected automatically; the default is 
 \code{drop = 0.1}.}
+
+\item{error_model}{a character vector of length one that indicates whether
+for \code{autocor = TRUE} the sum of autocovariances of the errors is 
+obtained purely nonparametrically (\code{"free"}) or whether an
+autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
+default is \code{error_model = "free"}.}
 }
 \value{
 The function returns and S4 object with the following elements (access them 

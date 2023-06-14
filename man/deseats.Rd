@@ -8,7 +8,7 @@ Series under Short Memory}
 deseats(
   y,
   smoothing_options = set_options(),
-  bwidth_start = 0.1,
+  bwidth_start = 0.2,
   correction_factor = TRUE,
   autocor = TRUE,
   drop = 0.1,
@@ -35,7 +35,9 @@ the algorithm.}
 \item{correction_factor}{A logical vector of length one; theoretically, a 
 larger bandwidth to estimate the sum of autocovariances from residuals of 
 pilot trend and seasonality estimates is advisable than for estimating trend
-and seasonality; for \code{correction_factor = TRUE}, this is implemented.}
+and seasonality; for \code{correction_factor = TRUE}, this is implemented;
+for \code{error_model = "ARMA"}, \code{correction_factor = FALSE} is 
+enforced.}
 
 \item{autocor}{a logical vector of length one; indicates whether to consider
 autocorrelated errors (\code{TRUE}) or independent but identically 
