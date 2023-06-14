@@ -42,8 +42,9 @@ int factorialCpp(const int k) {
 
 // Fit ARMA
 Rcpp::List armaCpp(const arma::vec& Xt, const int p, const int q) {
-  Rcpp::Environment pkg = Rcpp::Environment::namespace_env("stats");
-  Rcpp::Function f = pkg["arima"];    
+  Rcpp::Environment pkg = Rcpp::Environment::namespace_env("deseats");
+  // Rcpp::Function f = pkg["arima"];    
+  Rcpp::Function f = pkg["arima_no_warn"];
   
   Rcpp::NumericVector order = Rcpp::NumericVector::create(p, 0, q);
   
@@ -89,10 +90,15 @@ Rcpp::List armaoptCpp(const arma::vec& Xt) {
   
   Rcpp::NumericVector order = selectOrderBIC(Xt, 3, 3);
   
-  Rcpp::Environment pkg = Rcpp::Environment::namespace_env("stats");
-  Rcpp::Function f = pkg["arima"];    
+  Rcpp::Environment pkg = Rcpp::Environment::namespace_env("deseats");
+  // Rcpp::Function f = pkg["arima"];    
+  Rcpp::Function f = pkg["arima_no_warn"];
   
-  return f(Xt, order);  
+  Rcpp::List armaopt = f(Xt, order);
+  
+  arma::vec coefs = armaopt["coef"];
+  
+  return armaopt;  
   
 }
   

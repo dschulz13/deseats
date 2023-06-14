@@ -151,7 +151,8 @@ better performance.
 \examples{
 
 Xt <- log(EXPENDITURES)
-est <- deseats(Xt)
+smoothing_options <- set_options(order_poly = 3)
+est <- deseats(Xt, smoothing_options = smoothing_options)
 est
 plot(est, which = 1)
 

@@ -43,7 +43,7 @@
 #'select_bwidth(Xt)
 #'
 
-select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
   
   if (is.na(smoothing_options@season)) {
     if (inherits(y, c("ts", "zoo", "xts"))) {
@@ -252,12 +252,13 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'@examples
 #'
 #'Xt <- log(EXPENDITURES)
-#'est <- deseats(Xt)
+#'smoothing_options <- set_options(order_poly = 3)
+#'est <- deseats(Xt, smoothing_options = smoothing_options)
 #'est
 #'plot(est, which = 1)
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
 
   ts_name <- deparse(substitute(y))
   
@@ -307,6 +308,8 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
       CF01 <- 0
     }    
     
+    error_model <- match.arg(error_model)
+    
     err_m <- switch(
       error_model,
       "free" = 1,
@@ -321,7 +324,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
         "other settings or select a bandwidth manually."
       ), call. = FALSE)
     }
-    )    
+    )
   }
 
   est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bf)
@@ -448,11 +451,11 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.1, co
 #'
 s_semiarma <- function(yt, smoothing_options = set_options(),
                        arma_options = list(ar_order = NULL, ma_order = NULL),
-                       bwidth_start = 0.1, correction_factor = TRUE, drop = 0.1) {
+                       bwidth_start = 0.2, correction_factor = TRUE, drop = 0.1) {
   
   ts_name <- deparse(substitute(yt))
   
-  nonpar_model <- deseats(yt, smoothing_options, bwidth_start, errors = "autocor")
+  nonpar_model <- deseats(yt, smoothing_options, bwidth_start, autocor = TRUE)
   nonpar_model@ts_name <- ts_name
   
   res <- residuals(nonpar_model)

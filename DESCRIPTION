@@ -69,3 +69,4 @@ Collate:
     'functions_for_comparison.R'
     'bv41_subfunctionalities.R'
     'hA_calc.R'
+    'arima_no_warn.R'
