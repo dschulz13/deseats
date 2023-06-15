@@ -65,6 +65,19 @@
 #'\url{https://www-genesis.destatis.de/genesis/online?operation=abruftabelleBearbeiten&levelindex=2&levelid=1658407055248&auswahloperation=abruftabelleAuspraegungAuswaehlen&auswahlverzeichnis=ordnungsstruktur&auswahlziel=werteabruf&code=12613-0005&auswahltext=&werteabruf=Werteabruf#abreadcrumb}
 "DEATHS"
 
+#' Monthly Live Births in Germany
+#'
+#' A \code{ts} object that contains the monthly observed live births in Germany
+#' (in thousands of cases) from January 1995 to March 2023. The object 
+#' contains 339 observations.
+#' 
+#'@source The data was obtained from the databank "Genesis" of the National 
+#'Statistical Office of Germany (accessed: 2023-06-15) and then transformed into 
+#'a time series object using R.
+#'
+#'\url{https://www-genesis.destatis.de/genesis/online?operation=previous&levelindex=4&levelid=1686843345946&levelid=1686843308009&step=3#abreadcrumb}
+"LIVEBIRTHS"
+
 #' Monthly Industrial Production Index in the USA
 #'
 #' A \code{ts} object that contains the monthly observed industrial production 
@@ -103,5 +116,5 @@
 #'then transformed into a time series
 #'object using R. 
 #'
-#'\url{https://fred.stlouisfed.org/series/LNU01000000}
+#'\url{https://www.dwd.de/DE/leistungen/zeitreihen/zeitreihen.html#buehneTop}
 "SUNSHINE"
