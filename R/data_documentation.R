@@ -69,8 +69,8 @@
 #'
 #' A \code{ts} object that contains the monthly observed industrial production 
 #' index in the USA
-#' (year 2017 = 100) from January 1919 to December 2007. The object 
-#' contains 1068 observations.
+#' (year 2017 = 100) from January 1965 to December 2007. The object 
+#' contains 516 observations.
 #' 
 #'@source The data was obtained from the databank of the Federal Reserve Bank of 
 #'St. Louis (accessed: 2022-07-26) and then transformed into a time series
@@ -78,20 +78,6 @@
 #'
 #'\url{https://fred.stlouisfed.org/series/IPB50001N}
 "PRODINDEX"
-
-#' Monthly Advance Retail Sales (Retail Trade) in the USA
-#'
-#' A \code{ts} object that contains the monthly observed advance retail sales 
-#' (retail trade) in the USA
-#' (in billions of dollars) from January 1992 to December 2019. The object 
-#' contains 336 observations.
-#' 
-#'@source The data was obtained from the databank of the Federal Reserve Bank of 
-#'St. Louis (accessed: 2022-07-26) and then transformed into a time series
-#'object using R.
-#'
-#'\url{https://fred.stlouisfed.org/series/RSXFSN}
-"RETAILSALES"
 
 #' Monthly Civilian Labor Force Level in the USA
 #'
@@ -105,3 +91,17 @@
 #'
 #'\url{https://fred.stlouisfed.org/series/LNU01000000}
 "CIVLABOR"
+
+#' Monthly Hours of Sunshine in Germany
+#'
+#' A \code{ts} object that contains the monthly observed hours of sunshine
+#' in Germany from January 1951 to December 2022.
+#' The object contains 864 observations.
+#' 
+#'@source The data was obtained from the databank of the 
+#'German Weather Service (DWD) (accessed: 2023-06-15) and 
+#'then transformed into a time series
+#'object using R. 
+#'
+#'\url{https://fred.stlouisfed.org/series/LNU01000000}
+"SUNSHINE"
