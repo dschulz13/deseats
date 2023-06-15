@@ -13,7 +13,7 @@ German Weather Service (DWD) (accessed: 2023-06-15) and
 then transformed into a time series
 object using R. 
 
-\url{https://fred.stlouisfed.org/series/LNU01000000}
+\url{https://www.dwd.de/DE/leistungen/zeitreihen/zeitreihen.html#buehneTop}
 }
 \usage{
 SUNSHINE

@@ -5,7 +5,7 @@
 \alias{PRODINDEX}
 \title{Monthly Industrial Production Index in the USA}
 \format{
-An object of class \code{ts} of length 1068.
+An object of class \code{ts} of length 516.
 }
 \source{
 The data was obtained from the databank of the Federal Reserve Bank of 
@@ -20,7 +20,7 @@ PRODINDEX
 \description{
 A \code{ts} object that contains the monthly observed industrial production 
 index in the USA
-(year 2017 = 100) from January 1919 to December 2007. The object 
-contains 1068 observations.
+(year 2017 = 100) from January 1965 to December 2007. The object 
+contains 516 observations.
 }
 \keyword{datasets}

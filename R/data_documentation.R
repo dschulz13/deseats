@@ -12,46 +12,6 @@
 #'\url{https://fred.stlouisfed.org/series/NA000349Q}
 "EXPENDITURES"
 
-#' Monthly Labor Force Participation Rate Index of the USA
-#'
-#' A \code{ts} object that contains the monthly observed labor force 
-#' participation rate index (January 1948 = 100) from January 1965 to December 
-#' 2019. The object contains
-#' 660 observations.
-#' 
-#'@source The data was obtained from the databank of the Federal Reserve Bank of 
-#'St. Louis (accessed: 2022-07-16) and then transformed into a time series
-#'object using R.
-#'
-#'\url{https://fred.stlouisfed.org/series/LNU01300000}
-"LABORFORCE"
-
-#' Monthly Total Vehicle Sales in the USA
-#'
-#' A \code{ts} object that contains the monthly observed total vehicle sales 
-#' (in thousands of units) in the USA from January 1976 to December 2019. The object 
-#' contains 528 observations.
-#' 
-#'@source The data was obtained from the databank of the Federal Reserve Bank of 
-#'St. Louis (accessed: 2022-07-18) and then transformed into a time series
-#'object using R.
-#'
-#'\url{https://fred.stlouisfed.org/series/TOTALNSA}
-"VEHICLESALES"
-
-#' Monthly New One Family Houses Sold in the USA
-#'
-#' A \code{ts} object that contains the monthly observed new one family houses sold 
-#' (in thousands of units) in the USA from January 1963 to December 2019. The object 
-#' contains 684 observations.
-#' 
-#'@source The data was obtained from the databank of the Federal Reserve Bank of 
-#'St. Louis (accessed: 2022-07-18) and then transformed into a time series
-#'object using R.
-#'
-#'\url{https://fred.stlouisfed.org/series/HSN1FNSA}
-"HOUSESALES"
-
 #' Monthly Deaths in Germany
 #'
 #' A \code{ts} object that contains the monthly observed deaths in Germany
@@ -77,6 +37,20 @@
 #'
 #'\url{https://www-genesis.destatis.de/genesis/online?operation=previous&levelindex=4&levelid=1686843345946&levelid=1686843308009&step=3#abreadcrumb}
 "LIVEBIRTHS"
+
+#' Quarterly Savings of Private Households in Germany
+#'
+#' A \code{ts} object that contains the quarterly observed savings of
+#' private households in Germany
+#' (in billions of EUR) from January 1991 to December 2019. The object 
+#' contains 116 observations.
+#' 
+#'@source The data was obtained from the databank "Genesis" of the National 
+#'Statistical Office of Germany (accessed: 2023-06-15) and then transformed into 
+#'a time series object using R.
+#'
+#'\url{https://www-genesis.destatis.de/genesis/online?operation=abruftabelleBearbeiten&levelindex=1&levelid=1686857137066&auswahloperation=abruftabelleAuspraegungAuswaehlen&auswahlverzeichnis=ordnungsstruktur&auswahlziel=werteabruf&code=81000-0010&auswahltext=&werteabruf=Werteabruf#abreadcrumb}
+"SAVINGS"
 
 #' Monthly Industrial Production Index in the USA
 #'
@@ -104,6 +78,20 @@
 #'
 #'\url{https://fred.stlouisfed.org/series/LNU01000000}
 "CIVLABOR"
+
+#' Monthly Number of US Persons Not in the Labor Force
+#'
+#' A \code{ts} object that contains the monthly observed number of persons in
+#' the USA that do not belong to the labor force (in millions of persons)
+#' from January 1990 to December 2019. 
+#' The object contains 360 observations.
+#' 
+#'@source The data was obtained from the databank of the Federal Reserve Bank of 
+#'St. Louis (accessed: 2023-06-15) and then transformed into a time series
+#'object using R.
+#'
+#'\url{https://fred.stlouisfed.org/series/LNU05000000}
+"NOLABORFORCE"
 
 #' Monthly Hours of Sunshine in Germany
 #'
