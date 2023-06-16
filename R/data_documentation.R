@@ -106,3 +106,17 @@
 #'
 #'\url{https://www.dwd.de/DE/leistungen/zeitreihen/zeitreihen.html#buehneTop}
 "SUNSHINE"
+
+#' Monthly Average Temperature in Germany
+#'
+#' A \code{ts} object that contains the monthly observed average temperature
+#' in Germany (in degrees Celsius) from January 1900 to December 2022.
+#' The object contains 1476 observations.
+#' 
+#'@source The data was obtained from the databank of the 
+#'German Weather Service (DWD) (accessed: 2023-06-16) and 
+#'then transformed into a time series
+#'object using R. 
+#'
+#'\url{https://www.dwd.de/DE/leistungen/zeitreihen/zeitreihen.html#buehneTop}
+"TEMPERATURE"

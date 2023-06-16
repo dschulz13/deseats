@@ -298,29 +298,28 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
   
   bwidth <- smoothing_options@bwidth
   
+  CF <- correction_factor
+  if (CF) {
+    CF01 <- 1
+  } else {
+    CF01 <- 0
+  }    
 
-  if (is.na(bwidth)) {
+  err <- as.numeric(autocor)
     
-    err <- as.numeric(autocor)
+  error_model <- match.arg(error_model)
+    
+  err_m <- switch(
+    error_model,
+    "free" = 1,
+    "ARMA" = 0
+  )    
+    
+  if (err_m == 0) {
+    CF01 <- 0
+  }  
   
-    CF <- correction_factor
-    if (CF) {
-      CF01 <- 1
-    } else {
-      CF01 <- 0
-    }    
-    
-    error_model <- match.arg(error_model)
-    
-    err_m <- switch(
-      error_model,
-      "free" = 1,
-      "ARMA" = 0
-    )    
-    
-    if (err_m == 0) {
-      CF01 <- 0
-    }
+  if (is.na(bwidth)) {
     
     tryCatch({
       bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m)

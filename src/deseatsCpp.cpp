@@ -677,4 +677,5 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   }
   
   return(bopt);
+
 }
