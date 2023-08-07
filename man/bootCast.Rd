@@ -16,6 +16,7 @@ bootCast(
   cores = future::availableCores() - 1,
   alpha = c(0.95, 0.99),
   quant.type = 8,
+  bootstrap_type = c("simple", "advanced"),
   ...
 )
 }

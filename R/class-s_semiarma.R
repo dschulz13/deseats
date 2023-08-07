@@ -25,15 +25,33 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 
 #'Point and Interval Forecasts for Seasonal Semi-ARMA Models
 #'
-#'@param object 
-#'@param n.ahead
-#'@param intervals
-#'@param alpha 
-#'@param method 
-#'@param bootMethod
-#'@param quant.type 
-#'@param expo
-#'@param ...
+#'@param object an object of class \code{"s_semiarma"}.
+#'@param n.ahead a numeric vector of length one that represents the forecasting horizon; assume that \code{object} is based on 
+#'observations at time points \eqn{t=1,2,\dots,n}; forecasts are then obtained for time 
+#'points \eqn{t=n+1,n+2,\dots,n+\code{n.ahead}}; the default is \code{n.ahead = 1}.
+#'@param intervals a logical vector of length one that indicates whether or not 
+#'forecasting intervals should be obtained; the default is \code{intervals = TRUE}.
+#'@param alpha a numeric vector of variable length that indicates the confidence levels
+#' at which to obtain forecasting intervals; the default is \code{alpha = c(0.95, 0.99)},
+#'i.e. confidence levels of 95 and 99 percent.
+#'@param method a character vector that indicates the method used to obtain forecasting
+#'intervals; available are theoretical intervals based on the assumption of normal 
+#'innovations (\code{"norm"}) and intervals through a bootstrap (\code{"boot"}); 
+#'the default is \code{method = "norm"}.
+#'@param bootMethod a character vector that allows the user to select a bootstrap 
+#'procedure for the forecasting intervals when \code{method = "boot"} is selected;
+#'the default \code{bootMethod = "simple"} simulates future observations by resampling
+#'the obtained residuals; the second approach \code{bootMethod = "advanced"} also 
+#'considers the variation in the ARMA coefficient estimates by simulating and 
+#'reestimating complete ARMA paths upon which forecasts are obtained 
+#'(see also the B-ARMARoots algorithm in Lu and Wang, 2020); the second approach
+#'is often time-consuming.
+#'@param quant.type the method to obtain sample quantiles from the simulated
+#'forecasting errors; see also the argument \code{type} of the function 
+#'\code{\link[stats]{quantile}}.
+#'@param expo a logical vector of length one; indicates whether the forecasting 
+#'results should be exponentiated at the end; the default is \code{expo = FALSE}.
+#'@param ... only for comparability with the standard \code{predict} method.
 #'
 #'@export
 #'
@@ -48,7 +66,7 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 
 methods::setMethod("predict", "s_semiarma", 
   function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"),
-           bootMethod = c("predRoot", "futureObs"), quant.type = 8,
+           bootMethod = c("simple", "advanced"), quant.type = 8,
            expo = FALSE, ...) {
     
     if (intervals) {
@@ -87,16 +105,9 @@ methods::setMethod("predict", "s_semiarma",
         
         bootMethod <- match.arg(bootMethod)
         
-        if (bootMethod == "predRoot") {
-        
-          fi <- bootCast(model = object@par_model, X = object@decomp[, 4],
-            p = p, q = q, h = n.ahead, alpha = alpha, quant.type = quant.type)
-        
-        } else if (bootMethod == "futureObs") {
-          
-          fi <- bootCast_simple(model = object@par_model)   # !!!!!
-          
-        }
+        fi <- bootCast(model = object@par_model, X = object@decomp[, 4],
+          p = p, q = q, h = n.ahead, alpha = alpha, quant.type = quant.type,
+          bootstrap_type = bootMethod)
 
       }
       

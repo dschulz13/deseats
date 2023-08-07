@@ -10,22 +10,48 @@
   intervals = TRUE,
   alpha = c(0.95, 0.99),
   method = c("norm", "boot"),
-  bootMethod = c("predRoot", "futureObs"),
+  bootMethod = c("simple", "advanced"),
   quant.type = 8,
   expo = FALSE,
   ...
 )
 }
 \arguments{
-\item{object}{}
+\item{object}{an object of class \code{"s_semiarma"}.}
 
-\item{alpha}{}
+\item{n.ahead}{a numeric vector of length one that represents the forecasting horizon; assume that \code{object} is based on 
+observations at time points \eqn{t=1,2,\dots,n}; forecasts are then obtained for time 
+points \eqn{t=n+1,n+2,\dots,n+\code{n.ahead}}; the default is \code{n.ahead = 5}.}
 
-\item{method}{}
+\item{intervals}{a logical vector of length one that indicates whether or not 
+forecasting intervals should be obtained; the default is \code{intervals = TRUE}.}
 
-\item{quant.type}{}
+\item{alpha}{a numeric vector of variable length that indicates the confidence levels
+at which to obtain forecasting intervals; the default is \code{alpha = c(0.95, 0.99)},
+i.e. confidence levels of 95 and 99 percent.}
 
-\item{...}{}
+\item{method}{a character vector that indicates the method used to obtain forecasting
+intervals; available are theoretical intervals based on the assumption of normal 
+innovations (\code{"norm"}) and intervals through a bootstrap (\code{"boot"}); 
+the default is \code{method = "norm"}.}
+
+\item{bootMethod}{a character vector that allows the user to select a bootstrap 
+procedure for the forecasting intervals when \code{method = "boot"} is selected;
+the default \code{bootMethod = "simple"} simulates future observations by resampling
+the obtained residuals; the second approach \code{bootMethod = "advanced"} also 
+considers the variation in the ARMA coefficient estimates by simulating and 
+reestimating complete ARMA paths upon which forecasts are obtained 
+(see also the B-ARMARoots algorithm in Lu and Wang, 2020); the second approach
+is often time-consuming.}
+
+\item{quant.type}{the method to obtain sample quantiles from the simulated
+forecasting errors; see also the argument \code{type} of the function 
+\code{\link[stats]{quantile}}.}
+
+\item{expo}{a logical vector of length one; indicates whether the forecasting 
+results should be exponentiated at the end; the default is \code{expo = FALSE}.}
+
+\item{...}{only for comparability with the standard \code{predict} method.}
 }
 \description{
 Point and Interval Forecasts for Seasonal Semi-ARMA Models
