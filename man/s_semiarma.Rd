@@ -9,6 +9,7 @@ s_semiarma(
   smoothing_options = set_options(),
   arma_options = list(ar_order = NULL, ma_order = NULL),
   bwidth_start = 0.2,
+  inflation_rate = c("optimal", "naive"),
   correction_factor = TRUE,
   drop = 0.1,
   error_model = c("free", "ARMA")
@@ -36,6 +37,12 @@ parametric part of the model.}
 as the bandwidth will then
 be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
 the algorithm.}
+
+\item{inflation_rate}{a character vector of length one that indicates, which inflation rate 
+to use in the bandwidth selection; for a local linear trend, we have 
+\code{inflation_rate = "optimal"} as the default, for a local cubic trend
+it is \code{inflation_rate = "naive"}, which correspond to inflation rates
+of 5/7 and 9/13, respectively.}
 
 \item{correction_factor}{A logical vector of length one; theoretically, a 
 larger bandwidth to estimate the sum of autocovariances from residuals of 

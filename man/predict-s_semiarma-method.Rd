@@ -21,7 +21,7 @@
 
 \item{n.ahead}{a numeric vector of length one that represents the forecasting horizon; assume that \code{object} is based on 
 observations at time points \eqn{t=1,2,\dots,n}; forecasts are then obtained for time 
-points \eqn{t=n+1,n+2,\dots,n+\code{n.ahead}}; the default is \code{n.ahead = 5}.}
+points \eqn{t=n+1,n+2,\dots,n+\code{n.ahead}}; the default is \code{n.ahead = 1}.}
 
 \item{intervals}{a logical vector of length one that indicates whether or not 
 forecasting intervals should be obtained; the default is \code{intervals = TRUE}.}

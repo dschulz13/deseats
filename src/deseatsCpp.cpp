@@ -509,7 +509,7 @@ arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
 }
 
 // [[Rcpp::export]]
-double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm) {
+double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm, const double expo) {
   
   double bopt = bStart;
   double boptOld = -100;
@@ -560,12 +560,6 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   
   int it = 1;
   double bv;
-  double expo = 0;
-  if (p == 1) {
-    expo = 5.0 / 7.0;
-  } else if (p == 3) {
-    expo = 9.0 / 13.0;
-  }
   
   arma::vec gv;
   double I2;

@@ -14,6 +14,11 @@
 #'as the bandwidth will then
 #'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
 #'the algorithm.
+#'@param inflation_rate a character vector of length one that indicates, which inflation rate 
+#' to use in the bandwidth selection; for a local linear trend, we have 
+#'\code{inflation_rate = "optimal"} as the default, for a local cubic trend
+#'it is \code{inflation_rate = "naive"}, which correspond to inflation rates
+#'of 5/7 and 9/13, respectively.
 #'@param correction_factor A logical vector of length one; theoretically, a 
 #'larger bandwidth to estimate the sum of autocovariances from residuals of 
 #'pilot trend and seasonality estimates is advisable than for estimating trend
@@ -43,7 +48,7 @@
 #'select_bwidth(Xt)
 #'
 
-select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
   
   if (is.na(smoothing_options@season)) {
     if (inherits(y, c("ts", "zoo", "xts"))) {
@@ -66,6 +71,12 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
   bf <- bf_select(smoothing_options@boundary_method)
   mu <- mu_select(smoothing_options@kernel_fun)  
   p <- smoothing_options@order_poly
+  
+  if (all(inflation_rate == c("optimal", "naive"))) {
+    inflation_rate <- c("optimal", NA, "naive")[[p]]
+  }
+  
+  infr <- c("optimal" = 5 / 7, "naive" = 9 / 13)[[inflation_rate]]
   
   bound_method <- smoothing_options@boundary_method
   bb <- switch(
@@ -92,7 +103,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
   
   
   tryCatch({
-    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m)
+    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m, infr)
   }, error = function(e1) {
     stop(paste0(
       "Convergence of the bandwidth selection algorithm failed. Please try ",
@@ -126,6 +137,11 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'as the bandwidth will then
 #'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
 #'the algorithm.
+#'@param inflation_rate a character vector of length one that indicates, which inflation rate 
+#' to use in the bandwidth selection; for a local linear trend, we have 
+#'\code{inflation_rate = "optimal"} as the default, for a local cubic trend
+#'it is \code{inflation_rate = "naive"}, which correspond to inflation rates
+#'of 5/7 and 9/13, respectively.
 #'@param correction_factor A logical vector of length one; theoretically, a 
 #'larger bandwidth to estimate the sum of autocovariances from residuals of 
 #'pilot trend and seasonality estimates is advisable than for estimating trend
@@ -260,7 +276,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'plot(est, which = 1)
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
 
   ts_name <- deparse(substitute(y))
   
@@ -288,6 +304,12 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
   bf <- bf_select(smoothing_options@boundary_method)
   mu <- mu_select(smoothing_options@kernel_fun)  
   p <- smoothing_options@order_poly
+  
+  if (all(inflation_rate == c("optimal", "naive"))) {
+    inflation_rate <- c("optimal", NA, "naive")[[p]]
+  }
+  
+  infr <- c("optimal" = 5 / 7, "naive" = 9 / 13)[[inflation_rate]]  
   
   bound_method <- smoothing_options@boundary_method
   bb <- switch(
@@ -322,7 +344,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
   if (is.na(bwidth)) {
     
     tryCatch({
-      bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m)
+      bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m, infr)
     }, error = function(e1) {
       stop(paste0(
         "Convergence of the bandwidth selection algorithm failed. Please try ",
@@ -415,6 +437,11 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
 #'as the bandwidth will then
 #'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
 #'the algorithm.
+#'@param inflation_rate a character vector of length one that indicates, which inflation rate 
+#' to use in the bandwidth selection; for a local linear trend, we have 
+#'\code{inflation_rate = "optimal"} as the default, for a local cubic trend
+#'it is \code{inflation_rate = "naive"}, which correspond to inflation rates
+#'of 5/7 and 9/13, respectively.
 #'@param correction_factor A logical vector of length one; theoretically, a 
 #'larger bandwidth to estimate the sum of autocovariances from residuals of 
 #'pilot trend and seasonality estimates is advisable than for estimating trend
@@ -471,12 +498,14 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, co
 #'
 s_semiarma <- function(yt, smoothing_options = set_options(),
                        arma_options = list(ar_order = NULL, ma_order = NULL),
-                       bwidth_start = 0.2, correction_factor = TRUE, drop = 0.1,
+                       bwidth_start = 0.2, inflation_rate = c("optimal", "naive"),
+                       correction_factor = TRUE, drop = 0.1,
                        error_model = c("free", "ARMA")) {
   
   ts_name <- deparse(substitute(yt))
   
-  nonpar_model <- deseats(yt, smoothing_options, bwidth_start, autocor = TRUE,
+  nonpar_model <- deseats(yt, smoothing_options, bwidth_start, inflation_rate = inflation_rate,
+                          autocor = TRUE, correction_factor = correction_factor, drop = drop,
                           error_model = error_model)
   nonpar_model@ts_name <- ts_name
   
