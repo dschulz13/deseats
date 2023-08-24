@@ -623,8 +623,10 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   double cf0 = 0;
   double c3;
   arma::vec resAdj2;
+  int stopreason = 0;
+  const double diffvalue = 1.0 / n;
   
-  while (it < itMax + 1 && (std::abs(bopt - boptOld) / bopt >= 1.0 / n || std::abs(bopt - boptOld2) / bopt >= 1.0 / n)) {
+  while (it < itMax + 1 && stopreason == 0) {
     
     bv = std::pow(bopt, expo);
     bv = std::max(bv, bmin);
@@ -665,6 +667,15 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     bopt = std::pow((c1 * c2 * c3), (1.0 / (2 * k + 1))) * std::pow(n, (-1.0 / (2 * k + 1)));
     bopt = std::max(bopt, bmin);
     bopt = std::min(bopt, bmax);
+    
+    if (std::abs(bopt - boptOld) / bopt < diffvalue) {
+      stopreason = 1;
+    }
+    
+    if (std::abs(bopt - boptOld2) / bopt < diffvalue) {
+      stopreason = 1;
+      bopt = (bopt + boptOld) / 2.0;
+    }
     
     it += 1;
     
