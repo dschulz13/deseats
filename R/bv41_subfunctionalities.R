@@ -112,12 +112,14 @@ create_user_comp <- function(yt, shifts = NULL) {
 
 ##############################
 
-bv41_ols <- function(df, outlier_comp) {
+bv41_ols <- function(df, outlier_obj) {
   
   ols <- stats::lm(Fx ~ . - 1, data = df)
-  outl_coef <- ols$coefficients[paste0("outlier", seq_len(outlier_comp))]
+  outlier_comp <- outlier_obj$outlier_dummy
+  outlier_signs <- outlier_obj$signs
+  outl_coef <- ols$coefficients[paste0("outlier", 1:ncol(outlier_comp))]
   outl_effects <- c(t(outl_coef) %*% as.matrix(outlier_comp))
-  check_signs <- all(sign(outl_effects) == sign(outlier_signs)) #???
+  check_signs <- all(sign(outl_effects) == sign(outlier_signs))
   
   if (!check_signs) {
     
@@ -125,17 +127,24 @@ bv41_ols <- function(df, outlier_comp) {
     
     df[paste0("outlier", which_sign_diff)] <- NULL
     
-    outlier_comp[paste0("outlier", which_sign_diff)] <- NULL
+    outlier_obj$outlier_dummy[paste0("outlier", which_sign_diff)] <- NULL
+    rsums <- as.logical(rowSums(outlier_obj$outlier_dummy))
+    outlier_obj$signs[!rsums] <- 0
     
-    ols <- bv41_ols(df = df, outlier_comp = outlier_comp)
+    ols <- bv41_ols(df = df, outlier_comp = outlier_obj)
     
   }
   
-  list(ols = ols, outlier_comp = outlier_comp) #???
+  list(ols = ols, outlier_comp = outlier_comp)
   
 }
 
 ##############################
+
+#'Full BV4.1 Method
+#'
+#'@export
+#'
 
 BV4.1 <- function(
     yt, 
@@ -182,7 +191,7 @@ BV4.1 <- function(
       F_outlier_comp[, i] <- residuals(BV4.1_base(outlier_comp[, i], type = type))
     }
     
-    df <- cbind(df, residuals(BV4.1_base(F_outlier_comp, type = type)))
+    df <- cbind(df, F_outlier_comp)
   }
   if (!is.null(shifts)) {
     
@@ -211,7 +220,7 @@ BV4.1 <- function(
   
   if (outlier | !is.null(shifts) | !is.null(user) | calendar != "None") {
      
-    ols <- bv41_ols(df = df, outlier_comp = outlier_comp)
+    ols <- bv41_ols(df = df, outlier_comp = outlier_info)
     
   }
   
