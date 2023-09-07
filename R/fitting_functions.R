@@ -309,7 +309,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, in
     inflation_rate <- c("optimal", NA, "naive")[[p]]
   }
   
-  infr <- c("optimal" = c(5 / 7, NA, 9 / 11), "naive" = c(5 / 9, NA, 9 / 13))[[inflation_rate]][[p]]  
+  infr <- list("optimal" = c(5 / 7, NA, 9 / 11), "naive" = c(5 / 9, NA, 9 / 13))[[inflation_rate]][[p]]  
   
   bound_method <- smoothing_options@boundary_method
   bb <- switch(
