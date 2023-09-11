@@ -529,7 +529,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   const arma::vec u = seqCpp(-m, m) / (m + 0.5);
 
   arma::vec wk = arma::pow((1 - arma::pow(u, 2.0)), mu);
-  wk = wk / arma::accu(wk);
+  wk = wk / arma::accu(wk) * m;
   const double R2 = arma::accu(arma::pow(wk, 2.0)) / m;  
   
   arma::vec wkp;
@@ -548,7 +548,7 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     }
   }
   
-  wkp = wkp / arma::accu(wkp);
+  wkp = wkp / arma::accu(wkp) * m;
   
   const double Rp = arma::accu(arma::pow(wkp, 2.0)) / m;
   const double mukp = arma::accu(arma::pow(u, k) % wkp) / m;  
@@ -683,6 +683,12 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     it += 1;
     
   }
+  
+  Rcout << "Rp = "  << Rp << "\n";
+  Rcout << "R2 = "  << R2 << "\n";  
+  Rcout << "I2 = "  << I2 << "\n";  
+  Rcout << "b = "  << mukp << "\n";    
+  Rcout << "cf = "  << cf0 << "\n";  
   
   return(bopt);
 
