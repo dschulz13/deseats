@@ -53,67 +53,34 @@
 
 select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA")) {
   
-  if (is.na(smoothing_options@season)) {
-    if (inherits(y, c("ts", "zoo", "xts"))) {
-      s <- stats::frequency(y)
-      if (s == 1) {
-        stop('A seasonal period is required in the element "@season" of ', 
-             'the argument "smoothing_options".')
-      }
-    } else {
-      s <- 1
-    }
-  } else {
-    s <- smoothing_options@season
-  }
-  
-  # Number of observations
-  n <- length(y)           
+  # Identify exact smoothing options from input
+  det_options <- determine_options(y, smoothing_options)
 
-  # Select numeric values from character input using helper functions
-  bf <- bf_select(smoothing_options@boundary_method)
-  mu <- mu_select(smoothing_options@kernel_fun)  
-  p <- smoothing_options@order_poly
+  s <- det_options[["s"]]
+  mu <- det_options[["mu"]] 
+  p <- det_options[["p"]]
+  bb <- det_options[["bb"]]
   
-  if (all(inflation_rate == c("optimal", "naive"))) {
-    inflation_rate <- c("optimal", NA, "naive")[[p]]
-  }
-  
-  infr <- list("optimal" = c(5 / 7, NA, 9 / 11), "naive" = c(5 / 9, NA, 9 / 13))[[inflation_rate]][[p]]  
-  
-  bound_method <- smoothing_options@boundary_method
-  bb <- switch(
-    bound_method,
-    "extend" = 1,
-    "shorten" = 0
-  )  
-  
-  err <- as.numeric(autocor)
-  
-  CF <- correction_factor
-  if (CF) {
-    CF01 <- 1
-  } else {
-    CF01 <- 0
-  }
-  
-  error_model <- match.arg(error_model)
-  err_m <- switch(
-    error_model,
-    "free" = 1,
-    "ARMA" = 0
+  # Identify algorithm options from input
+  alg_options <- determine_alg(
+    inflation_rate = inflation_rate,
+    bwidth_start = bwidth_start,
+    correction_factor = correction_factor,
+    autocor = autocor,
+    drop = drop,
+    error_model = error_model,
+    p = p
   )
-  
-  if (is.null(drop)) {
-    drop <- c(0.05, NA, 0.1)[[p]]
-  }  
-  
-  if (is.null(bwidth_start)) {
-    bwidth_start <- c(0.1, NA, 0.2)[[p]]
-  }  
+
+  infr <- alg_options[["infr"]]
+  err <- alg_options[["err"]]
+  CF <- alg_options[["CF"]]
+  err_m <- alg_options[["err_m"]]
+  drop <- alg_options[["drop"]]
+  bwidth_start <- alg_options[["bwidth_start"]]
   
   tryCatch({
-    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m, infr)
+    bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF, err, drop, bb, err_m, infr)
   }, error = function(e1) {
     stop(paste0(
       "Convergence of the bandwidth selection algorithm failed. Please try ",
@@ -122,7 +89,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
   }
   ) 
   
-  out
+  bwidth
   
 }
 
@@ -296,92 +263,40 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
   y <- stats::as.ts(y)
   att <- attributes(y)
   
-  if (is.na(smoothing_options@season)) {
-    if (inherits(y, c("ts", "zoo", "xts"))) {
-      s <- stats::frequency(y)
-      if (s == 1) {
-        stop('A seasonal period is required in the element "@season" of ', 
-             'the argument "smoothing_options".')
-      }
-    } else {
-      s <- 1
-    }
-  } else {
-    s <- smoothing_options@season
-  }
-  
-  # Number of observations
-  n <- length(y)           
-
-  # Select numeric values from character input using helper functions
-  bf <- bf_select(smoothing_options@boundary_method)
-  mu <- mu_select(smoothing_options@kernel_fun)  
-  p <- smoothing_options@order_poly
-  
-  if (all(inflation_rate == c("optimal", "naive"))) {
-    inflation_rate <- c("optimal", NA, "naive")[[p]]
-  }
-  
-  infr <- list("optimal" = c(5 / 7, NA, 9 / 11), "naive" = c(5 / 9, NA, 9 / 13))[[inflation_rate]][[p]]  
-  
-  bound_method <- smoothing_options@boundary_method
-  bb <- switch(
-    bound_method,
-    "extend" = 1,
-    "shorten" = 0
-  )
-  
+  # Identify exact smoothing options from input
+  det_options <- determine_options(y, smoothing_options)
+  s <- det_options[["s"]]
+  mu <- det_options[["mu"]] 
+  p <- det_options[["p"]]
+  bb <- det_options[["bb"]]
+  err <- determine_err(autocor)
+  CF <- determine_CF(correction_factor, err)
   bwidth <- smoothing_options@bwidth
   
-  CF <- correction_factor
-  if (CF) {
-    CF01 <- 1
-  } else {
-    CF01 <- 0
-  }    
-
-  err <- as.numeric(autocor)
-    
-  error_model <- match.arg(error_model)
-    
-  err_m <- switch(
-    error_model,
-    "free" = 1,
-    "ARMA" = 0
-  )    
-    
-  if (err_m == 0) {
-    CF01 <- 0
-  }  
-  
+  # Select bandwidth automatically if required
   if (is.na(bwidth)) {
     
-    if (is.null(drop)) {
-      drop <- c(0.05, NA, 0.1)[[p]]
-    }    
-    if (is.null(bwidth_start)) {
-      bwidth_start <- c(0.1, NA, 0.2)[[p]]
-    }
-    
-    tryCatch({
-      bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m, infr)
-    }, error = function(e1) {
-      stop(paste0(
-        "Convergence of the bandwidth selection algorithm failed. Please try ",
-        "other settings or select a bandwidth manually."
-      ), call. = FALSE)
-    }
+    bwidth <- select_bwidth(
+      y = y, 
+      smoothing_options = smoothing_options, 
+      bwidth_start = bwidth_start, 
+      inflation_rate = inflation_rate, 
+      correction_factor = correction_factor, 
+      autocor = autocor, 
+      drop = drop, 
+      error_model = error_model
     )
+  
   }
 
-  est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bf)
+  est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bb)
   Trend <- est[[2]]
   Season <- est[[3]]
   Residuals <- est[[4]]
   if (CF) {
     adjfactor <- CF_table$CF[CF_table$s == s & CF_table$p == p & CF_table$mu == mu]
     ResidsAdj <- tryCatch({
-      residdeseatsCpp(y, p, s, mu, bwidth * adjfactor, bf)
+      residdeseatsCpp(y, p, s, mu, bwidth * adjfactor, bb)
     }, error = function (e1){
       stop(paste0(
         "Convergence of the bandwidth selection algorithm failed. Please try ",

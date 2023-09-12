@@ -14,6 +14,115 @@ bf_select <- function(boundary_method) {
   )
 }
 
+#' Obtain frequency from given time series
+
+define_frequency <- function(y, season_input) {
+
+  if (is.na(season_input)) {
+    if (inherits(y, c("ts", "zoo", "xts"))) {
+      s <- stats::frequency(y)
+      if (s == 1) {
+        stop('A seasonal period is required in the element "@season" of ', 
+             'the argument "smoothing_options".')
+      }
+    } else {
+      s <- 1
+    }
+  } else {
+    s <- season_input
+  }
+  
+  s
+  
+}
+
+#' Obtain all smoothing values from input
+
+determine_options <- function(y, smoothing_options) {
+  
+  list(
+    bb = bf_select(smoothing_options@boundary_method),
+    mu = mu_select(smoothing_options@kernel_fun),
+    p = smoothing_options@order_poly,
+    s = define_frequency(y, smoothing_options@season)
+  )
+  
+}
+
+#' Determine the inflation setting
+determine_InfR <- function(inflation_rate, p) {
+  
+  if (all(inflation_rate == c("optimal", "naive"))) {
+    inflation_rate <- c("optimal", NA, "naive")[[p]]
+  }
+  
+  list("optimal" = c(5 / 7, NA, 9 / 11), "naive" = c(5 / 9, NA, 9 / 13))[[inflation_rate]][[p]]  
+    
+}
+
+determine_err <- function(autocor) {
+  
+  as.numeric(autocor)
+  
+}
+
+determine_CF <- function(correction_factor, err_m) {
+  
+  c(0, 1)[[(correction_factor + 1) * err_m + (err_m == 0)]]
+  
+}
+
+determine_err_m <- function(error_model = c("free", "ARMA")) {
+  
+  error_model <- match.arg(error_model)
+  c("free" = 1, "ARMA" = 0)[[error_model]]
+  
+}
+
+determine_drop <- function(drop, p) {
+  
+  if (is.null(drop)) {
+    drop <- c(0.05, NA, 0.1)[[p]]
+  }
+  
+  drop
+  
+}
+
+determine_bwidth_start <- function(bwidth_start, p) {
+  
+  if (is.null(bwidth_start)) {
+    bwidth_start <- c(0.1, NA, 0.2)[[p]]
+  }  
+  
+  bwidth_start
+  
+}
+
+determine_alg <- function(
+    inflation_rate, 
+    autocor, 
+    correction_factor, 
+    error_model,
+    drop,
+    bwidth_start,
+    p
+  ) {
+  
+    err_m <- determine_err_m(error_model)
+    
+    list(
+      infr = determine_InfR(inflation_rate, p),
+      err = determine_err(autocor),
+      CF = determine_CF(correction_factor, err_m),
+      err_m = err_m,
+      drop = determine_drop(drop, p),
+      bwidth_start = determine_bwidth_start(bwidth_start, p)
+    )
+  
+}
+
+
 set_default <- function(obj, repl) {
   arg_names <- names(repl)
   for (i in seq_along(arg_names)) {
@@ -50,9 +159,9 @@ check_which <-function(which) {
   
     if (is.null(which)) {
     text_prompt <- data.frame(
-      c("facets:", "observations:", "fitted:", "detailed_fit:", "trend_season:",
-        "residuals:",
-        "deseasonalized:", "detrended:"),
+      c("(1) facets:", "(2) observations:", "(3) fitted:", "(4) detailed_fit:", "(5) trend_season:",
+        "(6) residuals:",
+        "(7) deseasonalized:", "(8) detrended:"),
       c(
         "Facet plot of the estimated components",
         "The observed time series",

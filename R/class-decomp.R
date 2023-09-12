@@ -87,6 +87,7 @@ setMethod("plot", "decomp", function(x, which = NULL, ...) {
   
 })
 
+
 ### ggplot2 plot method
 
 #'Plot Method for Decomposition Results in the Style of ggplot2
@@ -112,8 +113,8 @@ setMethod("plot", "decomp", function(x, which = NULL, ...) {
 #'
 #'Work in progress. Details will be added soon.
 #'
+#'@export
 #'@importFrom ggplot2 autoplot
-#'@export 
 #'
 #'@return
 #'None

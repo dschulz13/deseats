@@ -8,7 +8,7 @@ Time Series under Short Memory}
 select_bwidth(
   y,
   smoothing_options = set_options(),
-  bwidth_start = 0.2,
+  bwidth_start = NULL,
   inflation_rate = c("optimal", "naive"),
   correction_factor = TRUE,
   autocor = TRUE,
