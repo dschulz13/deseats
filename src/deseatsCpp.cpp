@@ -684,12 +684,6 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
     
   }
   
-  Rcout << "Rp = "  << Rp << "\n";
-  Rcout << "R2 = "  << R2 << "\n";  
-  Rcout << "I2 = "  << I2 << "\n";  
-  Rcout << "b = "  << mukp << "\n";    
-  Rcout << "cf = "  << cf0 << "\n";  
-  
   return(bopt);
 
 }

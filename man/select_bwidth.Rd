@@ -12,7 +12,7 @@ select_bwidth(
   inflation_rate = c("optimal", "naive"),
   correction_factor = TRUE,
   autocor = TRUE,
-  drop = 0.1,
+  drop = NULL,
   error_model = c("free", "ARMA")
 )
 }
@@ -31,7 +31,9 @@ polynomial and the bandwidth for smoothing among others.}
 \code{bwidth} in \code{smoothing_options} is set to \code{NA}; 
 as the bandwidth will then
 be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
-the algorithm.}
+the algorithm; the default, \code{bwidth_start = NULL}, corresponds to 
+\code{bwidth_start = 0.1} for a local linear trend and to 
+\code{bwidth_start = 0.2} for a local cubic trend.}
 
 \item{inflation_rate}{a character vector of length one that indicates, which inflation rate 
 to use in the bandwidth selection; for a local linear trend, we have 
@@ -51,7 +53,8 @@ distributed errors (\code{FALSE}); the default is \code{autocor = TRUE}.}
 \item{drop}{a numeric vector of length one that indicates the proportion of 
 the observations to not include at each boundary in the bandwidth estimation 
 process, if a bandwidth is selected automatically; the default is 
-\code{drop = 0.1}.}
+\code{drop = NULL}, which corresponds to \code{drop = 0.05} for a 
+local linear trend and to \code{drop = 0.1} for a local cubic trend.}
 
 \item{error_model}{a character vector of length one that indicates whether
 for \code{autocor = TRUE} the sum of autocovariances of the errors is 

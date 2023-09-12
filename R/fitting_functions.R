@@ -13,7 +13,9 @@
 #'\code{bwidth} in \code{smoothing_options} is set to \code{NA}; 
 #'as the bandwidth will then
 #'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
-#'the algorithm.
+#'the algorithm; the default, \code{bwidth_start = NULL}, corresponds to 
+#'\code{bwidth_start = 0.1} for a local linear trend and to 
+#'\code{bwidth_start = 0.2} for a local cubic trend.
 #'@param inflation_rate a character vector of length one that indicates, which inflation rate 
 #' to use in the bandwidth selection; for a local linear trend, we have 
 #'\code{inflation_rate = "optimal"} as the default, for a local cubic trend
@@ -29,7 +31,8 @@
 #'@param drop a numeric vector of length one that indicates the proportion of 
 #'the observations to not include at each boundary in the bandwidth estimation 
 #'process, if a bandwidth is selected automatically; the default is 
-#'\code{drop = 0.1}.
+#'\code{drop = NULL}, which corresponds to \code{drop = 0.05} for a 
+#'local linear trend and to \code{drop = 0.1} for a local cubic trend.
 #'@param error_model a character vector of length one that indicates whether
 #'for \code{autocor = TRUE} the sum of autocovariances of the errors is 
 #'obtained purely nonparametrically (\code{"free"}) or whether an
@@ -48,7 +51,7 @@
 #'select_bwidth(Xt)
 #'
 
-select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA")) {
   
   if (is.na(smoothing_options@season)) {
     if (inherits(y, c("ts", "zoo", "xts"))) {
@@ -101,6 +104,13 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
     "ARMA" = 0
   )
   
+  if (is.null(drop)) {
+    drop <- c(0.05, NA, 0.1)[[p]]
+  }  
+  
+  if (is.null(bwidth_start)) {
+    bwidth_start <- c(0.1, NA, 0.2)[[p]]
+  }  
   
   tryCatch({
     bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m, infr)
@@ -136,7 +146,9 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'\code{bwidth} in \code{smoothing_options} is set to \code{NA}; 
 #'as the bandwidth will then
 #'be selected automatically, \code{bwidth_start} sets the initial bandwidth for 
-#'the algorithm.
+#'the algorithm; the default, \code{bwidth_start = NULL}, corresponds to 
+#'\code{bwidth_start = 0.1} for a local linear trend and to 
+#'\code{bwidth_start = 0.2} for a local cubic trend.
 #'@param inflation_rate a character vector of length one that indicates, which inflation rate 
 #' to use in the bandwidth selection; for a local linear trend, we have 
 #'\code{inflation_rate = "optimal"} as the default, for a local cubic trend
@@ -154,7 +166,8 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'@param drop a numeric vector of length one that indicates the proportion of 
 #'the observations to not include at each boundary in the bandwidth estimation 
 #'process, if a bandwidth is selected automatically; the default is 
-#'\code{drop = 0.1}.
+#'\code{drop = NULL}, which corresponds to \code{drop = 0.05} for a 
+#'local linear trend and to \code{drop = 0.1} for a local cubic trend.
 #'@param error_model a character vector of length one that indicates whether
 #'for \code{autocor = TRUE} the sum of autocovariances of the errors is 
 #'obtained purely nonparametrically (\code{"free"}) or whether an
@@ -276,7 +289,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = 0
 #'plot(est, which = 1)
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = 0.1, error_model = c("free", "ARMA")) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA")) {
 
   ts_name <- deparse(substitute(y))
   
@@ -342,6 +355,13 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = 0.2, in
   }  
   
   if (is.na(bwidth)) {
+    
+    if (is.null(drop)) {
+      drop <- c(0.05, NA, 0.1)[[p]]
+    }    
+    if (is.null(bwidth_start)) {
+      bwidth_start <- c(0.1, NA, 0.2)[[p]]
+    }
     
     tryCatch({
       bwidth <- algorithmCpp(y, p, s, mu, bwidth_start, CF01, err, drop, bb, err_m, infr)

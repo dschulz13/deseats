@@ -101,23 +101,23 @@ hA_calc <- function(
     eval(mk)^2
   }
   
-  Imk <- stats::integrate(mk_f, cb, 1 - cb, mk = mk)[[1]]
+  Imk <- stats::integrate(mk_f, cb, 1 - cb, mk = mk, subdivisions = 100000L)[[1]]
   
   b_f <- function(u, Ku = Ku, k = k) {
     u^k * Ku(u)
   }
   
-  b <- stats::integrate(b_f, -1, 1, Ku = Ku, k = k)[[1]]
+  b <- stats::integrate(b_f, -1, 1, Ku = Ku, k = k, subdivisions = 100000L)[[1]]
   
   K2_f <- function(u, Ku) {
     Ku(u)^2
   }
-  RK <- stats::integrate(K2_f, -1, 1, Ku = Ku)[[1]]
+  RK <- stats::integrate(K2_f, -1, 1, Ku = Ku, subdivisions = 100000L)[[1]]
   
   W2_f <- function(u, Wu) {
     Wu(u)^2
   }
-  RW <- stats::integrate(W2_f, -1, 1, Wu = Wu)[[1]]
+  RW <- stats::integrate(W2_f, -1, 1, Wu = Wu, subdivisions = 100000L)[[1]]
   
   h_c1 <- (factorial(k))^2 / (2 * k)
   h_c2 <- (sum_acov * ((1 - cb) - cb) * (RK + (frequ - 1) * RW)) / (Imk * b^2)
