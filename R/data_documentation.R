@@ -52,20 +52,6 @@
 #'\url{https://www-genesis.destatis.de/genesis/online?operation=abruftabelleBearbeiten&levelindex=1&levelid=1686857137066&auswahloperation=abruftabelleAuspraegungAuswaehlen&auswahlverzeichnis=ordnungsstruktur&auswahlziel=werteabruf&code=81000-0010&auswahltext=&werteabruf=Werteabruf#abreadcrumb}
 "SAVINGS"
 
-#' Monthly Industrial Production Index in the USA
-#'
-#' A \code{ts} object that contains the monthly observed industrial production 
-#' index in the USA
-#' (year 2017 = 100) from January 1965 to December 2007. The object 
-#' contains 516 observations.
-#' 
-#'@source The data was obtained from the databank of the Federal Reserve Bank of 
-#'St. Louis (accessed: 2022-07-26) and then transformed into a time series
-#'object using R.
-#'
-#'\url{https://fred.stlouisfed.org/series/IPB50001N}
-"PRODINDEX"
-
 #' Monthly Civilian Labor Force Level in the USA
 #'
 #' A \code{ts} object that contains the monthly observed civilian labor force
