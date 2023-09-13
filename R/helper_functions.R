@@ -14,7 +14,7 @@ bf_select <- function(boundary_method) {
   )
 }
 
-#' Obtain frequency from given time series
+# Obtain frequency from given time series
 
 define_frequency <- function(y, season_input) {
 
@@ -36,7 +36,7 @@ define_frequency <- function(y, season_input) {
   
 }
 
-#' Obtain all smoothing values from input
+# Obtain all smoothing values from input
 
 determine_options <- function(y, smoothing_options) {
   
@@ -49,7 +49,7 @@ determine_options <- function(y, smoothing_options) {
   
 }
 
-#' Determine the inflation setting
+# Determine the inflation setting
 determine_InfR <- function(inflation_rate, p) {
   
   if (all(inflation_rate == c("optimal", "naive"))) {

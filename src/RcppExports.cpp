@@ -261,7 +261,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // algorithmCpp
-double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm, const double expo);
+Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm, const double expo);
 RcppExport SEXP _deseats_algorithmCpp(SEXP ytSEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bStartSEXP, SEXP CFSEXP, SEXP errorsSEXP, SEXP cbSEXP, SEXP bbSEXP, SEXP errmSEXP, SEXP expoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

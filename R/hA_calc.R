@@ -1,6 +1,53 @@
-#' Calculation of Theoretically Optimal Bandwidth and Its Components
+#'Calculation of Theoretically Optimal Bandwidth and Its Components
+#'
+#'Allows to calculate the theoretically optimal bandwidth for estimating
+#'the trend and the seasonality in an equidistant time series with short-range 
+#'dependence using locally weighted regression, if the trend function 
+#'and the exact ARMA dependence structure of the errors are known.
+#'
+#'@param m an expression that defines the trend function in terms of \code{x},
+#'where \code{x} is the rescaled time on the interval \eqn{[0,1]}.
+#'@param arma a list with the elements \code{ar}, \code{ma} and \code{sd_e};
+#'\code{ar} is a numeric vector with the AR-coefficients, \code{ma} is a numeric 
+#'vector with the MA-coefficients and \code{sd_e} is the innovation standard 
+#'deviation.
+#'@param p the order of polynomial to use locally for the trend estimation.
+#'@param mu the smoothness parameter of the second-order kernel function used 
+#'in the weighting process.
+#'@param frequ the frequency of the theoretical time series (4 for quarterly and
+#'12 for monthly time series).
+#'@param n the number of observations.
+#'@param cb the part of observations to drop at each boundary.
+#'
+#'@details
+#'For simulation studies of the function \code{\link{deseats}} one may be 
+#'interested in obtaining the theoretically optimal bandwidth for local 
+#'regression first for a given theoretical process (from which realizations 
+#'will be drawn in the simulation). This function assists in obtaining this 
+#'theoretical bandwidth.
 #'
 #'@export
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+#'
+#'@return
+#'This function returns a list with various elements. See the documentation of 
+#'\code{\link{deseats}} to understand, what each quantity signifies.
+#'\describe{
+#'\item{\code{b}}{This is the theoretical quantity \eqn{\beta_{(k)}}.}
+#'\item{\code{hA}}{The theoretically asymptotically optimal global bandwidth for 
+#'locally weighted regression applied to the theoretical time series under 
+#'consideration.}
+#'\item{\code{Imk}}{This is the theoretical quantity \eqn{I[m^{(k)}]}.}
+#'\item{\code{RK}}{This is the theoretical quantity \eqn{R(K)}.}
+#'\item{\code{RW}}{This is the theoretical quantity \eqn{R(W)}.}
+#'\item{\code{sum_autocov}}{This is the theoretical quantity \eqn{2\pi c_f}.}
+#'}
 #'
 #'@examples
 #'arma <- list(ar = 0.8, sd_e = 0.01)
@@ -9,7 +56,7 @@
 #'p <- 1
 #'mu <- 1
 #'frequ <- 4
-#'cb <- 0.1
+#'cb <- 0.05
 #'
 #'hA_calc(
 #'  m = m_f,

@@ -509,7 +509,7 @@ arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
 }
 
 // [[Rcpp::export]]
-double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm, const double expo) {
+Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm, const double expo) {
   
   double bopt = bStart;
   double boptOld = -100;
@@ -625,6 +625,8 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
   arma::vec resAdj2;
   int stopreason = 0;
   const double diffvalue = 1.0 / n;
+  arma::vec bwidths = arma::zeros<arma::vec>(itMax + 1);
+  bwidths(0) = bopt;
   
   while (it < itMax + 1 && stopreason == 0) {
     
@@ -678,12 +680,16 @@ double algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu,
       bopt = (bopt + boptOld) / 2.0;
     }  
     
-
+    bwidths(it) = bopt;
     
     it += 1;
     
   }
   
-  return(bopt);
+  arma::vec bout = bwidths.subvec(0, it - 1);
+  
+  Rcpp::List out = Rcpp::List::create(_["bwidths"] = bout, _["Imk"] = I2, _["sum_autocov"] = cf0);
+  
+  return(out);
 
 }

@@ -62,6 +62,17 @@ obtained purely nonparametrically (\code{"free"}) or whether an
 autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
 default is \code{error_model = "free"}.}
 }
+\value{
+The function returns a list with different components:
+
+\describe{
+\item{\code{bopt}}{the obtained optimal bandwidth.}
+\item{\code{bwidths}}{the obtained bandwidth for each iteration of the 
+IPI-algorithm.}
+\item{\code{Imk}}{the final estimate of \eqn{I[m^{(k)}]}.}
+\item{\code{sum_autocov}}{the final estimate of the sum of autocovariances.}
+}
+}
 \description{
 Optimal Bandwidth Estimation for Locally Weighted Regression in Equidistant 
 Time Series under Short Memory

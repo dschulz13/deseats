@@ -67,6 +67,35 @@ default is \code{error_model = "free"}.}
 \value{
 The function returns and S4 object with the following elements (access them 
 via \code{@}):
+
+\describe{
+\item{\code{boundary_method}}{the applied boundary method.}
+\item{\code{bwidth}}{the globally applied bandwidth in the smoothing process; if not 
+if no input is given in the function call, this is the automatically selected 
+optimal bandwidth.}
+\item{\code{decomp}}{An object of class \code{"mts"} that consists of the
+decomposed time series data.}
+\item{\code{frequency}}{the frequency of the time series.}
+\item{\code{kernel_fun}}{the second-order kernel function considered for weighting.}
+\item{\code{order_poly}}{the order of polynomial considered locally for the trend.}
+\item{\code{order_poly}}{the order of polynomial considered locally for the trend.}
+\item{\code{sum_autocov}}{the estimated sum of autocovariances.}
+\item{\code{ts_name}}{the object name of the initially provided time series object.}
+\item{\code{weights_wfun}}{a matrix, which gives the weighting system to estimate 
+trend + seasonality as a weighted average from the given time series; if 
+\eqn{n} is the length of the given time series and \eqn{b} is the applied 
+(relative) bandwidth, then the first row of the weighting system gives the 
+weights to obtain estimates at \eqn{t=1}, the second row gives the weights to 
+obtain estimates at \eqn{t=2} and so on for all left-hand side boundary points 
+until the middle row, which contains the 
+weights used at all interior points; the rows following the middle row contain
+the weights for right-hand side boundary points (the rows are ordered
+chronologically).}
+\item{\code{weights}}{an array with many slices that represent the weighting systems,
+just as described for \code{weights_wfun}, for various filters; the
+slice names are \code{"Trend"}, \code{"Season"} and \code{"Combined"}, where
+that last slice corresponds to the matrix \code{weights_wfun}}. 
+}
 }
 \description{
 Simultaneously estimate the trend and the 
@@ -78,7 +107,7 @@ for identifying the asymptotically globally optimal bandwidth for smoothing.
 The trend is estimated based on the additive
 nonparametric regression model for an equidistant time series
 \deqn{y_t = m(x_t) + s(x_t) + \epsilon_t,}
-where \eqn{y_t} is the observed time series with \eqn{t=1,...\n}, \eqn{x_t} is the rescaled time
+where \eqn{y_t} is the observed time series with \eqn{t=1,...n}, \eqn{x_t = t / n} is the rescaled time
 on the interval \eqn{[0, 1]}, \eqn{m(x_t)} is a smooth and deterministic
 trend function, \eqn{s(x_t)} is a (slowly changing) seasonal component with 
 seasonal period \eqn{p_s} and \eqn{\epsilon_t} are stationary errors 
