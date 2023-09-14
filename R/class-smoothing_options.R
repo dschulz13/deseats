@@ -99,49 +99,89 @@ set_options <- function(
 }
 
 
+#'Retrieve or Set Smoothing Options
+#'
+#'Retrieve smoothing options from or set them in an object 
+#'of class \code{"smoothing_options"}.
+#'
+#'@param object an object of class \code{"smoothing_options"}.
+#'
+#'@details
+#'Various methods are provided to either retrieve smoothing option
+#'settings from an object of class \code{"smoothing_options"} or 
+#'to adjust them within such an object.
+#'
+#'@export
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+#'
+#'@examples
+#'opts <- set_options()
+#'opts
+#'order_poly(opts)
+#'order_poly(opts) <- 3
+#'opts
+#'
+methods::setMethod("order_poly", "smoothing_options", function(object) object@order_poly)
 
+#'
+#'@param value the value to set the corresponding option to.
+#'
+#'@rdname order_poly-smoothing_options-method
+#'
 #'@export
-methods::setMethod("order_poly", "smoothing_options", function(x) x@order_poly)
-#'@export
-methods::setMethod("order_poly<-", "smoothing_options", function(x, value) {
-  x@order_poly <- value
-  x
+methods::setMethod("order_poly<-", "smoothing_options", function(object, value) {
+  object@order_poly <- value
+  object
 })
 
+#'@rdname order_poly-smoothing_options-method
+#'@export
+methods::setMethod("season", "smoothing_options", function(object) object@season)
 
+#'@rdname order_poly-smoothing_options-method
 #'@export
-methods::setMethod("season", "smoothing_options", function(x) x@season)
-#'@export
-methods::setMethod("season<-", "smoothing_options", function(x, value) {
-  x@season <- value
-  x
+methods::setMethod("season<-", "smoothing_options", function(object, value) {
+  object@season <- value
+  object
 })
 
+#'@rdname order_poly-smoothing_options-method
+#'@export
+methods::setMethod("kernel_fun", "smoothing_options", function(object) object@kernel_fun)
 
+#'@rdname order_poly-smoothing_options-method
 #'@export
-methods::setMethod("kernel_fun", "smoothing_options", function(x) x@kernel_fun)
-#'@export
-methods::setMethod("kernel_fun<-", "smoothing_options", function(x, value) {
-  x@kernel_fun <- value
-  x
+methods::setMethod("kernel_fun<-", "smoothing_options", function(object, value) {
+  object@kernel_fun <- value
+  object
 })
 
+#'@rdname order_poly-smoothing_options-method
+#'@export
+methods::setMethod("bwidth", "smoothing_options", function(object) object@bwidth)
 
+#'@rdname order_poly-smoothing_options-method
 #'@export
-methods::setMethod("bwidth", "smoothing_options", function(x) x@bwidth)
-#'@export
-methods::setMethod("bwidth<-", "smoothing_options", function(x, value) {
-  x@bwidth <- value
-  x
+methods::setMethod("bwidth<-", "smoothing_options", function(object, value) {
+  object@bwidth <- value
+  object
 })
 
+#'@rdname order_poly-smoothing_options-method
+#'@export
+methods::setMethod("boundary_method", "smoothing_options", function(object) object@boundary_method)
 
+#'@rdname order_poly-smoothing_options-method
 #'@export
-methods::setMethod("boundary_method", "smoothing_options", function(x) x@boundary_method)
-#'@export
-methods::setMethod("boundary_method<-", "smoothing_options", function(x, value) {
-  x@boundary_method <- value
-  x
+methods::setMethod("boundary_method<-", "smoothing_options", function(object, value) {
+  object@boundary_method <- value
+  object
 })
 
 #------------------

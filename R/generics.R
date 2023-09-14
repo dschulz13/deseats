@@ -3,7 +3,7 @@
 #'Various generics that can be used write methods to either retrieve or set 
 #'smoothing options.
 #'
-#'@param x an object from which to either retrieve options or in which to set 
+#'@param object an object from which to either retrieve options or in which to set 
 #'an option.
 #'
 #'@details
@@ -16,41 +16,44 @@
 #'The generics themselves are without a direct purpose. 
 #'
 #'@export
-methods::setGeneric("order_poly", function(x) standardGeneric("order_poly"))
+methods::setGeneric("order_poly", function(object) standardGeneric("order_poly"))
 #'@rdname order_poly
 #'
 #'@param value the value to set the corresponding option to.
 #'
 #'@export
-methods::setGeneric("order_poly<-", function(x, value) standardGeneric("order_poly<-"))
+methods::setGeneric("order_poly<-", function(object, value) standardGeneric("order_poly<-"))
 
 #'@rdname order_poly
 #'@export
-methods::setGeneric("season", function(x) standardGeneric("season"))
+#'
+#'@param ... without use; implemented for possible future compatibility only.
+#'
+methods::setGeneric("season", function(object, ...) standardGeneric("season"))
 #'@rdname order_poly
 #'@export
-methods::setGeneric("season<-", function(x, value) standardGeneric("season<-"))
+methods::setGeneric("season<-", function(object, value) standardGeneric("season<-"))
 
 #'@rdname order_poly
 #'@export
-methods::setGeneric("kernel_fun", function(x) standardGeneric("kernel_fun"))
+methods::setGeneric("kernel_fun", function(object) standardGeneric("kernel_fun"))
 #'@rdname order_poly
 #'@export
-methods::setGeneric("kernel_fun<-", function(x, value) standardGeneric("kernel_fun<-"))
+methods::setGeneric("kernel_fun<-", function(object, value) standardGeneric("kernel_fun<-"))
 
 #'@rdname order_poly
 #'@export
-methods::setGeneric("bwidth", function(x) standardGeneric("bwidth"))
+methods::setGeneric("bwidth", function(object) standardGeneric("bwidth"))
 #'@rdname order_poly
 #'@export
-methods::setGeneric("bwidth<-", function(x, value) standardGeneric("bwidth<-"))
+methods::setGeneric("bwidth<-", function(object, value) standardGeneric("bwidth<-"))
 
 #'@rdname order_poly
 #'@export
-methods::setGeneric("boundary_method", function(x) standardGeneric("boundary_method"))
+methods::setGeneric("boundary_method", function(object) standardGeneric("boundary_method"))
 #'@rdname order_poly
 #'@export
-methods::setGeneric("boundary_method<-", function(x, value) standardGeneric("boundary_method<-"))
+methods::setGeneric("boundary_method<-", function(object, value) standardGeneric("boundary_method<-"))
 
 #------------------------------------------#
 
@@ -59,22 +62,22 @@ methods::setGeneric("boundary_method<-", function(x, value) standardGeneric("bou
 #'Obtain estimated components, such as the estimated trend, the seasonally 
 #'adjusted series, and so on from an estimation object.
 #'
-#'@param x the estimation object.
+#'@param object the estimation object.
 #'@param ... currently without use; included for future compatibility.
 #'
 #'@export
-methods::setGeneric("trend", function(x, ...) standardGeneric("trend"))
+methods::setGeneric("trend", function(object, ...) standardGeneric("trend"))
 
 #'@rdname trend
 #'
 #'
 #'
 #'@export
-methods::setGeneric("deseasonalize", function(x, ...) standardGeneric("deseasonalize"))
+methods::setGeneric("deseasonalize", function(object, ...) standardGeneric("deseasonalize"))
 
 #'@rdname trend
 #'@export
-methods::setGeneric("detrend", function(x, ...) standardGeneric("detrend"))
+methods::setGeneric("detrend", function(object, ...) standardGeneric("detrend"))
 
 #------------------------------------------#
 

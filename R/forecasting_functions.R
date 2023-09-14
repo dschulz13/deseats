@@ -1,4 +1,4 @@
-#' Forecasting Function for ARMA Models via Bootstrap
+# Forecasting Function for ARMA Models via Bootstrap
 
 bootCast <- function(model, X, p = NULL, q = NULL,
   n.start = 1000, h = 5, it = 5000, pb = TRUE,
@@ -122,7 +122,7 @@ bootSetup <- function(model, X, p, q, h, n.start, b_type = c("simple", "advanced
 }
 
 
-#' Forecasting Function for ARMA Models under Normally Distributed Innovations
+# Forecasting Function for ARMA Models under Normally Distributed Innovations
 
 normCast <- function(model, p = NULL, q = NULL, h = 1,
   alpha = c(0.95, 0.99), ...) {

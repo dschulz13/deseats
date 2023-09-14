@@ -30,15 +30,18 @@ methods::setGeneric(
 #' colF <- colorRampPalette(c("deepskyblue4", "deepskyblue"))
 #' cols <- colF(m)
 #'
-#'matplot(lambda, t(gain_values$gain_decomb[1:(k + 1), ]), type = paste0(rep("l", k + 1), collapse = ""),
+#'matplot(lambda, t(gain_values$gain_decomb[1:(k + 1), ]), 
+#'  type = paste0(rep("l", k + 1), collapse = ""),
 #'  col = cols, lty = rep(1, k + 1))
 #'title("Gain functions of the combined detrend and deseasonalization filters")
 #'
-#'matplot(lambda, t(gain_values$gain_trend[1:(k + 1), ]), type = paste0(rep("l", k + 1), collapse = ""),
+#'matplot(lambda, t(gain_values$gain_trend[1:(k + 1), ]), 
+#'  type = paste0(rep("l", k + 1), collapse = ""),
 #'  col = cols, lty = rep(1, k + 1))
 #'title("Gain functions of the trend filters")
 #' 
-#'matplot(lambda, t(gain_values$gain_deseason[1:(k + 1), ]), type = paste0(rep("l", k + 1), collapse = ""),
+#'matplot(lambda, t(gain_values$gain_deseason[1:(k + 1), ]), 
+#'  type = paste0(rep("l", k + 1), collapse = ""),
 #'  col = cols, lty = rep(1, k + 1))
 #'title("Gain functions of the seasonal adjustment filters")
 #' 

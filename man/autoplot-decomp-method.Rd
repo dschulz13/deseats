@@ -24,14 +24,20 @@ interactively in the R console.}
 \item{...}{no purpose and only implemented for compatibility.}
 }
 \value{
-None
+A ggplot2-graphic object is returned, i.e. an object of classes 
+\code{"gg"} and \code{"ggplot"}.
 }
 \description{
 This is method for producing various plots of the decomposition results
 returned by this package.
 }
 \details{
-Work in progress. Details will be added soon.
+Create predefined standard plots of the decomposition objects returned by the 
+\code{deseats} package, e.g. returned by the function \code{\link{deseats}}. 
+Plots are created in the ggplot2 plot style. The type of plot can be chosen 
+either interactively from the console, or the argument \code{which} can be 
+used to directly  select the kind of plot to create (see also the description
+of the argument \code{which}) within the function call.
 }
 \examples{
 

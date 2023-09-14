@@ -32,14 +32,19 @@ setClass("decomp",
 #'or multiple time series are shown in the plot).
 #'
 #'@details
-#'
-#'Work in progress. Details will be added soon.
+#'Create predefined standard plots of the decomposition objects returned by the 
+#'\code{deseats} package, e.g. returned by the function \code{\link{deseats}}. 
+#'Plots are created in the base R plot style. The type of plot can be chosen 
+#'either interactively from the console, or the argument \code{which} can be 
+#'used to directly  select the kind of plot to create (see also the description
+#'of the argument \code{which}) within the function call.
 #'
 #'@importFrom ggplot2 autoplot
 #'@export 
 #'
 #'@return
-#'None
+#'A graphic is created in the plots windows, the function itself, however,
+#'returns \code{NULL}.
 #'
 #'@author
 #'\itemize{
@@ -110,14 +115,19 @@ setMethod("plot", "decomp", function(x, which = NULL, ...) {
 #'@param ... no purpose and only implemented for compatibility.
 #'
 #'@details
-#'
-#'Work in progress. Details will be added soon.
+#'Create predefined standard plots of the decomposition objects returned by the 
+#'\code{deseats} package, e.g. returned by the function \code{\link{deseats}}. 
+#'Plots are created in the ggplot2 plot style. The type of plot can be chosen 
+#'either interactively from the console, or the argument \code{which} can be 
+#'used to directly  select the kind of plot to create (see also the description
+#'of the argument \code{which}) within the function call.
 #'
 #'@export
 #'@importFrom ggplot2 autoplot
 #'
 #'@return
-#'None
+#'A ggplot2-graphic object is returned, i.e. an object of classes 
+#'\code{"gg"} and \code{"ggplot"}.
 #'
 #'@author
 #'\itemize{
@@ -168,45 +178,76 @@ setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
 
 #--------------------------------------------------------------
 
+#'Obtain Individual Components of a Decomposed Time Series
+#'
+#'The provided methods work for decomposition objects created 
+#'within this package. They allow the user to retrieve individual
+#'components among the estimated ones.
+#'
+#'@param object the estimation / decomposition object, for example 
+#'of class \code{"deseats"}.
+#'
+#'@details
+#'Apply these functions directly to an estimation object, i.e. 
+#'the result of a decomposition of a seasonal time series, in order 
+#'to retrieve individual estimated components.
+#'
 #'@export
-methods::setMethod("trend", "decomp", function(x) {
+#'
+#'@examples
+#'Xt <- log(EXPENDITURES)
+#'smoothing_options <- set_options(order_poly = 3)
+#'est <- deseats(Xt, smoothing_options = smoothing_options)
+#'trend_e <- trend(est)           # Trend estimates
+#'season_e <- season(est)         # Seasonality estimates
+#'trend_season_e <- fitted(est)   # Trend + seasonality estimates
+#'resid_e <- residuals(est)       # Residuals (observ. - trend - seasonality)
+#'ts_adj <- deseasonalize(est)    # Seasonally adjusted series
+#'ts_notrend <- detrend(est)      # Detrended series
+#'
+
+methods::setMethod("trend", "decomp", function(object, ...) {
   tryCatch({
-    x@decomp[, "Trend"]
+    object@decomp[, "Trend"]
   }, error = function(c1) {stop("No trend component to retrieve.", call. = FALSE)})
   
 })
+#'@rdname trend-decomp-method
 #'@export
-methods::setMethod("season", "decomp", function(x) {
+methods::setMethod("season", "decomp", function(object, ...) {
   tryCatch({
-    x@decomp[, "Season"]
+    object@decomp[, "Season"]
   }, error = function(c1) {stop("No seasonal component to retrieve.", call. = FALSE)})
   
 })
-
+#'@rdname trend-decomp-method
 #'@export
+#'
+#'@param ... without further use; implemented for compatibility only.
+#'
 setMethod("fitted", "decomp",
   function(object, ...){
     trend(object) + season(object)
   }
 )
-
+#'@rdname trend-decomp-method
 #'@export
 setMethod("residuals", "decomp",
   function(object, ...){
     object@decomp[, "Rest"]
   }
 )
-
+#'@rdname trend-decomp-method
 #'@export
 setMethod("deseasonalize", "decomp",
-  function(x, ...){
-    x@decomp[, "Observations"] - season(x)
+  function(object, ...){
+    object@decomp[, "Observations"] - season(object)
   }
 )
-
+#'@rdname trend-decomp-method
 #'@export
 setMethod("detrend", "decomp",
-  function(x, ...){
-    x@decomp[, "Observations"] - trend(x)
+  function(object, ...){
+    object@decomp[, "Observations"] - trend(object)
   }
 )

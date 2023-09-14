@@ -2,7 +2,6 @@
 % Please edit documentation in R/deseats-package.R
 \docType{package}
 \name{deseats-package}
-\alias{deseats}
 \alias{deseats-package}
 \title{Decomposition of Seasonal Time Series}
 \description{

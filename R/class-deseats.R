@@ -59,7 +59,59 @@ setMethod("show", "deseats",
 
 #-----------------
 
+#'Animate Locally Weighted Regression Results
+#'
+#'The results of locally weighted regression results
+#'acquired through decomposition of seasonal time series 
+#'via the function \code{\link{deseats}} can be 
+#'animated automatically.
+#'
+#'@param object an object of class \code{"deseats"}.
+#'@param col.obs the color to use for the observations.
+#'@param col.fit the color to use for the fitted values.
+#'@param col.weights the color to use for the active kernel weights.
+#'@param col.window the color to use for the window defined through the
+#'bandwidth
+#'@param col.spot the color to highlight the estimation time point.
+#'@param save whether to save the animation or not; for \code{NULL},
+#'it will not be saved; to save it in the current working directory, use 
+#'either \code{save = "PDF"} or \code{save = "HTML"}, which also specifies 
+#'the file format.
+#'@param xlab the label for the x-axis.
+#'@param ylab1 the label for the y-axis on the left-hand side.
+#'@param ylab2 the label for the second y-axis on the right-hand side.
+#'@param main the plot title.
+#'@param ... currently without use; implemented for possible future 
+#'compatibility.
+#'
+#'@details
+#'\code{\link{deseats}} estimation results are automatically animated 
+#'through this method. It shows the observed series together with fitted
+#'values (trend + seasonality), the smoothing window, the fitted values from 
+#'the local regression, and the active kernel weights.
+#'
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+#'
 #'@export
+#'
+#'@return
+#'The function returns \code{NULL}.
+#'
+#'@examples
+#'\dontrun{
+#'### Creating the animation might take a while
+#'Xt <- log(EXPENDITURES)
+#'smoothing_options <- set_options(order_poly = 3)
+#'est <- deseats(Xt, smoothing_options = smoothing_options)
+#'animate(est)
+#'}
+#'
 methods::setMethod("animate", "deseats", 
 function(object, col.obs = "grey74", col.fit = "red", 
                     col.weights = "#00D40E", col.window = "deepskyblue4", 
@@ -258,10 +310,32 @@ if (is.null(save)) {
 }
 )
 
+#'Retrieve the Used Bandwidth from an Estimation Object 
+#'
+#'If either \code{\link{deseats}} or \code{\link{s_semiarma}} are 
+#'used to fit a model to time series data, this method retrieves 
+#'the applied bandwidth from the output object.
+#'
+#'@param object an object either of class \code{"deseats"} or 
+#'\code{"s_semiarma"}.
+#'
+#'@details
+#'When applying \code{\link{deseats}} or \code{link{s_semiarma}},
+#'one approach is to let the functions automatically choose a 
+#'bandwidth for locally weighted regression. Using this method,
+#'the applied bandwidth can be retrieved.
+#'
 #'@export
+#'
+#'@examples
+#'Xt <- log(EXPENDITURES)
+#'smoothing_options <- set_options(order_poly = 3)
+#'est <- deseats(Xt, smoothing_options = smoothing_options)
+#'bwidth(est)
+#'
 setMethod("bwidth", "deseats",
-  function(x){
-    x@bwidth
+  function(object){
+    object@bwidth
   }
 )
 

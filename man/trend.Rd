@@ -6,14 +6,14 @@
 \alias{detrend}
 \title{Obtain Estimated Components of a Time Series}
 \usage{
-trend(x, ...)
+trend(object, ...)
 
-deseasonalize(x, ...)
+deseasonalize(object, ...)
 
-detrend(x, ...)
+detrend(object, ...)
 }
 \arguments{
-\item{x}{the estimation object.}
+\item{object}{the estimation object.}
 
 \item{...}{currently without use; included for future compatibility.}
 }

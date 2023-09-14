@@ -177,9 +177,10 @@ methods::setMethod("show", "s_semiarma",
 }
 )
 
+#'@rdname bwidth-deseats-method
 #'@export
 setMethod("bwidth", "s_semiarma",
-  function(x){
-    x@nonpar_model@bwidth
+  function(object){
+    object@nonpar_model@bwidth
   }
 )

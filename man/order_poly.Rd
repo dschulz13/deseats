@@ -13,31 +13,33 @@
 \alias{boundary_method<-}
 \title{Smoothing Option Generics}
 \usage{
-order_poly(x)
+order_poly(object)
 
-order_poly(x) <- value
+order_poly(object) <- value
 
-season(x)
+season(object, ...)
 
-season(x) <- value
+season(object) <- value
 
-kernel_fun(x)
+kernel_fun(object)
 
-kernel_fun(x) <- value
+kernel_fun(object) <- value
 
-bwidth(x)
+bwidth(object)
 
-bwidth(x) <- value
+bwidth(object) <- value
 
-boundary_method(x)
+boundary_method(object)
 
-boundary_method(x) <- value
+boundary_method(object) <- value
 }
 \arguments{
-\item{x}{an object from which to either retrieve options or in which to set 
+\item{object}{an object from which to either retrieve options or in which to set 
 an option.}
 
 \item{value}{the value to set the corresponding option to.}
+
+\item{...}{without use; implemented for possible future compatibility only.}
 }
 \description{
 Various generics that can be used write methods to either retrieve or set 

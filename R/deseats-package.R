@@ -43,10 +43,14 @@
 #'Author
 #'}
 #'
+#'@importFrom stats as.formula frequency lm na.omit qnorm quantile
+#'@importFrom stats rgeom time ts
+#'@importFrom utils head tail
 #'
 #'@useDynLib deseats
-"_PACKAGE"
-
-## usethis namespace: start
-## usethis namespace: end
+#'@docType package
+#'@name deseats-package
+#'@aliases deseats-package
+#'@useDynLib deseats
+#'@importFrom Rcpp sourceCpp
 NULL
