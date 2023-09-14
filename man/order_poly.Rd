@@ -7,6 +7,10 @@
 \alias{season<-}
 \alias{kernel_fun}
 \alias{kernel_fun<-}
+\alias{bwidth}
+\alias{bwidth<-}
+\alias{boundary_method}
+\alias{boundary_method<-}
 \title{Smoothing Option Generics}
 \usage{
 order_poly(x)
@@ -20,6 +24,14 @@ season(x) <- value
 kernel_fun(x)
 
 kernel_fun(x) <- value
+
+bwidth(x)
+
+bwidth(x) <- value
+
+boundary_method(x)
+
+boundary_method(x) <- value
 }
 \arguments{
 \item{x}{an object from which to either retrieve options or in which to set 

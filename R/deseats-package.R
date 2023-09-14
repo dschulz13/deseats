@@ -33,8 +33,21 @@
 #'Speth, H.-T. (2004). Komponentenzerlegung und Saisonbereinigung ökonomischer 
 #'Zeitreihen mit dem Verfahren BV4.1. Statistisches Bundesamt.
 #'
-#'@docType package
-#'@name deseats-package
-#'@aliases deseats-package
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'\item Yuanhua Feng (Department of Economics, Paderborn
+#'University), \cr
+#'Author
+#'}
+#'
+#'
 #'@useDynLib deseats
+#'@keywords internal
+"_PACKAGE"
+
+## usethis namespace: start
+## usethis namespace: end
 NULL

@@ -2,6 +2,7 @@
 % Please edit documentation in R/deseats-package.R
 \docType{package}
 \name{deseats-package}
+\alias{deseats}
 \alias{deseats-package}
 \title{Decomposition of Seasonal Time Series}
 \description{
@@ -44,3 +45,14 @@ The package is distributed under the General Public License v3
 Speth, H.-T. (2004). Komponentenzerlegung und Saisonbereinigung ökonomischer 
 Zeitreihen mit dem Verfahren BV4.1. Statistisches Bundesamt.
 }
+\author{
+\itemize{
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+University), \cr
+Author and Package Creator
+\item Yuanhua Feng (Department of Economics, Paderborn
+University), \cr
+Author
+}
+}
+\keyword{internal}
