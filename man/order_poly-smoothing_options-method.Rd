@@ -38,6 +38,11 @@
 
 \item{value}{the value to set the corresponding option to.}
 }
+\value{
+The methods without \code{<-} return the corrsponding settings in the supplied 
+object. The methods with \code{<-} set the corresponding option in the 
+provided object.
+}
 \description{
 Retrieve smoothing options from or set them in an object 
 of class \code{"smoothing_options"}.

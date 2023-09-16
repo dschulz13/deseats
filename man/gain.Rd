@@ -6,6 +6,27 @@
 \usage{
 gain(object, lambda = seq(0, 0.5, 1e-04), ...)
 }
+\arguments{
+\item{object}{an input object; for the linear filters considered in this 
+object, gain function values should be obtained.}
+
+\item{lambda}{a vector of frequencies (from 0 to 0.5) for which 
+to obtain the gain function.}
+
+\item{...}{currently without use; for possible future compatibility.}
+}
 \description{
 Gain Function Generic
+}
+\details{
+A standard generic function. The purpose is to build various methods 
+to instantaneously obtain gain function values for linear filters of 
+different decomposition objects.
+}
+\author{
+\itemize{
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+University), \cr
+Author and Package Creator
+}
 }

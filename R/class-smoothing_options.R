@@ -57,7 +57,6 @@ setClass("smoothing_options",
 #'Work in progress. Details will be added in the release version of this package.
 #'
 #'@return
-#'
 #'The function returns an S4 object with the following elements (access via 
 #'\code{@}):
 #'
@@ -119,6 +118,11 @@ set_options <- function(
 #'University), \cr
 #'Author and Package Creator
 #'}
+#'
+#'@return
+#'The methods without \code{<-} return the corrsponding settings in the supplied 
+#'object. The methods with \code{<-} set the corresponding option in the 
+#'provided object.
 #'
 #'@examples
 #'opts <- set_options()
@@ -186,7 +190,26 @@ methods::setMethod("boundary_method<-", "smoothing_options", function(object, va
 
 #------------------
 
+#'Show Method for Smoothing Options
+#'
+#'Show smoothing settings in an object of class \code{"smoothing_options"}. 
+#'
+#'@param object an object of class \code{"smoothing_options"}.
+#'
+#'@details
+#'This is a special printing method for objects object of class 
+#'\code{"smoothing_options"}. Calling this method shows a nice looking 
+#'overview of the saved smoothing settings.
+#'
+#'@return
+#'This method returns \code{NULL}.
+#'
 #'@export
+#'
+#'@examples
+#'opts <- set_options()
+#'opts
+#'
 setMethod("show", "smoothing_options",
   function(object){
     .df <- data.frame(

@@ -7,7 +7,7 @@
 lm_decomp(yt, order_poly = 1, season = NULL)
 }
 \arguments{
-\item{yt}{a time series object of class \code{ts} or an object that can be 
+\item{yt}{a time series object of class \code{"ts"} or an object that can be 
 transformed to that class using \code{\link[stats]{as.ts}}.}
 
 \item{order_poly}{the order of the polynomial considered for the trend; the
@@ -16,16 +16,35 @@ default is \code{order_poly = 1}.}
 \item{season}{the seasonal period in \code{yt}; by default, the seasonal 
 period is obtained automatically from \code{yt}.}
 }
+\value{
+A list with the following elements is returned.
+\describe{
+\item{decomp}{an object of class \code{"mts"} that consists of the
+decomposed time series data.}
+\item{ts_name}{the object name of the initially provided time series object.}
+\item{frequency}{the frequency of the time series.}
+\item{regression_output}{an object of class \code{"lm"}, i.e. basic regression
+output.}
+}
+}
 \description{
 Trend and seasonality are simultaneously modelled by considering a polynomial
 for the trend and dummy variables for the different time units (e.g. months).
 }
 \details{
-Soon to be written.
+Apply ordinary least squares to estimate trend and seasonality simultaneously
+in a given time series. This a global approach in contrast to for example 
+\code{\link{deseats}}, which is a local estimation method.
 }
 \examples{
-
 est <- lm_decomp(log(EXPENDITURES), order_poly = 4)
 est
 
+}
+\author{
+\itemize{
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+University), \cr
+Author and Package Creator
+}
 }

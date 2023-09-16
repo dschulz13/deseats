@@ -1,6 +1,24 @@
-#' Gain Function Generic
+#'Gain Function Generic
 #' 
-#' @export
+#'@param object an input object; for the linear filters considered in this 
+#'object, gain function values should be obtained.
+#'@param lambda a vector of frequencies (from 0 to 0.5) for which 
+#'to obtain the gain function.
+#'@param ... currently without use; for possible future compatibility.
+#' 
+#'@details
+#'A standard generic function. The purpose is to build various methods 
+#'to instantaneously obtain gain function values for linear filters of 
+#'different decomposition objects.
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+#' 
+#'@export
 #' 
 
 methods::setGeneric(
@@ -10,14 +28,44 @@ methods::setGeneric(
   }
 )
 
-#' Obtain gain function values for Semi-ARMA Trend and Detrend Filters
+#' Obtain gain function values for DeSeaTS Trend and Detrend Filters
 #' 
 #' @param object an object of class \code{"deseats"}.
 #' @param lambda a numeric vector with the frequencies at which to get 
 #' the gain function values. 
 #' @param ... no current purpose for this ellipsis.
 #' 
+#'@details
+#'The various filters obtained via \code{\link{deseats}} (represented by 
+#'the returned weighting systems) have a representation in the frequency 
+#'domain. Using this method, those gain function values can be easily 
+#'obtained.
+#' 
 #' @export
+#' 
+#'@return
+#'A list is returned. Each element represents gain function values 
+#'at the specified frequencies \code{lambda} for the filter defined 
+#'through the element name.
+#'\describe{
+#'\item{\code{gain_trend}}{gain function values for the trend filter.}
+#'\item{\code{gain_detrend}}{gain function values for the detrending filter.}
+#'\item{\code{gain_season}}{gain function values for the seasonality filter.}
+#'\item{\code{gain_deseason}}{gain function values for the seasonal 
+#'adjustment filter.}
+#'\item{\code{gain_comb}}{gain function values for the trend + seasonality 
+#'filter.}
+#'\item{\code{gain_decomb}}{gain function values for the detrending + seasonal 
+#'adjustment filter.}
+#'} 
+#' 
+#' 
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
 #' 
 #' @examples
 #'xt <- log(EXPENDITURES)
@@ -210,6 +258,13 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
 #' The function returns a "gain function" function that has the numeric 
 #' argument \code{lambda} only that represents frequencies to calculate 
 #' the values of the gain function for.
+#' 
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
 #' 
 #' @examples 
 #' # Moving average with smoothing over three values

@@ -53,15 +53,33 @@ results should be exponentiated at the end; the default is \code{expo = FALSE}.}
 
 \item{...}{only for comparability with the standard \code{predict} method.}
 }
+\value{
+A list with the following elements is returned.
+\describe{
+\item{\code{pred}}{the obtained point forecasts.}
+\item{\code{interv}}{the obtained forecasting intervals.}
+\item{\code{obs}}{the observation series.}
+\item{\code{ts_name}}{the name of the observation series object.}
+}
+}
 \description{
-Point and Interval Forecasts for Seasonal Semi-ARMA Models
+Obtain point and interval forecasts based on fitted Seasonal Semi-ARMA models.
+}
+\details{
+Assume a Seasonal Semi-ARMA model was fitted using \code{\link{s_semiarma}}.
+Pass the resulting object to this method, in order to obtain point and 
+interval forecasts.
 }
 \examples{
 xt <- log(EXPENDITURES)
 est <- s_semiarma(xt)
 predict(est, n.ahead = 10)
 
-
-
-
+}
+\author{
+\itemize{
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+University), \cr
+Author and Package Creator
+}
 }

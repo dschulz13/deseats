@@ -25,6 +25,8 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 
 #'Point and Interval Forecasts for Seasonal Semi-ARMA Models
 #'
+#'Obtain point and interval forecasts based on fitted Seasonal Semi-ARMA models.
+#'
 #'@param object an object of class \code{"s_semiarma"}.
 #'@param n.ahead a numeric vector of length one that represents the forecasting horizon; assume that \code{object} is based on 
 #'observations at time points \eqn{t=1,2,\dots,n}; forecasts are then obtained for time 
@@ -53,15 +55,33 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 #'results should be exponentiated at the end; the default is \code{expo = FALSE}.
 #'@param ... only for comparability with the standard \code{predict} method.
 #'
+#'@details
+#'Assume a Seasonal Semi-ARMA model was fitted using \code{\link{s_semiarma}}.
+#'Pass the resulting object to this method, in order to obtain point and 
+#'interval forecasts.
+#'
 #'@export
+#'
+#'@return
+#'A list with the following elements is returned.
+#'\describe{
+#'\item{\code{pred}}{the obtained point forecasts.}
+#'\item{\code{interv}}{the obtained forecasting intervals.}
+#'\item{\code{obs}}{the observation series.}
+#'\item{\code{ts_name}}{the name of the observation series object.}
+#'}
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
 #'
 #'@examples
 #'xt <- log(EXPENDITURES)
 #'est <- s_semiarma(xt)
 #'predict(est, n.ahead = 10)
-#'
-#'
-#'
 #'
 
 methods::setMethod("predict", "s_semiarma", 
@@ -148,6 +168,26 @@ methods::setMethod("predict", "s_semiarma",
   }
 )
 
+#'Show Method for Objects of Class \code{"s_semiarma"}
+#'
+#'Print results of the function \code{\link{s_semiarma}} to the console.
+#'
+#'@param object an object of class \code{"s_semiarma"}.
+#'
+#'@details
+#'Use this method to create a nice looking overview of the contents of 
+#'objects of class \code{"s_semiarma"}.
+#'
+#'@return
+#'This method returns \code{NULL}.
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+#'
 #'@export
 methods::setMethod("show", "s_semiarma", 
   function(object) {

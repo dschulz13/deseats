@@ -7,7 +7,7 @@
 runDecomposition()
 }
 \value{
-This function returns nothing.
+This function returns \code{NULL}.
 }
 \description{
 A shiny app is started that allows its user to run some of the decomposition

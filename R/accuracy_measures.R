@@ -38,7 +38,28 @@ rmsse <- function(preds, obs) {
   rmse_out / rmse_in
 }
 
+#'Forecasting Accuracy Measure Calculation
+#'
+#'Given point forecasts and observations, calculate various forecasting 
+#'accuracy measures.
+#'
+#'@param preds the point predictions for the test data period.
+#'@param obs the observation series (training data and test data)
+#'
+#'@details
+#'Given one-step-ahead rolling forecasts as well as the whole series of given 
+#'observations (training together with test data), different forecasting 
+#'accuracy measures (MAE, RMSE, Pearson's correlation, MASE, RMSSE) are being 
+#'calculated.
+#'
+#'@return 
+#'A named vector with the obtained criteria values is returned.
+#'
 #'@export
+#'
+#'
+#'
+#'
 measures <- function(preds, obs) {
   funs <- c(MAE = mae, RMSE = rmse, PC = pc, MASE = mase, RMSSE = rmsse)
   

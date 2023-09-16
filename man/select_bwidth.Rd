@@ -64,7 +64,6 @@ default is \code{error_model = "free"}.}
 }
 \value{
 The function returns a list with different components:
-
 \describe{
 \item{\code{bopt}}{the obtained optimal bandwidth.}
 \item{\code{bwidths}}{the obtained bandwidth for each iteration of the 
@@ -86,4 +85,14 @@ by default to select an optimal bandwidth.
 Xt <- log(EXPENDITURES)
 select_bwidth(Xt)
 
+}
+\author{
+\itemize{
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+University), \cr
+Author and Package Creator
+\item Yuanhua Feng (Department of Economics, Paderborn
+University), \cr
+Author
+}
 }

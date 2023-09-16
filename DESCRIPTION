@@ -67,7 +67,6 @@ Collate:
     'gain_function.R'
     'linear_filters.R'
     'ts_conversion.R'
-    'functions_for_comparison.R'
     'bv41_subfunctionalities.R'
     'hA_calc.R'
     'arima_no_warn.R'

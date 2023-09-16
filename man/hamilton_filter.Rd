@@ -16,17 +16,32 @@ the seasonal period in \code{yt} multiplied by 2.}
 \item{p}{the number of regressors; the default is the seasonal period in
 \code{yt}.}
 }
+\value{
+A list with the following elements is returned.
+\describe{
+\item{decomp}{an object of class \code{"mts"} that consists of the
+decomposed time series data.}
+\item{ts_name}{the object name of the initially provided time series object.}
+\item{frequency}{the frequency of the time series.}
+\item{regression_output}{an object of class \code{"lm"}, i.e. basic regression
+output.}
+}
+}
 \description{
 A stationary remainder is obtained from a univariate time series using the 
 filter proposed by Hamilton. The filter is capable of estimating the trend 
 together with the seasonality in a series.
 }
 \details{
-Soon to be written.
+Implement the filter by Hamilton (2018) to decompose a time series.
 }
 \examples{
-
 est <- hamilton_filter(log(EXPENDITURES))
 est
 
+}
+\references{
+Hamilton, J. D. (2018). Why You Should Never Use the Hodrick-Prescott Filter.
+The Review of Economics and Statistics, 100(5): 831–843.
+DOI: 10.1162/rest_a_00706.
 }

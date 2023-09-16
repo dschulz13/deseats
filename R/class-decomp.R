@@ -192,6 +192,11 @@ setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
 #'the result of a decomposition of a seasonal time series, in order 
 #'to retrieve individual estimated components.
 #'
+#'@return
+#'These methods return time series objects of class \code{"ts"} that represent
+#'the corresponding estimated component in the time series originally used in
+#'the estimation process.
+#'
 #'@export
 #'
 #'@examples

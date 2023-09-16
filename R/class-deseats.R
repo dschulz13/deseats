@@ -33,6 +33,20 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
 
 #------------------------------------------------------------------------------#
 
+#'Printing of \code{deseats} Function Results
+#'
+#'Print results of the function \code{deseats}.
+#'
+#'@param object an object of class \code{"deseats"}.
+#'
+#'@details
+#'After trend and seasonality in a time series have been estimated using the
+#'function \code{deseats}, basic estimation results can be easily printed to 
+#'the console.
+#'
+#'@return
+#'The function returns \code{NULL}.
+#'
 #'@export
 setMethod("show", "deseats",
   function(object){
@@ -327,6 +341,10 @@ if (is.null(save)) {
 #'
 #'@export
 #'
+#'@return
+#'A numeric vector of length one that represents the bandwidth used in the
+#'smoothing procedure is returned.
+#'
 #'@examples
 #'Xt <- log(EXPENDITURES)
 #'smoothing_options <- set_options(order_poly = 3)
@@ -340,64 +358,64 @@ setMethod("bwidth", "deseats",
 )
 
 #--------------------------------------#
-
-setMethod(".boot_f_generate", "deseats",
-  function(object, ...){
-    fitted_vals <- fitted(object)
-    resids <- residuals(object)
-    n <- length(fitted_vals)
-    opts <- set_options(
-      order_poly = object@order_poly, season = object@frequency,
-      kernel_fun = object@kernel_fun,
-      boundary_method = object@boundary_method
-    )
-    
-    l <- 10
-    
-    m <- trunc(n / l) + 1 * (n / l != trunc(n / l))
-    
-    k <- n - l + 1
-    
-    blocks <- lapply(
-      1:k,
-      function(.x, Xt, l) {
-        
-        Xt[(.x):(.x + l - 1)]
-        
-      }, Xt = resids, l = l
-    )
-    
-    function(zt) {
-      Zt <- fitted_vals + 
-        head(unname(unlist(sample(blocks, size = m, replace = TRUE))), n)
-      deseats(Zt, opts, bwidth_start = 0.1)@bwidth
-    }
-    
-  }
-)
-
-#'@export
-setMethod("bwidth_interval", "deseats",
-  function(object, ...){
-    .fun <- .boot_f_generate(object)
-    
-    ncores <- future::availableCores() - 1
-    oldPlan <- future::plan()
-    on.exit(future::plan(oldPlan), add = TRUE, after = TRUE)
-    future::plan(future::multisession)
-    bwidths <- furrr::future_map_dbl(
-      1:1000,
-      .f = .fun,
-      .options = furrr::furrr_options(seed = TRUE),
-      .progress = TRUE
-    )
-    
-    cat("\n")
-    
-    q <- stats::quantile(bwidths, probs = c(0.025, 0.975))
-    q_names <- names(q)
-    out <- c(q[[1]], object@bwidth, q[[2]])
-    names(out) <- c(q_names[[1]], "Estimate", q_names[[2]])
-    out
-  }
-)
+#' 
+#' setMethod(".boot_f_generate", "deseats",
+#'   function(object, ...){
+#'     fitted_vals <- fitted(object)
+#'     resids <- residuals(object)
+#'     n <- length(fitted_vals)
+#'     opts <- set_options(
+#'       order_poly = object@order_poly, season = object@frequency,
+#'       kernel_fun = object@kernel_fun,
+#'       boundary_method = object@boundary_method
+#'     )
+#'     
+#'     l <- 10
+#'     
+#'     m <- trunc(n / l) + 1 * (n / l != trunc(n / l))
+#'     
+#'     k <- n - l + 1
+#'     
+#'     blocks <- lapply(
+#'       1:k,
+#'       function(.x, Xt, l) {
+#'         
+#'         Xt[(.x):(.x + l - 1)]
+#'         
+#'       }, Xt = resids, l = l
+#'     )
+#'     
+#'     function(zt) {
+#'       Zt <- fitted_vals + 
+#'         head(unname(unlist(sample(blocks, size = m, replace = TRUE))), n)
+#'       deseats(Zt, opts, bwidth_start = 0.1)@bwidth
+#'     }
+#'     
+#'   }
+#' )
+#' 
+#' #'@export
+#' setMethod("bwidth_interval", "deseats",
+#'   function(object, ...){
+#'     .fun <- .boot_f_generate(object)
+#'     
+#'     ncores <- future::availableCores() - 1
+#'     oldPlan <- future::plan()
+#'     on.exit(future::plan(oldPlan), add = TRUE, after = TRUE)
+#'     future::plan(future::multisession)
+#'     bwidths <- furrr::future_map_dbl(
+#'       1:1000,
+#'       .f = .fun,
+#'       .options = furrr::furrr_options(seed = TRUE),
+#'       .progress = TRUE
+#'     )
+#'     
+#'     cat("\n")
+#'     
+#'     q <- stats::quantile(bwidths, probs = c(0.025, 0.975))
+#'     q_names <- names(q)
+#'     out <- c(q[[1]], object@bwidth, q[[2]])
+#'     names(out) <- c(q_names[[1]], "Estimate", q_names[[2]])
+#'     out
+#'   }
+#' )

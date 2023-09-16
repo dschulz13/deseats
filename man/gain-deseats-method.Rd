@@ -2,7 +2,7 @@
 % Please edit documentation in R/gain_function.R
 \name{gain,deseats-method}
 \alias{gain,deseats-method}
-\title{Obtain gain function values for Semi-ARMA Trend and Detrend Filters}
+\title{Obtain gain function values for DeSeaTS Trend and Detrend Filters}
 \usage{
 \S4method{gain}{deseats}(object, lambda = seq(0, 0.5, 1e-04), ...)
 }
@@ -14,8 +14,30 @@ the gain function values.}
 
 \item{...}{no current purpose for this ellipsis.}
 }
+\value{
+A list is returned. Each element represents gain function values 
+at the specified frequencies \code{lambda} for the filter defined 
+through the element name.
+\describe{
+\item{\code{gain_trend}}{gain function values for the trend filter.}
+\item{\code{gain_detrend}}{gain function values for the detrending filter.}
+\item{\code{gain_season}}{gain function values for the seasonality filter.}
+\item{\code{gain_deseason}}{gain function values for the seasonal 
+adjustment filter.}
+\item{\code{gain_comb}}{gain function values for the trend + seasonality 
+filter.}
+\item{\code{gain_decomb}}{gain function values for the detrending + seasonal 
+adjustment filter.}
+}
+}
 \description{
-Obtain gain function values for Semi-ARMA Trend and Detrend Filters
+Obtain gain function values for DeSeaTS Trend and Detrend Filters
+}
+\details{
+The various filters obtained via \code{\link{deseats}} (represented by 
+the returned weighting systems) have a representation in the frequency 
+domain. Using this method, those gain function values can be easily 
+obtained.
 }
 \examples{
 xt <- log(EXPENDITURES)
@@ -43,4 +65,11 @@ matplot(lambda, t(gain_values$gain_deseason[1:(k + 1), ]),
  col = cols, lty = rep(1, k + 1))
 title("Gain functions of the seasonal adjustment filters")
 
+}
+\author{
+\itemize{
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+University), \cr
+Author and Package Creator
+}
 }

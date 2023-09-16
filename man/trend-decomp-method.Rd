@@ -27,6 +27,11 @@ of class \code{"deseats"}.}
 
 \item{...}{without further use; implemented for compatibility only.}
 }
+\value{
+These methods return time series objects of class \code{"ts"} that represent
+the corresponding estimated component in the time series originally used in
+the estimation process.
+}
 \description{
 The provided methods work for decomposition objects created 
 within this package. They allow the user to retrieve individual

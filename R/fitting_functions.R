@@ -43,7 +43,6 @@
 #'
 #'
 #'@return The function returns a list with different components:
-#'
 #'\describe{
 #'\item{\code{bopt}}{the obtained optimal bandwidth.}
 #'\item{\code{bwidths}}{the obtained bandwidth for each iteration of the 
@@ -57,6 +56,16 @@
 #'See further details in the documentation of the function 
 #'\code{\link[deseats]{deseats}}, where this function is applied internally
 #'by default to select an optimal bandwidth.
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'\item Yuanhua Feng (Department of Economics, Paderborn
+#'University), \cr
+#'Author
+#'}
 #'
 #'@examples
 #'Xt <- log(EXPENDITURES)
@@ -701,12 +710,27 @@ BV4.1_arma <- function(yt,
 #'\code{yt}.
 #'
 #'@details
-#'Soon to be written.
+#'Implement the filter by Hamilton (2018) to decompose a time series.
 #'
 #'@export
 #'
-#'@examples
+#'@references
+#'Hamilton, J. D. (2018). Why You Should Never Use the Hodrick-Prescott Filter.
+#'The Review of Economics and Statistics, 100(5): 831–843.
+#'DOI: 10.1162/rest_a_00706.
 #'
+#'@return
+#'A list with the following elements is returned.
+#'\describe{
+#'\item{decomp}{an object of class \code{"mts"} that consists of the
+#'decomposed time series data.}
+#'\item{ts_name}{the object name of the initially provided time series object.}
+#'\item{frequency}{the frequency of the time series.}
+#'\item{regression_output}{an object of class \code{"lm"}, i.e. basic regression
+#'output.}
+#'}
+#'
+#'@examples
 #'est <- hamilton_filter(log(EXPENDITURES))
 #'est
 #'
@@ -764,7 +788,7 @@ hamilton_filter <- function(yt, h = NULL, p = NULL) {
 #'Trend and seasonality are simultaneously modelled by considering a polynomial
 #'for the trend and dummy variables for the different time units (e.g. months).
 #'
-#'@param yt a time series object of class \code{ts} or an object that can be 
+#'@param yt a time series object of class \code{"ts"} or an object that can be 
 #'transformed to that class using \code{\link[stats]{as.ts}}.
 #'@param order_poly the order of the polynomial considered for the trend; the
 #'default is \code{order_poly = 1}.
@@ -772,12 +796,31 @@ hamilton_filter <- function(yt, h = NULL, p = NULL) {
 #'period is obtained automatically from \code{yt}.
 #'
 #'@details
-#'Soon to be written.
+#'Apply ordinary least squares to estimate trend and seasonality simultaneously
+#'in a given time series. This a global approach in contrast to for example 
+#'\code{\link{deseats}}, which is a local estimation method.
 #'
 #'@export
 #'
-#'@examples
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
 #'
+#'@return
+#'A list with the following elements is returned.
+#'\describe{
+#'\item{decomp}{an object of class \code{"mts"} that consists of the
+#'decomposed time series data.}
+#'\item{ts_name}{the object name of the initially provided time series object.}
+#'\item{frequency}{the frequency of the time series.}
+#'\item{regression_output}{an object of class \code{"lm"}, i.e. basic regression
+#'output.}
+#'}
+#'
+#'@examples
 #'est <- lm_decomp(log(EXPENDITURES), order_poly = 4)
 #'est
 #'

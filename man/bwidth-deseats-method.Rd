@@ -13,6 +13,10 @@
 \item{object}{an object either of class \code{"deseats"} or 
 \code{"s_semiarma"}.}
 }
+\value{
+A numeric vector of length one that represents the bandwidth used in the
+smoothing procedure is returned.
+}
 \description{
 If either \code{\link{deseats}} or \code{\link{s_semiarma}} are 
 used to fit a model to time series data, this method retrieves 

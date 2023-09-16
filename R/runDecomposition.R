@@ -13,7 +13,7 @@
 #'@export
 #'
 #'@return
-#'This function returns nothing.
+#'This function returns \code{NULL}.
 #'
 #'@author
 #'\itemize{
