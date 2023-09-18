@@ -159,6 +159,11 @@ The main functions of the package are:
 The package, however, provides many other useful functions for you to
 discover.
 
+## Datasets
+
+The package contains several seasonal example time series from official
+sources.
+
 ## Contact
 
 For questions, bug reports, etc., please contact the maintainer
