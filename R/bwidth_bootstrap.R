@@ -1,19 +1,22 @@
-#' Bootstrapping Confidence Intervals for Bandwidths
+#' Bootstrapping Confidence Intervals for Locally Weighted Regression Bandwidths
 #' 
 #' A stationary block bootstrap is applied to resample from a time 
-#' series that was decomposed into a trend and a remainder by means of
-#' data-driven local polynomial regression with automatically
-#' selected bandwidth. Bandwidth re-estimation from each 
+#' series that was decomposed into a trend, a seasonal component and a 
+#' remainder by means of data-driven local polynomial regression with 
+#' automatically selected bandwidth. Bandwidth re-estimation from each 
 #' bootstrapped sample results in confidence bounds for the 
 #' bandwidth.
 #' 
-#' @param nonpar_model the object with the nonparametric trend
-#' estimation results returned by for example the function \code{tsmooth()}
-#' of the \code{smoots} package.
-#' @param K a numerical vector of length one that indicates the average 
-#' block length to be drawn from the detrended series; the default is 30.
-#' @param num.it a numeric vector of length one that indicates the number of
-#' bootstrap iterations; the default is \code{n.it = 1000}.
+#' @param nonpar_model the object with the nonparametric trend and seasonality
+#' estimation results returned by for example the function 
+#' \code{\link{deseats}}.
+#' @param blocklen a numerical vector of length one that indicates the average 
+#' block length to be drawn from the detrended series; the default is 
+#' \code{NULL}, which means \code{8} for quarterly and \code{24} for monthly 
+#' data; selecting a suitable expected blocklength and checking the sensivity 
+#' of the blocklength are left for the user.
+#' @param npaths a numeric vector of length one that indicates the number of
+#' bootstrap paths; the default is \code{npaths = 1000}.
 #' @param parallel a logical vector of length one that indicates whether or 
 #' not to employ parallel programming for the resampling and the subsequently 
 #' data-driven bandwidth estimations from the bootstrapped samples; the default 
@@ -21,6 +24,7 @@
 #' @param num.cores a numeric vector of length one that indicates the number of
 #' CPU cores to use for parallel programming, if \code{parallel = TRUE}; the 
 #' default is \code{num.cores = future::availableCores() - 1}.
+#' @param ... further arguments to pass to \code{\link{deseats}}.
 #' 
 #' @export
 #' 
@@ -38,21 +42,51 @@
 #' @importFrom future availableCores plan multisession
 #' @importFrom furrr future_map_dbl furrr_options
 #' @importFrom purrr map
-#' @importFrom smoots tsmooth
 #' 
+#' @return
+#' A list with the following elements is returned.
+#' \describe{
+#' \item{\code{conf}}{A vector with named elements that gives the original 
+#' bandwidth estimate as well as the bootstrapped bounds of the 95 and 
+#' 99 percent confidence intervals of the bandwidth.}
+#' \item{\code{bwidth_estimates}}{a vector with all the obtained bandwidths 
+#' for the bootstrapped series.}
+#' \item{\code{sd_bwidth}}{the sample standard deviation of 
+#' \code{bwidth_estimates}.}
+#' }
+#' 
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
 #' 
 #' @examples
-#' lgdp <- log(smoots::gdpUS$GDP)
-#' est <- smoots::tsmooth(lgdp)
-#' conf <- bwidth_confint(est, K = 30, n.it = 200, num.cores = 2)
+#' xt <- log(EXPENDITURES)
+#' est <- deseats(xt, set_options(order_poly = 3))
+#' conf <- bwidth_confint(est, npaths = 200, num.cores = 2)
 #' conf
 #' 
 
-bwidth_confint <- function(nonpar_model, K = 30, n.it = 1000, parallel = TRUE, num.cores = future::availableCores() - 1) {
-  trend <- nonpar_model$ye
-  res <- nonpar_model$res
+bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, parallel = TRUE, num.cores = future::availableCores() - 1, ...) {
+  gxt <- fitted(nonpar_model)
+  fr <- frequency(gxt)
+  if (is.null(blocklen)) {
+    blocklen <- fr * 2
+  }
+  gxt <- c(gxt)
+  res <- c(residuals(nonpar_model))
+  order_p <- nonpar_model@order_poly
   
-  if (isTRUE(parallel)) {
+  sm_opts <- set_options(
+    order_poly = order_p,
+    season = fr,
+    kernel_fun = est@kernel_fun,
+    boundary_method = est@boundary_method
+  )
+  
+  if (parallel) {
     oldplan <- future::plan()
     future::plan(strategy = future::multisession(), workers = num.cores)
     on.exit({
@@ -60,14 +94,14 @@ bwidth_confint <- function(nonpar_model, K = 30, n.it = 1000, parallel = TRUE, n
     }, add = TRUE, after = TRUE)
   }
   
-  p <- 1 / K
+  p <- 1 / blocklen
   
   res2 <- c(res, res)
   n <- length(res)
   
   b0_all <- furrr::future_map_dbl(
-    1:n.it,
-    .f = function(.x, trend, res2, p, n) {
+    1:npaths,
+    .f = function(.x, gxt, res2, p, n, sm_opts, ...) {
       Li <- rgeom(n, prob = p) + 1
       cLi <- cumsum(Li)
       nLi <- sum(cLi < n) + 1
@@ -81,10 +115,11 @@ bwidth_confint <- function(nonpar_model, K = 30, n.it = 1000, parallel = TRUE, n
           }
         )
       )
-      ts_new <- trend + head(res2[index_sel], n)
-      smoots::tsmooth(ts_new)$b0
+      ts_new <- ts(gxt + head(res2[index_sel], n), frequency = fr)
+      deseats(ts_new, smoothing_options = sm_opts, ...)@bwidth
       
-    }, trend = trend, res2 = res2, p = p, n = n,
+    }, gxt = gxt, res2 = res2, p = p, n = n, sm_opts = sm_opts,
+    ... = ...,
     .options = furrr::furrr_options(seed = TRUE),
     .progress = TRUE
   )
@@ -93,10 +128,11 @@ bwidth_confint <- function(nonpar_model, K = 30, n.it = 1000, parallel = TRUE, n
   
   out <- list(
     conf = c(
-      "estimate" = nonpar_model$b0,
+      "estimate" = nonpar_model@bwidth,
       quantile(b0_all, probs = c(0.005, 0.025, 0.975, 0.995))
     ),
-    bwidth_estimates = b0_all
+    bwidth_estimates = b0_all,
+    sd_bwidth = stats::sd(b0_all)
   )
   
   out

@@ -81,8 +81,21 @@ decomposed time series data.}
 \item{\code{order_poly}}{the order of polynomial considered locally for the trend.}
 \item{\code{sum_autocov}}{the estimated sum of autocovariances.}
 \item{\code{ts_name}}{the object name of the initially provided time series object.}
-\item{\code{weights_wfun}}{a matrix, which gives the weighting system to estimate 
-trend + seasonality as a weighted average from the given time series; if 
+\item{\code{weights_wfun}}{a matrix that gives the weights of the weighting 
+function \eqn{K} at each estimation time point; ; if 
+\eqn{n} is the length of the given time series and \eqn{b} is the applied 
+(relative) bandwidth, then the first row of the weighting system gives the 
+weighting function weights when estimating at \eqn{t=1}, the second row gives 
+the weights when estimating at \eqn{t=2} and so on for all left-hand side 
+boundary points 
+until the middle row, which contains the 
+weights used at all interior points; the rows following the middle row contain
+the weights for right-hand side boundary points (the rows are ordered
+chronologically)}
+\item{\code{weights}}{an array with many slices that represent the weighting 
+systems for various filters; each slice is a matrix, which gives the weighting 
+system to estimate a component, for example trend + seasonality, as a weighted 
+average from the given time series; if 
 \eqn{n} is the length of the given time series and \eqn{b} is the applied 
 (relative) bandwidth, then the first row of the weighting system gives the 
 weights to obtain estimates at \eqn{t=1}, the second row gives the weights to 
@@ -90,11 +103,10 @@ obtain estimates at \eqn{t=2} and so on for all left-hand side boundary points
 until the middle row, which contains the 
 weights used at all interior points; the rows following the middle row contain
 the weights for right-hand side boundary points (the rows are ordered
-chronologically).}
-\item{\code{weights}}{an array with many slices that represent the weighting systems,
-just as described for \code{weights_wfun}, for various filters; the
-slice names are \code{"Trend"}, \code{"Season"} and \code{"Combined"}, where
-that last slice corresponds to the matrix \code{weights_wfun}}. 
+chronologically); 
+the slice names are \code{"Trend"}, \code{"Season"} and \code{"Combined"},
+where \code{"Combined"} are the weights to estimate trend + seasonality 
+combined.}
 }
 }
 \description{
@@ -104,7 +116,7 @@ under short memory. The default setting uses an iterative plug-in algorithm
 for identifying the asymptotically globally optimal bandwidth for smoothing.
 }
 \details{
-The trend is estimated based on the additive
+Trend and seasonality are estimated based on the additive
 nonparametric regression model for an equidistant time series
 \deqn{y_t = m(x_t) + s(x_t) + \epsilon_t,}
 where \eqn{y_t} is the observed time series with \eqn{t=1,...n}, \eqn{x_t = t / n} is the rescaled time

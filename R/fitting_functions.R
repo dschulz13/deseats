@@ -175,7 +175,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'
 #'@details
 #'
-#'The trend is estimated based on the additive
+#'Trend and seasonality are estimated based on the additive
 #'nonparametric regression model for an equidistant time series
 #'\deqn{y_t = m(x_t) + s(x_t) + \epsilon_t,}
 #'where \eqn{y_t} is the observed time series with \eqn{t=1,...n}, \eqn{x_t = t / n} is the rescaled time
@@ -278,8 +278,21 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'\item{\code{order_poly}}{the order of polynomial considered locally for the trend.}
 #'\item{\code{sum_autocov}}{the estimated sum of autocovariances.}
 #'\item{\code{ts_name}}{the object name of the initially provided time series object.}
-#'\item{\code{weights_wfun}}{a matrix, which gives the weighting system to estimate 
-#'trend + seasonality as a weighted average from the given time series; if 
+#'\item{\code{weights_wfun}}{a matrix that gives the weights of the weighting 
+#'function \eqn{K} at each estimation time point; ; if 
+#'\eqn{n} is the length of the given time series and \eqn{b} is the applied 
+#'(relative) bandwidth, then the first row of the weighting system gives the 
+#'weighting function weights when estimating at \eqn{t=1}, the second row gives 
+#'the weights when estimating at \eqn{t=2} and so on for all left-hand side 
+#'boundary points 
+#'until the middle row, which contains the 
+#'weights used at all interior points; the rows following the middle row contain
+#'the weights for right-hand side boundary points (the rows are ordered
+#'chronologically)}
+#'\item{\code{weights}}{an array with many slices that represent the weighting 
+#'systems for various filters; each slice is a matrix, which gives the weighting 
+#'system to estimate a component, for example trend + seasonality, as a weighted 
+#'average from the given time series; if 
 #'\eqn{n} is the length of the given time series and \eqn{b} is the applied 
 #'(relative) bandwidth, then the first row of the weighting system gives the 
 #'weights to obtain estimates at \eqn{t=1}, the second row gives the weights to 
@@ -287,11 +300,10 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'until the middle row, which contains the 
 #'weights used at all interior points; the rows following the middle row contain
 #'the weights for right-hand side boundary points (the rows are ordered
-#'chronologically).}
-#'\item{\code{weights}}{an array with many slices that represent the weighting systems,
-#'just as described for \code{weights_wfun}, for various filters; the
-#'slice names are \code{"Trend"}, \code{"Season"} and \code{"Combined"}, where
-#'that last slice corresponds to the matrix \code{weights_wfun}}. 
+#'chronologically); 
+#'the slice names are \code{"Trend"}, \code{"Season"} and \code{"Combined"},
+#'where \code{"Combined"} are the weights to estimate trend + seasonality 
+#'combined.}
 #'}
 #'
 #'@author
@@ -468,9 +480,17 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
 #'
 #'
 #'@return
-#'
 #'The function returns and S4 object with the following elements (access them 
 #'via \code{@}):
+#'\describe{
+#'\item{\code{decomp}}{an object of class \code{"mts"} that includes the 
+#'observed time series and its estimated components.}
+#'\item{\code{nonpar_model}}{an object of class \code{"deseats"}; this is 
+#'the result of applying \code{\link{deseats}}.}
+#'\item{\code{par_model}}{an object of class \code{"Arima"}; the result of 
+#'applying \code{\link[stats]{arima}} to the residuals of the nonparametric 
+#'estimation step.}
+#'}
 #'
 #'@author
 #'\itemize{
@@ -554,8 +574,22 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'frequency in \code{yt}. 
 #'
 #'@details
+#'The BV4.1 base model is as follows:
 #'
-#'Work in progress. Details will soon be added.
+#'trend and seasonality are estimated based on the additive
+#'nonparametric regression model for an equidistant time series
+#'\deqn{y_t = m(x_t) + s(x_t) + \epsilon_t,}
+#'where \eqn{y_t} is the observed time series with \eqn{t=1,...n}, \eqn{x_t = t / n} is the rescaled time
+#'on the interval \eqn{[0, 1]}, \eqn{m(x_t)} is a smooth trend function, 
+#'\eqn{s(x_t)} is a (slowly changing) seasonal component with 
+#'seasonal period \eqn{p_s} and \eqn{\epsilon_t} are stationary errors 
+#'with \eqn{E(\epsilon_t) = 0} that are furthermore assumed to be independent 
+#'but identically distributed (i.i.d.).
+#'
+#'It is assumed that \eqn{m} and \eqn{s} can be approximated by a polynomial of
+#'small order and by a trigonometric polynomial, respectively. Through locally
+#'weighted regression, \eqn{m} and \eqn{s} can therefore be estimated 
+#'suitably.
 #'
 #'The advantage of the Berlin Procedure 4.1 (BV4.1) is that it makes use of
 #'fixed filters based on locally weighted regression (both with a weighted 
@@ -563,7 +597,8 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'observation time points. Thus, BV4.1 results in fixed weighting matrices 
 #'both for the trend estimation step and for the seasonality estimation step 
 #'that can be immediately applied to all economic time series. 
-#'Those matrices are saved internally in the package and when applying BV4.1, 
+#'Those matrices are saved internally in the package and when applying 
+#'\code{\link{BV4.1}}, 
 #'only weighted sums of the observations (with already obtained weights) have 
 #'to be obtained at all time points. Thus, this procedure is quite fast.
 #'
@@ -580,9 +615,18 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'Author and Package Creator
 #'}
 #'
+#'@return
+#'An S4 object with the following elements is returned.
+#'\describe{
+#'\item{\code{decomp}}{An object of class \code{"mts"} that consists of the
+#'decomposed time series data.}
+#'\item{\code{frequency}}{the frequency of the time series.}
+#'\item{\code{ts_name}}{the object name of the initially provided time series object.}
+#'}
+#'
 #'@examples
 #'
-#'Xt <- LABORFORCE
+#'Xt <- log(EXPENDITURES)
 #'est <- BV4.1(Xt)
 #'est
 #'
@@ -654,7 +698,43 @@ BV4.1_base <- function(yt, type = NULL) {
   
 }
 
+#'Combining the BV4.1 Approach with ARMA Errors
+#'
+#'Estimate trend and seasonality in a time series using BV4.1 and 
+#'fit an ARMA model to the resulting residuals.
+#'
+#'@param yt a time series object of class \code{"ts"}.
+#'@param arma_options a list with elements \code{ar_order} and 
+#'\code{ma_order}, which represent the AR and MA orders to consider 
+#'when fitting an ARMA model to the residuals of the BV4.1 approach; 
+#'if both are set to \code{NULL}, the BIC is used to select the optimal 
+#'orders.
+#'
+#'@details
+#'The BV4.1 method is first used to estimate trend and seasonality in a 
+#'time series. Afterwards, an ARMA model is fitted to the resulting 
+#'residuals.
+#'
+#'@return
+#'An S4 object of class \code{"bv41_arma"} with the following elements 
+#'is created.
+#'\describe{
+#'\item{\code{decomp}}{an object of class \code{"mts"} that includes the 
+#'observed time series and its estimated components.}
+#'\item{\code{nonpar_model}}{an object of class \code{"bv41"}; this is 
+#'the result of applying \code{\link{BV4.1}}.}
+#'\item{\code{par_model}}{an object of class \code{"Arima"}; the result of 
+#'applying \code{\link[stats]{arima}} to the residuals of the nonparametric 
+#'estimation step.}
+#'}
+#'
 #'@export
+#'
+#'@examples
+#'Xt <- log(EXPENDITURES)
+#'est <- BV4.1_arma(Xt)
+#'est
+#'
 BV4.1_arma <- function(yt, 
                   arma_options = list(ar_order = NULL, ma_order = NULL)) {
   
@@ -810,7 +890,7 @@ hamilton_filter <- function(yt, h = NULL, p = NULL) {
 #'}
 #'
 #'@return
-#'A list with the following elements is returned.
+#'An S4 object with the following elements is returned.
 #'\describe{
 #'\item{decomp}{an object of class \code{"mts"} that consists of the
 #'decomposed time series data.}

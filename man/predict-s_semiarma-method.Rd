@@ -11,6 +11,7 @@
   alpha = c(0.95, 0.99),
   method = c("norm", "boot"),
   bootMethod = c("simple", "advanced"),
+  npaths = 5000,
   quant.type = 8,
   expo = FALSE,
   ...
@@ -43,6 +44,9 @@ considers the variation in the ARMA coefficient estimates by simulating and
 reestimating complete ARMA paths upon which forecasts are obtained 
 (see also the B-ARMARoots algorithm in Lu and Wang, 2020); the second approach
 is often time-consuming.}
+
+\item{npaths}{the number of paths to simulate, if the forecasting intervals 
+are obtained via a bootstrap.}
 
 \item{quant.type}{the method to obtain sample quantiles from the simulated
 forecasting errors; see also the argument \code{type} of the function 

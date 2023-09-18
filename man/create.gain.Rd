@@ -46,16 +46,17 @@ lambda <- seq(0, 0.5, 0.001)
 GF2 <- gain_diff(lambda)
 plot(lambda, GF2, type = "l")
 
-# For a fully data-driven local linear trend
+# For a fully data-driven local linear trend + 
+# trigonometric polynomial seasonality
 # (Note: we get various filters for different observation time points)
 
-xt <- ts(log(smoots::gdpUS$GDP), start = c(1947, 1), frequency = 4)
-est <- auto.semiarma(xt)
-ws <- est$nonpar_model$ws
+xt <- EXPENDITURES
+est <- deseats(log(xt), set_options(order_poly = 3))
+ws <- est@weights[, , "Combined"]
 l <- (length(ws[, 1]) - 1) / 2
 
 lambda <- seq(0, 0.5, 0.001)
-mat <- matrix(0, ncol = length(lambda), nrow = l)
+mat <- matrix(0, ncol = length(lambda), nrow = l + 1)
 colF <- colorRampPalette(c("deepskyblue4", "deepskyblue"))
 cols <- colF(l)
 
@@ -70,8 +71,8 @@ matplot(lambda, t(mat), type = paste0(rep("l", l + 1), collapse = ""),
         lty = rep(1, l + 1), col = cols)
 title(
   main = paste0(
-    "Gain functions for the applied data-driven local linear trend ",
-    "estimation\napproach at boundary points and the first interior ",
+    "Gain functions for the applied data-driven locally weighted ",
+    "regression\napproach at boundary points and the first interior ",
     "point"
   )
 )

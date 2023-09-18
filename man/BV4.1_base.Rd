@@ -16,6 +16,15 @@ default is \code{"monthly"}; if a time series object is passed to \code{yt},
 the value for this argument will be automatically selected according to the 
 frequency in \code{yt}.}
 }
+\value{
+An S4 object with the following elements is returned.
+\describe{
+\item{\code{decomp}}{An object of class \code{"mts"} that consists of the
+decomposed time series data.}
+\item{\code{frequency}}{the frequency of the time series.}
+\item{\code{ts_name}}{the object name of the initially provided time series object.}
+}
+}
 \description{
 Economic data can be decomposed into a trend, a seasonal and a remainder 
 component using the Berlin procedure  4.1 (German: Berliner Verfahren 
@@ -25,7 +34,22 @@ calendar component, of the official procedure are not yet implemented. The
 function supports quarterly and monthly data.
 }
 \details{
-Work in progress. Details will soon be added.
+The BV4.1 base model is as follows:
+
+trend and seasonality are estimated based on the additive
+nonparametric regression model for an equidistant time series
+\deqn{y_t = m(x_t) + s(x_t) + \epsilon_t,}
+where \eqn{y_t} is the observed time series with \eqn{t=1,...n}, \eqn{x_t = t / n} is the rescaled time
+on the interval \eqn{[0, 1]}, \eqn{m(x_t)} is a smooth trend function, 
+\eqn{s(x_t)} is a (slowly changing) seasonal component with 
+seasonal period \eqn{p_s} and \eqn{\epsilon_t} are stationary errors 
+with \eqn{E(\epsilon_t) = 0} that are furthermore assumed to be independent 
+but identically distributed (i.i.d.).
+
+It is assumed that \eqn{m} and \eqn{s} can be approximated by a polynomial of
+small order and by a trigonometric polynomial, respectively. Through locally
+weighted regression, \eqn{m} and \eqn{s} can therefore be estimated 
+suitably.
 
 The advantage of the Berlin Procedure 4.1 (BV4.1) is that it makes use of
 fixed filters based on locally weighted regression (both with a weighted 
@@ -33,13 +57,14 @@ mixture of local linear and local cubic components for the trend) at all
 observation time points. Thus, BV4.1 results in fixed weighting matrices 
 both for the trend estimation step and for the seasonality estimation step 
 that can be immediately applied to all economic time series. 
-Those matrices are saved internally in the package and when applying BV4.1, 
+Those matrices are saved internally in the package and when applying 
+\code{\link{BV4.1}}, 
 only weighted sums of the observations (with already obtained weights) have 
 to be obtained at all time points. Thus, this procedure is quite fast.
 }
 \examples{
 
-Xt <- LABORFORCE
+Xt <- log(EXPENDITURES)
 est <- BV4.1(Xt)
 est
 

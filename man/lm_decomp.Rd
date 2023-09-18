@@ -17,7 +17,7 @@ default is \code{order_poly = 1}.}
 period is obtained automatically from \code{yt}.}
 }
 \value{
-A list with the following elements is returned.
+An S4 object with the following elements is returned.
 \describe{
 \item{decomp}{an object of class \code{"mts"} that consists of the
 decomposed time series data.}

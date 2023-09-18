@@ -1,0 +1,131 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# deseats <img src="man/figures/logo.png" align="right" height="139" alt="" />
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of deseats is to provide several methods to decompose seasonal time 
+series. Among them is a new fully data-driven algorithm called DeSeaTS 
+(deseasonalize time series) for locally weighted regression 
+with an automatically selected bandwidth. DeSeaTS accounts for possible 
+short-range dependence in the underlying error process. Furthermore, the base 
+model of the BV4.1 (Berlin Procedure 4.1) can be considered as well.
+
+## Installation
+
+You can install the current version of the package from CRAN with:
+
+``` {r, message = FALSE, eval = FALSE, echo = TRUE}
+install.packages("deseats")
+```
+
+## Examples
+
+### Basic decomposition
+
+This is a basic example which shows you how to decompose a seasonal time series 
+using the DeSeaTS algorithm:
+
+```{r example, message = FALSE, fig.height = 8}
+library(deseats)
+
+### Locally weighted regression with automatically selected bandwidth
+### (here: local cubic trend)
+est <- deseats(NOLABORFORCE, set_options(order_poly = 3))
+est@bwidth     # The automatically selected bandwidth
+
+### Plot of the results
+plot(est, which = 1, xlab = "Year")
+```
+
+### Seasonal adjustment
+
+A seasonal adjustment can subsequently be easily achieved using implemented 
+methods.
+
+```{r example2}
+adj <- deseasonalize(est)
+plot(adj, xlab = "Year", main = "The seasonally adjusted series")
+```
+
+### Forecasting
+
+If a decomposition via the DeSeaTS algorithm is suitable, the residual series 
+can be further analyzed using autoregressive moving-average (ARMA) models.
+
+```{r example3}
+model <- s_semiarma(NOLABORFORCE, set_options(order_poly = 3))
+model
+```
+
+The complete model can then be used for forecasting the seasonal time series. 
+Forecasting intervals can be obtained either through the normality assumption or 
+via a bootstrap.
+
+```{r example4}
+fc <- predict(model, n.ahead = 12, method = "norm")
+plot(fc, xlab = "Year", main = "A forecasting example")
+```
+
+### Filters in the frequency domain
+
+The linear locally weighted regression filters can be quickly displayed in the 
+frequency domain.
+
+```{r example5, fig.height = 4}
+fr <- seq(0, 0.5, 1e-04) # Frequencies
+g_funs <- gain(est, lambda = fr) # Obtain correspondiong gain function values
+g_deseas <- g_funs$gain_deseason # Gain function values for deseasonalization
+
+l <- length(g_deseas[, 1])
+weights_interior <- g_deseas[(l - 1) / 2 + 1, ] # middle point filter weights
+
+plot(fr, weights_interior, type = "l", xlab = "Frequency", ylab = "Gain",
+     main = "Middle point filter in the frequency domain")
+```
+
+### Interactive decomposition
+
+The provided decomposition methods can also be applied interactively. Run the 
+following code.
+
+```{r example6, eval = FALSE}
+runDecomposition()
+```
+
+This starts a shiny app which lets you load data files, decompose the time 
+series saved therein, and download the decomposed data.
+
+## Main functions
+
+The main functions of the package are:
+
+- `deseats()`: locally weighted regression with automatically selected bandwidth 
+for decomposition,
+
+- `BV4.1()`: BV4.1 base model for decomposition,
+
+- `lm_decomp()`: ordinary least squares for decomposition,
+
+- `hamilton_filter()`: the time series filter by Hamilton.
+
+The package, however, provides many other useful functions for you to discover.
+
+## Contact
+
+For questions, bug reports, etc., please contact the maintainer Mr. Dominik 
+Schulz via [dominik.schulz@uni-paderborn.de](mailto:dominik.schulz@uni-paderborn.de).

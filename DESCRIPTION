@@ -33,8 +33,7 @@ Imports: Rcpp (>= 1.0.6),
          furrr,
          future.apply,
          progressr,
-         purrr,
-         smoots
+         purrr
 License: GPL-3
 Encoding: UTF-8
 LinkingTo: Rcpp, RcppArmadillo

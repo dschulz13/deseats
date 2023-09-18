@@ -65,6 +65,15 @@ default is \code{error_model = "free"}.}
 \value{
 The function returns and S4 object with the following elements (access them 
 via \code{@}):
+\describe{
+\item{\code{decomp}}{an object of class \code{"mts"} that includes the 
+observed time series and its estimated components.}
+\item{\code{nonpar_model}}{an object of class \code{"deseats"}; this is 
+the result of applying \code{\link{deseats}}.}
+\item{\code{par_model}}{an object of class \code{"Arima"}; the result of 
+applying \code{\link[stats]{arima}} to the residuals of the nonparametric 
+estimation step.}
+}
 }
 \description{
 Fit a seasonal semiparamteric autoregressive moving-average 
