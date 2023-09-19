@@ -4,6 +4,10 @@
 # deseats <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
+
+usethis::use_cran_badge() badger::badge_cran_checks(“badger”)
+badger::badge_cran_download(“badger”, “grand-total”, “blue”)
+badger::badge_cran_download(“badger”, “last-month”, “green”)
 <!-- badges: end -->
 
 The goal of deseats is to provide several methods to decompose seasonal
@@ -163,6 +167,12 @@ discover.
 
 The package contains several seasonal example time series from official
 sources.
+
+## Authors
+
+- Yuanhua Feng (Department Economics, Paderborn University)
+
+- Dominik Schulz (Department Economics, Paderborn University)
 
 ## Contact
 
