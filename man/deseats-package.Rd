@@ -3,7 +3,7 @@
 \docType{package}
 \name{deseats-package}
 \alias{deseats-package}
-\title{Decomposition of Seasonal Time Series}
+\title{Deseasonalize Time Series}
 \description{
 A library of decomposition methods for equidistant time series with 
 trend and seasonality.
@@ -26,13 +26,16 @@ The main functions of the package are:
 selected bandwidth for decomposition,}
 \item{\code{\link{BV4.1}}:}{BV4.1 base model for decomposition,}
 \item{\code{\link{lm_decomp}}:}{ordinary least squares for decomposition,}
+\item{\code{\link{ma_decomp}}:}{moving averages for decomposition,}
 \item{\code{\link{hamilton_filter}}:}{the time series filter by Hamilton.}
 }
 }
 
 \section{Datasets}{
 
-The package includes a few datasets.
+The package includes a few datasets. Follow the corresponding links to the 
+documentation of the datasets to find additional information including the 
+sources.
 \describe{
 \item{\code{\link{CIVLABOR}}:}{civilian labor force level in the USA.}
 \item{\code{\link{DEATHS}}:}{recorded number of deaths in Germany.}

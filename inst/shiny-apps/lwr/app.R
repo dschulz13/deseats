@@ -32,7 +32,7 @@ quarter_f <- function(quarter) {
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Decomposition of Time Series with Locally Weighted Regression"),
+    titlePanel("Decomposition of Seasonal Time Series"),
 
     # Sidebar with inputs
     sidebarLayout(

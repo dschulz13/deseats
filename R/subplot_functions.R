@@ -22,7 +22,7 @@ plot_fit_detailed <- function(obj, ...) {
     main = paste0('The time series "', obj@ts_name, 
                   '" together with fitted values and estimated trend'),
     ylab = obj@ts_name,
-    col = c("grey74", "red", "blue"),
+    col = c("grey60", "red", "blue"),
     lty = c(1, 1, 1),
     type = "lll"
   )
@@ -37,16 +37,16 @@ plot_components <- function(obj, ...) {
   dots <- list(...)
   defaults <- list(
     xlab = "Time",
-    main = paste0('The estimated trend and seasonality in the time series "', 
-                  obj@ts_name, '"'),
+    main = paste0('The estimated trend and seasonality (displayed around',
+                  '\nthe series mean) in the time series "', obj@ts_name, '"'),
     ylab = obj@ts_name,
-    col = c("grey74", "red", "lightgray", "blue"),
+    col = c("grey60", "red", "lightgray", "blue"),
     lty = c(1, 1, 2, 1),
     type = "llll"
   )
   dots <- set_default(dots, defaults)
   dots[["x"]] <- c(stats::time(obj@decomp))
-  dots[["y"]] <- cbind(obj@decomp[, 1], trend(obj), rep(0, length(trend(obj))), season(obj))
+  dots[["y"]] <- cbind(obj@decomp[, 1], trend(obj), rep(mean(obj@decomp[, 1]), length(trend(obj))), season(obj) + mean(obj@decomp[, 1]))
   
   do.call(graphics::matplot, args = dots)   
 }
@@ -71,7 +71,7 @@ plot_fit <- function(obj, ...) {
     main = paste0('The time series "', obj@ts_name, 
                   '" together with estimated trend and seasonality'),
     ylab = obj@ts_name,
-    col = c("grey74", "red"),
+    col = c("grey60", "red"),
     lty = c(1, 1),
     type = "ll"
   )
@@ -192,7 +192,7 @@ plot_fit_gg <- function(obj, ...) {
       ggplot2::ggtitle(paste0('The time series "', obj@ts_name,
                   '" together with estimated trend and seasonality')) +
       ggplot2::ylab(obj@ts_name) +
-        ggplot2::scale_color_manual(values = c("grey74", "red"))
+        ggplot2::scale_color_manual(values = c("grey60", "red"))
     
     p1
 
@@ -222,7 +222,7 @@ plot_fit_detailed_gg <- function(obj, ...) {
       ggplot2::ggtitle(paste0('The time series "', obj@ts_name,
                   '" together with fitted values and estimated trend')) +
       ggplot2::ylab(obj@ts_name) +
-        ggplot2::scale_color_manual(values = c("grey74", "red", "blue"))
+        ggplot2::scale_color_manual(values = c("grey60", "red", "blue"))
     
     p1
 
@@ -233,7 +233,7 @@ plot_components_gg <- function(obj, ...) {
     t <- c(stats::time(obj@decomp))
     obs <- as.numeric(obj@decomp[, 1])
     trend_v <- as.numeric(obj@decomp[, 2])
-    middle_v <- rep(0, n)
+    middle_v <- rep(mean(obs), n)
     season_v <- as.numeric(season(obj))
     lo <- length(obs)
     lf <- length(trend_v)
@@ -243,7 +243,7 @@ plot_components_gg <- function(obj, ...) {
 
     df <- data.frame(
       Time = rep(t, 3),
-      Value = c(obs, trend_v, season_v),
+      Value = c(obs, trend_v, season_v + mean(obs)),
       Series = factor(c(rep(1:3, each = n)), labels = c("Observations", "Estimated trend", "Estimated seasonality"))
     )
     df2 <- data.frame(
@@ -256,10 +256,10 @@ plot_components_gg <- function(obj, ...) {
                          color = "lightgray", inherit.aes = FALSE,
                          linetype = "dashed") +
       ggplot2::geom_line(data = df, ggplot2::aes_string(x = "Time", y = "Value", color = "Series"), inherit.aes = FALSE) +
-      ggplot2::ggtitle(paste0('The estimated trend and seasonality in the time series "', 
-                  obj@ts_name, '"')) +
+      ggplot2::ggtitle(paste0('The estimated trend and seasonality (displayed around',
+                  '\nthe series mean) in the time series "', obj@ts_name, '"')) +
       ggplot2::ylab(obj@ts_name) +
-      ggplot2::scale_color_manual(values = c("grey74", "red", "blue"))
+      ggplot2::scale_color_manual(values = c("grey60", "red", "blue"))
     
     p1
 }

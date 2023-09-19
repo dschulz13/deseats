@@ -4,7 +4,7 @@
 \alias{lm_decomp}
 \title{Decomposition of Time Series Using Linear Regression}
 \usage{
-lm_decomp(yt, order_poly = 1, season = NULL)
+lm_decomp(yt, order_poly = 1, order_poly_s = 1, season = NULL)
 }
 \arguments{
 \item{yt}{a time series object of class \code{"ts"} or an object that can be 
@@ -12,6 +12,9 @@ transformed to that class using \code{\link[stats]{as.ts}}.}
 
 \item{order_poly}{the order of the polynomial considered for the trend; the
 default is \code{order_poly = 1}.}
+
+\item{order_poly_s}{the order of the polynomial considered for the 
+seasonality; the default is \code{order_poly_s = 1}.}
 
 \item{season}{the seasonal period in \code{yt}; by default, the seasonal 
 period is obtained automatically from \code{yt}.}
@@ -24,12 +27,19 @@ decomposed time series data.}
 \item{ts_name}{the object name of the initially provided time series object.}
 \item{frequency}{the frequency of the time series.}
 \item{regression_output}{an object of class \code{"lm"}, i.e. basic regression
-output.}
+output; the time variable \code{t} used in the regression is encoded as 
+\code{seq_along(yt)}; the dummy variable \code{S2} encodes 
+the first observation time point (and the yearly corresponding time points) as 
+\code{-1} and the second observation time point (and the yearly corresponding 
+time points) as \code{1}, the dummy variable \code{S3} does the same but has 
+instead for the third observation time point (and the yearly corresponding 
+time points) a \code{1}, and so on.}
 }
 }
 \description{
 Trend and seasonality are simultaneously modelled by considering a polynomial
-for the trend and dummy variables for the different time units (e.g. months).
+for the trend and a polynomial in the seasonality (via dummy variables and 
+their interactions with time) for the different time units (e.g. months).
 }
 \details{
 Apply ordinary least squares to estimate trend and seasonality simultaneously
@@ -37,7 +47,7 @@ in a given time series. This a global approach in contrast to for example
 \code{\link{deseats}}, which is a local estimation method.
 }
 \examples{
-est <- lm_decomp(log(EXPENDITURES), order_poly = 4)
+est <- lm_decomp(log(EXPENDITURES), order_poly = 3, order_poly_s = 2)
 est
 
 }

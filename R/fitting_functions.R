@@ -866,12 +866,15 @@ hamilton_filter <- function(yt, h = NULL, p = NULL) {
 #'Decomposition of Time Series Using Linear Regression
 #'
 #'Trend and seasonality are simultaneously modelled by considering a polynomial
-#'for the trend and dummy variables for the different time units (e.g. months).
+#'for the trend and a polynomial in the seasonality (via dummy variables and 
+#'their interactions with time) for the different time units (e.g. months).
 #'
 #'@param yt a time series object of class \code{"ts"} or an object that can be 
 #'transformed to that class using \code{\link[stats]{as.ts}}.
 #'@param order_poly the order of the polynomial considered for the trend; the
 #'default is \code{order_poly = 1}.
+#'@param order_poly_s the order of the polynomial considered for the 
+#'seasonality; the default is \code{order_poly_s = 1}.
 #'@param season the seasonal period in \code{yt}; by default, the seasonal 
 #'period is obtained automatically from \code{yt}.
 #'
@@ -897,15 +900,21 @@ hamilton_filter <- function(yt, h = NULL, p = NULL) {
 #'\item{ts_name}{the object name of the initially provided time series object.}
 #'\item{frequency}{the frequency of the time series.}
 #'\item{regression_output}{an object of class \code{"lm"}, i.e. basic regression
-#'output.}
+#'output; the time variable \code{t} used in the regression is encoded as 
+#'\code{seq_along(yt)}; the dummy variable \code{S2} encodes 
+#'the first observation time point (and the yearly corresponding time points) as 
+#'\code{-1} and the second observation time point (and the yearly corresponding 
+#'time points) as \code{1}, the dummy variable \code{S3} does the same but has 
+#'instead for the third observation time point (and the yearly corresponding 
+#'time points) a \code{1}, and so on.}
 #'}
 #'
 #'@examples
-#'est <- lm_decomp(log(EXPENDITURES), order_poly = 4)
+#'est <- lm_decomp(log(EXPENDITURES), order_poly = 3, order_poly_s = 2)
 #'est
 #'
 
-lm_decomp <- function(yt, order_poly = 1, season = NULL) {
+lm_decomp <- function(yt, order_poly = 1, order_poly_s = 1, season = NULL) {
 
   ts_name <- deparse(substitute(yt))
   if (is.null(season)) {
@@ -913,45 +922,43 @@ lm_decomp <- function(yt, order_poly = 1, season = NULL) {
   }
   
   N <- length(yt)
-  season_add_col <- if (season > 1) {season - 1} else {0}
+  t <- seq_along(yt)
+  season_add_col <- if (season > 1 && !is.na(order_poly_s)) {(season - 1) * (order_poly_s + 1)} else {0}
   X_mat <- matrix(0, nrow = N, ncol = order_poly + season_add_col)
-  if (season > 1) {
-    diag_N <- floor(N / season)
-    rest_rows <- N - diag_N * season
-    for (i in 1:diag_N) {
-      X_mat[(1:season) + ((i - 1) * season), 
-            (1 + order_poly):(order_poly + season - 1)] <- diag(nrow = season, 
-                                                              ncol = season - 1)
+  if (season > 1 && !is.na(order_poly_s)) {
+    
+    for (i in 1:(season - 1)) {
+      vec_i <- rep(0, season)
+      vec_i[[1]] <- -1
+      vec_i[[i + 1]] <- 1
+      for (j in 1:(order_poly_s + 1)) {
+        X_mat[, order_poly + i + (j - 1) * (season - 1)] <- rep(vec_i, length.out = N) * t^(j - 1)
+      }
     }
-    if (rest_rows >= 1) {
-      X_mat[(N - rest_rows + 1):N, 
-          (1 + order_poly):(order_poly + season - 1)] <- diag(nrow = rest_rows, 
-                                                              ncol = season - 1)
-    }
-    X_mat[(1:N) %% season == 0, ] <- rep(-1, order_poly + season - 1)
-    name_season <- paste0("S", 1:(season - 1))
+    name_season <- paste0(rep(paste0("S", 2:season), order_poly_s + 1), rep(paste0("*t^", 0:order_poly_s), each = season - 1))
+    
   } else {
     name_season <- c()
   }
   if (order_poly > 0) {
-    t <- seq_along(yt)
     for (i in 1:order_poly) {
       X_mat[, i] <- t^i
     }
-    name_trend <- paste0("t", 1:order_poly)
+    name_trend <- paste0("t^", 1:order_poly)
   } else {
     name_trend <- c()
   }
   X_df <- as.data.frame(cbind(
     as.numeric(yt),
     X_mat
-    ))
+  ))
   names(X_df) <- c("yt", name_trend, name_season)
   reg <- stats::lm(yt ~ ., data = X_df)
 
   # if (season > 1) {
-    s <- reg$coefficients[(2 + order_poly):(order_poly + season)]
-    seasonality <- utils::head(rep(c(s, -sum(s)), diag_N + 1), N)
+    l_coef <- length(reg$coefficients)
+    s_coef <- reg$coefficients[(2 + order_poly):l_coef]
+    seasonality <- c(X_mat[, (order_poly + 1):(l_coef - 1)] %*% s_coef)
     remainder <- yt - seasonality
     name_s <- "Season"
   # } else {
@@ -981,3 +988,112 @@ lm_decomp <- function(yt, order_poly = 1, season = NULL) {
 
   out
 }
+
+#------------------------------------------------------------------------------#
+
+#'Decomposition of Time Series Using Moving Averages
+#'
+#'Trend and seasonality are modelled in a two-step approach, where first the 
+#'trend is being estimated using moving averages and then trend + seasonality 
+#'are being estimated using moving averages. The difference is then the 
+#'estimated seasonality.
+#'
+#'@param yt a time series object of class \code{"ts"} or an object that can be 
+#'transformed to that class using \code{\link[stats]{as.ts}}.
+#'@param k_trend the complete absolute bandwidth (in years); represents the data 
+#'of how many years to use around the estimation time point to consider 
+#'for trend smoothing.
+#'@param k_season the complete absolute bandwidth (in years); represents the data 
+#'of how many years (only from the same quarter, month, etc.) to use around the 
+#'estimation time point for trend + seasonality 
+#'smoothing.
+#'@param season the seasonal period in \code{yt}; by default, the seasonal 
+#'period is obtained automatically from \code{yt}.
+#'
+#'@details
+#'Apply moving averages to estimate trend and seasonality 
+#'in a given time series. This approach results in missings \code{NA} at 
+#'boundary points.
+#'
+#'@export
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+#'
+#'@return
+#'An S4 object with the following elements is returned.
+#'\describe{
+#'\item{decomp}{an object of class \code{"mts"} that consists of the
+#'decomposed time series data.}
+#'\item{ts_name}{the object name of the initially provided time series object.}
+#'\item{frequency}{the frequency of the time series.}
+#'\item{k_trend}{the same as the input argument \code{k_trend}.}
+#'\item{k_season}{the same as the input argument \code{k_season}.}
+#'}
+#'
+#'@examples
+#'est <- ma_decomp(log(EXPENDITURES), k_trend = 6, k_season = 7)
+#'est
+#'
+
+ma_decomp <- function(yt, k_trend = 4, k_season = 5, season = NULL) {
+
+  ts_name <- deparse(substitute(yt))
+  if (is.null(season)) {
+    season <- frequency(yt)
+  }
+  
+  P <- season
+  k <- k_trend
+  kP <- k * P
+  n <- length(yt)
+  kP_even <- kP %% 2 == 0  # TRUE if kP is even, FALSE otherwise
+  
+  m <- ifelse(kP_even,
+    yes = kP / 2,          # Case 1: kP is even
+    no = (kP - 1) / 2      # Case 2: kP is odd
+  )
+  
+  g_hat <- yt              # Copy time series ...
+  g_hat[1:n] <- NA         # and fill it with missing values
+  
+  for (i in (m + 1):(n - m)) {
+    g_hat[[i]] <- (1 / kP) * (sum(yt[(i - m):(i + m)]) - kP_even * 0.5 * (yt[[i - m]] + yt[[i + m]]))
+  }
+  
+  k <- k_season
+  
+  if (k %% 2 == 0) {
+    stop("k_season must be an odd number.")
+  }
+  
+  ms <- (k - 1) / 2
+  
+  gS_hat <- yt              # Copy time series ...
+  gS_hat[1:n] <- NA         # and fill it with missing values
+  
+  for (j in (ms * P + 1):(n - ms * P)) {
+    gS_hat[[j]] <- (1 / k) * sum(yt[seq(from = j - P * ms, to = j + P * ms, by = P)])
+  }
+  
+  trend <- g_hat
+  seasonality <- gS_hat - g_hat
+  remainder <- yt - trend - seasonality
+  
+  out <- create_madecomp(
+    decomp = cbind("Observations" = yt, "Trend" = trend, 
+          "Season" = seasonality, "Rest" = remainder),
+    ts_name = ts_name,
+    frequency = season,
+    k_trend = k_trend,
+    k_season = k_season
+  )
+
+  out
+}
+
+

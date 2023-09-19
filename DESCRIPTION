@@ -58,6 +58,7 @@ Collate:
     'class-bv41_arma.R'
     'class-hfilter.R'
     'class-lmdecomp.R'
+    'class-madecomp.R'
     'data_documentation.R'
     'fitting_functions.R'
     'runDecomposition.R'

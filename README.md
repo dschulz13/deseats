@@ -162,6 +162,8 @@ The main functions of the package are:
 
 - `lm_decomp()`: ordinary least squares for decomposition,
 
+- `ma_decomp()`: moving averages for decomposition,
+
 - `hamilton_filter()`: the time series filter by Hamilton.
 
 The package, however, provides many other useful functions for you to

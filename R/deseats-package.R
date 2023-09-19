@@ -1,4 +1,4 @@
-#'Decomposition of Seasonal Time Series
+#'Deseasonalize Time Series
 #' 
 #'A library of decomposition methods for equidistant time series with 
 #'trend and seasonality.
@@ -20,6 +20,7 @@
 #'selected bandwidth for decomposition,}
 #'\item{\code{\link{BV4.1}}:}{BV4.1 base model for decomposition,}
 #'\item{\code{\link{lm_decomp}}:}{ordinary least squares for decomposition,}
+#'\item{\code{\link{ma_decomp}}:}{moving averages for decomposition,}
 #'\item{\code{\link{hamilton_filter}}:}{the time series filter by Hamilton.}
 #'}
 #'
