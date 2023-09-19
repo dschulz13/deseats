@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![](https://www.r-pkg.org/badges/version/deseats?color=purple)](https://cran.r-project.org/package=deseats)
+[![](https://www.r-pkg.org/badges/version/deseats?color=green)](https://cran.r-project.org/package=deseats)
 [![CRAN
 checks](https://badges.cranchecks.info/summary/deseats.svg)](https://cran.r-project.org/web/checks/check_results_deseats.html)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/deseats?color=blue)](https://cran.r-project.org/package=deseats)
