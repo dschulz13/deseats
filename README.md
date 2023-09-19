@@ -5,9 +5,12 @@
 
 <!-- badges: start -->
 
-usethis::use_cran_badge() badger::badge_cran_checks(“badger”)
-badger::badge_cran_download(“badger”, “grand-total”, “blue”)
-badger::badge_cran_download(“badger”, “last-month”, “green”)
+[![CRAN
+checks](https://badges.cranchecks.info/summary/badger.svg)](https://cran.r-project.org/web/checks/check_results_badger.html)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/badger?color=blue)](https://cran.r-project.org/package=badger)
+[![](http://cranlogs.r-pkg.org/badges/last-month/badger?color=green)](https://cran.r-project.org/package=badger)
+[![License:
+GPL-3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://cran.r-project.org/web/licenses/GPL-3)
 <!-- badges: end -->
 
 The goal of deseats is to provide several methods to decompose seasonal
@@ -170,9 +173,10 @@ sources.
 
 ## Authors
 
-- Yuanhua Feng (Department Economics, Paderborn University)
+- Yuanhua Feng (Department Economics, Paderborn University) \[Author\]
 
-- Dominik Schulz (Department Economics, Paderborn University)
+- Dominik Schulz (Department Economics, Paderborn University) \[Author,
+  Maintainer\]
 
 ## Contact
 

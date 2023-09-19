@@ -16,10 +16,12 @@ knitr::opts_chunk$set(
 # deseats <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
-usethis::use_cran_badge()
-badger::badge_cran_checks("badger")
-badger::badge_cran_download("badger", "grand-total", "blue")
-badger::badge_cran_download("badger", "last-month", "green")
+`r usethis::use_cran_badge()`
+`r badger::badge_cran_checks("badger")`
+`r badger::badge_cran_download("badger", "grand-total", "blue")`
+`r badger::badge_cran_download("badger", "last-month", "green")`
+`r badger::badge_license("GPL-3")`
+[![CRAN status](https://www.r-pkg.org/badges/version/deseats)](https://CRAN.R-project.org/package=deseats)
 <!-- badges: end -->
 
 The goal of deseats is to provide several methods to decompose seasonal time 
@@ -135,9 +137,9 @@ The package contains several seasonal example time series from official sources.
 
 ## Authors
 
-- Yuanhua Feng (Department Economics, Paderborn University)
+- Yuanhua Feng (Department Economics, Paderborn University) [Author]
 
-- Dominik Schulz (Department Economics, Paderborn University)
+- Dominik Schulz (Department Economics, Paderborn University) [Author, Maintainer]
 
 ## Contact
 
