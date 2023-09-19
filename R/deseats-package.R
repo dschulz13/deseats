@@ -24,7 +24,9 @@
 #'}
 #'
 #'@section Datasets:
-#'The package includes a few datasets.
+#'The package includes a few datasets. Follow the corresponding links to the 
+#'documentation of the datasets to find additional information including the 
+#'sources.
 #'\describe{
 #'\item{\code{\link{CIVLABOR}}:}{civilian labor force level in the USA.}
 #'\item{\code{\link{DEATHS}}:}{recorded number of deaths in Germany.}

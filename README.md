@@ -5,13 +5,13 @@
 
 <!-- badges: start -->
 
-[![](https://www.r-pkg.org/badges/version/deseats?color=green)](https://cran.r-project.org/package=deseats)
+[![](https://www.r-pkg.org/badges/version/deseats?color=purple)](https://cran.r-project.org/package=deseats)
 [![CRAN
 checks](https://badges.cranchecks.info/summary/deseats.svg)](https://cran.r-project.org/web/checks/check_results_deseats.html)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/deseats?color=blue)](https://cran.r-project.org/package=deseats)
 [![](http://cranlogs.r-pkg.org/badges/last-month/deseats?color=green)](https://cran.r-project.org/package=deseats)
 [![License:
-GPL-3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://cran.r-project.org/web/licenses/GPL-3)
+GPL-3](https://img.shields.io/badge/license-GPL--3-yellow.svg)](https://cran.r-project.org/web/licenses/GPL-3)
 <!-- badges: end -->
 
 The goal of deseats is to provide several methods to decompose seasonal

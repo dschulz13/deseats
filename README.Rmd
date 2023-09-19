@@ -16,11 +16,11 @@ knitr::opts_chunk$set(
 # deseats <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
-`r badger::badge_cran_release("deseats", color = "green")`
+`r badger::badge_cran_release("deseats", color = "purple")`
 `r badger::badge_cran_checks("deseats")`
 `r badger::badge_cran_download("deseats", "grand-total", "blue")`
 `r badger::badge_cran_download("deseats", "last-month", "green")`
-`r badger::badge_license("GPL-3")`
+`r badger::badge_license(color = "yellow")`
 <!-- badges: end -->
 
 The goal of deseats is to provide several methods to decompose seasonal time 
