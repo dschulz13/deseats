@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
 `r badger::badge_cran_download("deseats", "grand-total", "blue")`
 `r badger::badge_cran_download("deseats", "last-month", "green")`
 `r badger::badge_license("GPL-3")`
-[![CRAN status](https://www.r-pkg.org/badges/version/deseats)](https://CRAN.R-project.org/package=deseats)
 <!-- badges: end -->
 
 The goal of deseats is to provide several methods to decompose seasonal time 

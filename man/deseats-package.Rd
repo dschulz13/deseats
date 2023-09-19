@@ -21,16 +21,28 @@ few of the BV4.1 subcomponents.
 \section{Main Functions}{
 
 The main functions of the package are:
-\itemize{
-\item{}{}
+\describe{
+\item{\code{\link{deseats}}:}{locally weighted regression with automatically 
+selected bandwidth for decomposition,}
+\item{\code{\link{BV4.1}}:}{BV4.1 base model for decomposition,}
+\item{\code{\link{lm_decomp}}:}{ordinary least squares for decomposition,}
+\item{\code{\link{hamilton_filter}}:}{the time series filter by Hamilton.}
 }
 }
 
 \section{Datasets}{
 
 The package includes a few datasets.
-\itemize{
-\item{}{}
+\describe{
+\item{\code{\link{CIVLABOR}}:}{civilian labor force level in the USA.}
+\item{\code{\link{DEATHS}}:}{recorded number of deaths in Germany.}
+\item{\code{\link{EXPENDITURES}}:}{consumption expenditures in the USA.}
+\item{\code{\link{LIVEBIRTHS}}:}{recorded number of livebirths in Germany.}
+\item{\code{\link{NOLABORFORCE}}:}{number of persons in the USA not belonging 
+to the labor force.}
+\item{\code{\link{SAVINGS}}:}{savings of private households in Germany.}
+\item{\code{\link{SUNSHINE}}:}{hours of sunshine in Germany.}
+\item{\code{\link{TEMPERATURE}}:}{average temperature in Germany.}
 }
 }
 

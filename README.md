@@ -12,8 +12,6 @@ checks](https://badges.cranchecks.info/summary/deseats.svg)](https://cran.r-proj
 [![](http://cranlogs.r-pkg.org/badges/last-month/deseats?color=green)](https://cran.r-project.org/package=deseats)
 [![License:
 GPL-3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://cran.r-project.org/web/licenses/GPL-3)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/deseats)](https://CRAN.R-project.org/package=deseats)
 <!-- badges: end -->
 
 The goal of deseats is to provide several methods to decompose seasonal
