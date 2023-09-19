@@ -267,3 +267,10 @@ select_arma_orders <- function(xt, ar, ma) {
   }
   c(ar, ma)
 }
+
+cap_1st <- function(string) {
+
+    first_letter <- substr(string, 1, 1)
+    w <- which(letters == first_letter)
+    sub(paste0("^", first_letter), LETTERS[[w]], string)
+}

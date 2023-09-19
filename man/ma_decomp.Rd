@@ -45,7 +45,7 @@ in a given time series. This approach results in missings \code{NA} at
 boundary points.
 }
 \examples{
-est <- ma_decomp(log(EXPENDITURES), k_trend = 8, k_season = 9)
+est <- ma_decomp(log(EXPENDITURES), k_trend = 6, k_season = 7)
 est
 
 }

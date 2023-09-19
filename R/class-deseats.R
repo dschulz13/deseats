@@ -50,14 +50,20 @@ create_deseats <- function(decomp, bwidth, ts_name, frequency, order_poly,
 #'@export
 setMethod("show", "deseats",
   function(object){
+    
+    kfun <- cap_1st(object@kernel_fun)
+    bound_m <- cap_1st(object@boundary_method)
+    
     cat(paste0("\n",
       "************************************************\n",
       "*                                              *\n",
       "*               Smoothing Results              *\n",
       "*                                              *\n",
       "************************************************\n\n",
-      " Series: ", object@ts_name, "\n",
+      " Series:    ", object@ts_name, "\n",
       " Estimated: Trend + Seasonality\n",
+      " Kernel:    ", kfun,"\n",
+      " Boundary:  ", bound_m,"\n",      
       " Bandwidth: ", sprintf("%.4f", object@bwidth), "\n\n",      
       " Trend:\n",
       " ------\n",
