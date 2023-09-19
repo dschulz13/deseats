@@ -240,18 +240,18 @@ server <- function(input, output) {
     output$decompmethod <- renderUI({
       req(tseries())
       selectInput("method", "Decomposition method:",
-                  choices = c("Data-driven locally weighted regression", "Berlin Procedure 4.1",
-                              "Linear regression", "Hamilton filter"),
-                  selected = "Data-driven locally weighted regression")
+                  choices = c("Locally weighted regression", "Berlin Procedure 4.1",
+                              "Linear regression", "Moving average", "Hamilton filter"),
+                  selected = "Locally weighted regression")
     })
     
     output$decompsettings <- renderUI({
       req(input$method)
       
-      if (input$method == "Data-driven locally weighted regression") {
+      if (input$method == "Locally weighted regression") {
         out <- list(
             sliderInput("opoly",
-                        "Order of local polynomial (for the trend):",
+                        "Order of trend polynomial:",
                         min = 1,
                         max = 3,
                         value = 1,
@@ -277,11 +277,35 @@ server <- function(input, output) {
       } else if (input$method == "Linear regression") {
         out <- list(
             sliderInput("opoly",
-                        "Order of local polynomial (for the trend):",
+                        "Order of trend polynomial:",
                         min = 1,
                         max = 4,
                         value = 1,
-                        step = 1)          
+                        step = 1),
+            sliderInput("opoly_s",
+                        "Order of seasonality polynomial:",
+                        min = 0,
+                        max = 4,
+                        step = 1,
+                        value = 1
+                        )
+        )
+        
+      } else if (input$method == "Moving average") {
+        out <- list(
+            sliderInput("bwidth_t",
+                        "Total bandwidth for trend smoothing:",
+                        min = 1,
+                        max = 30,
+                        value = 4,
+                        step = 1),
+            sliderInput("bwidth_s",
+                        "Total bandwidth for trend + seasonality smoothing:",
+                        min = 1,
+                        max = 29,
+                        step = 2,
+                        value = 1
+                        )
         )
       } else if (input$method == "Hamilton filter") {
         out <- list(
@@ -326,14 +350,16 @@ server <- function(input, output) {
       
         req(input$method)
       
-        if (input$method == "Data-driven locally weighted regression") {
+        if (input$method == "Locally weighted regression") {
           req(input$bwidth)
           req(opts)
           est <- deseats::deseats(ts_tr(), opts())           
         } else if (input$method == "Berlin Procedure 4.1") {
           est <- deseats::BV4.1(ts_tr())
         } else if (input$method == "Linear regression") {
-          est <- deseats::lm_decomp(ts_tr(), input$opoly, input$frequ)
+          est <- deseats::lm_decomp(ts_tr(), input$opoly, input$opoly_s, input$frequ)
+        } else if (input$method == "Moving average") {
+          est <- deseats::ma_decomp(ts_tr(), input$bwidth_t, input$bwidth_s, input$frequ)          
         } else if (input$method == "Hamilton filter") {
           est <- deseats::hamilton_filter(ts_tr(), input$bgap, input$nregr)
         }
@@ -369,7 +395,7 @@ server <- function(input, output) {
 
         req(est_result())
         
-        deseats::autoplot(est_result(), which = 4) +
+        deseats::autoplot(est_result(), which = "residuals") +
           ggplot2::ggtitle(paste0('Estimated remainder in "', ts_name_tr(), '"')) +
           ggplot2::theme_bw() +
           ggplot2::theme(legend.position = "bottom",
