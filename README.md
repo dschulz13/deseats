@@ -85,7 +85,9 @@ model
 #> Nonparametric part (Trend + Seasonality):
 #> -----------------------------------------
 #> 
-#>   Bandwidth: 0.2373
+#>  Kernel:    Epanechnikov
+#>  Boundary:  Extend
+#>  Bandwidth: 0.2373
 #> 
 #>   Trend:
 #>   ------

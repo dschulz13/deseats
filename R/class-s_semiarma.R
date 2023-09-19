@@ -193,6 +193,10 @@ methods::setMethod("predict", "s_semiarma",
 #'@export
 methods::setMethod("show", "s_semiarma", 
   function(object) {
+    
+    kfun <- cap_1st(object@nonpar_model@kernel_fun)
+    bound_m <- cap_1st(object@nonpar_model@boundary_method)
+        
     text_out <- paste0(
     "\n*******************************************\n",
     "*                                         *\n",
@@ -204,7 +208,9 @@ methods::setMethod("show", "s_semiarma",
     
     "Nonparametric part (Trend + Seasonality):\n",
     "-----------------------------------------\n\n",
-    "  Bandwidth: ", sprintf("%.4f", object@nonpar_model@bwidth), "\n\n",
+    " Kernel:    ", kfun,"\n",
+    " Boundary:  ", bound_m,"\n",      
+    " Bandwidth: ", sprintf("%.4f", object@nonpar_model@bwidth), "\n\n",   
     "  Trend:\n",
     "  ------\n",
     "    Order of local polynomial: ", object@nonpar_model@order_poly, "\n\n",

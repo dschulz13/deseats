@@ -40,7 +40,10 @@ LinkingTo: Rcpp, RcppArmadillo
 Depends: 
     R (>= 2.10),
     methods
-Suggests: badger, smoots
+Suggests: 
+    badger,
+    smoots,
+    testthat (>= 3.0.0)
 RoxygenNote: 7.2.3
 LazyData: true
 Collate: 
@@ -72,3 +75,4 @@ Collate:
     'hA_calc.R'
     'arima_no_warn.R'
     'deseats-package.R'
+Config/testthat/edition: 3
