@@ -176,10 +176,11 @@ sources.
 
 ## Authors
 
-- Yuanhua Feng (Department Economics, Paderborn University) \[Author\]
+- Yuanhua Feng (Department Economics, Paderborn University, Germany)
+  \[Author\]
 
-- Dominik Schulz (Department Economics, Paderborn University) \[Author,
-  Maintainer\]
+- Dominik Schulz (Department Economics, Paderborn University, Germany)
+  \[Author, Maintainer\]
 
 ## Contact
 
