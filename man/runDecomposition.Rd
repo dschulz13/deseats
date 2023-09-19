@@ -21,8 +21,9 @@ suitability of the decomposition graphically. The decomposed data can then be
 saved in CSV format.
 }
 \examples{
+\dontrun{
 runDecomposition()
-
+}
 
 }
 \author{

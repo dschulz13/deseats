@@ -27,3 +27,5 @@
 ^MSACSRNSA\.csv$
 ^WorkingDaysGermany_since1900\.csv$
 ^logo_creation\.R$
+^_pkgdown\.yml$
+^pkgdown$

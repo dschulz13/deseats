@@ -23,8 +23,9 @@
 #'}
 #'
 #'@examples
+#'\dontrun{
 #'runDecomposition()
-#'
+#'}
 #'
 runDecomposition <- function() {
   appDir <- system.file("shiny-apps", "lwr", package = "deseats")
