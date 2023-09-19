@@ -16,10 +16,10 @@ knitr::opts_chunk$set(
 # deseats <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
-`r usethis::use_cran_badge()`
-`r badger::badge_cran_checks("badger")`
-`r badger::badge_cran_download("badger", "grand-total", "blue")`
-`r badger::badge_cran_download("badger", "last-month", "green")`
+`r badger::badge_cran_release("deseats", color = "green")`
+`r badger::badge_cran_checks("deseats")`
+`r badger::badge_cran_download("deseats", "grand-total", "blue")`
+`r badger::badge_cran_download("deseats", "last-month", "green")`
 `r badger::badge_license("GPL-3")`
 [![CRAN status](https://www.r-pkg.org/badges/version/deseats)](https://CRAN.R-project.org/package=deseats)
 <!-- badges: end -->

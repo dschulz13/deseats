@@ -5,12 +5,15 @@
 
 <!-- badges: start -->
 
+[![](https://www.r-pkg.org/badges/version/deseats?color=green)](https://cran.r-project.org/package=deseats)
 [![CRAN
-checks](https://badges.cranchecks.info/summary/badger.svg)](https://cran.r-project.org/web/checks/check_results_badger.html)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/badger?color=blue)](https://cran.r-project.org/package=badger)
-[![](http://cranlogs.r-pkg.org/badges/last-month/badger?color=green)](https://cran.r-project.org/package=badger)
+checks](https://badges.cranchecks.info/summary/deseats.svg)](https://cran.r-project.org/web/checks/check_results_deseats.html)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/deseats?color=blue)](https://cran.r-project.org/package=deseats)
+[![](http://cranlogs.r-pkg.org/badges/last-month/deseats?color=green)](https://cran.r-project.org/package=deseats)
 [![License:
 GPL-3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://cran.r-project.org/web/licenses/GPL-3)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/deseats)](https://CRAN.R-project.org/package=deseats)
 <!-- badges: end -->
 
 The goal of deseats is to provide several methods to decompose seasonal
