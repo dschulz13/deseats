@@ -17,6 +17,22 @@ setClass("smoothing_options",
   )
 )
 
+setValidity("smoothing_options", function(object) {
+  if (length(object@order_poly) > 1) {
+    "@order_poly must be of length 1"
+  } else if (length(object@season) > 1) {
+    "@season must be of length 1"
+  } else if (length(object@kernel_fun) > 1) {
+    "@kernel_fun must be of length 1"
+  } else if (length(object@bwidth) > 1) {
+    "@bwidth must be of length 1"
+  } else if (length(object@boundary_method) > 1) {
+    "@boundary_method must be of length 1"
+  } else {
+    TRUE
+  }
+})
+
 #' Specification of Smoothing Options
 #' 
 #' Set the smoothing specifications for locally weighted regression for
@@ -54,7 +70,12 @@ setClass("smoothing_options",
 #' 
 #'@details
 #'
-#'Work in progress. Details will be added in the release version of this package.
+#'An object of class \code{"smoothing_options"} is created that contains 
+#'all required information to conduct a locally weighted regression for 
+#'decomposing a seasonal time series. The information include the order 
+#'of the trend polynomials, the frequency of the observed series, the 
+#'second-order kernel function to use in the weighting process, the 
+#'(relative) bandwidth to employ, and the boundary method for the bandwidth.
 #'
 #'@return
 #'The function returns an S4 object with the following elements (access via 
@@ -141,6 +162,7 @@ methods::setMethod("order_poly", "smoothing_options", function(object) object@or
 #'@export
 methods::setMethod("order_poly<-", "smoothing_options", function(object, value) {
   object@order_poly <- value
+  validObject(object)
   object
 })
 
@@ -152,6 +174,7 @@ methods::setMethod("season", "smoothing_options", function(object) object@season
 #'@export
 methods::setMethod("season<-", "smoothing_options", function(object, value) {
   object@season <- value
+  validObject(object)  
   object
 })
 
@@ -163,6 +186,7 @@ methods::setMethod("kernel_fun", "smoothing_options", function(object) object@ke
 #'@export
 methods::setMethod("kernel_fun<-", "smoothing_options", function(object, value) {
   object@kernel_fun <- value
+  validObject(object)  
   object
 })
 
@@ -174,6 +198,7 @@ methods::setMethod("bwidth", "smoothing_options", function(object) object@bwidth
 #'@export
 methods::setMethod("bwidth<-", "smoothing_options", function(object, value) {
   object@bwidth <- value
+  validObject(object)  
   object
 })
 
@@ -185,6 +210,7 @@ methods::setMethod("boundary_method", "smoothing_options", function(object) obje
 #'@export
 methods::setMethod("boundary_method<-", "smoothing_options", function(object, value) {
   object@boundary_method <- value
+  validObject(object)  
   object
 })
 

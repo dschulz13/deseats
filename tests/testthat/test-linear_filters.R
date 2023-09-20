@@ -45,4 +45,9 @@ test_that("Test filter functions for incorrect input", {
   expect_error(arma_to_ar(ma = "Hello"))
   expect_error(arma_to_ar(max_i = "Hello"))
   expect_error(arma_to_ar(max_i = c(4, 5)))  
+  
+  expect_error(arma_to_ma(ar = "Hello"))
+  expect_error(arma_to_ma(ma = "Hello"))
+  expect_error(arma_to_ma(max_i = "Hello"))
+  expect_error(arma_to_ma(max_i = c(4, 5)))    
 })

@@ -274,3 +274,19 @@ cap_1st <- function(string) {
     w <- which(letters == first_letter)
     sub(paste0("^", first_letter), LETTERS[[w]], string)
 }
+
+check_input_deseats <- function(y, smoothing_options, bwidth_start, inflation_rate, correction_factor, autocor, drop, error_model) {
+  
+  stopifnot(
+    'y needs to be a time series object of class "ts" or a numeric vector' = (inherits(y, "ts") || (is.atomic(y) && is.numeric(y))),
+    'smoothing_options must be an object of S4 class "smoothing_options"' = inherits(smoothing_options, "smoothing_options"),
+    "bwidth_start must be a single numeric value between 0 and 0.5 or NULL" = (is.null(bwidth_start) || (length(bwidth_start) == 1 && is.numeric(bwidth_start) && bwidth_start > 0 && bwidth_start < 0.5)),
+    'inflation_rate must be either "optimal" or "naive"' = (is.character(inflation_rate) && (all(inflation_rate == c("optimal", "naive")) || (length(inflation_rate) == 1 && inflation_rate %in% c("optimal", "naive")))),
+    "correction_factor must be either TRUE or FALSE" = (is.logical(correction_factor) && length(correction_factor) == 1),
+    "autocor must be either TRUE or FALSE" = (is.logical(autocor) && length(autocor) == 1), 
+    "drop must be a single numeric value between 0 and 0.25 or NULL" = (is.null(drop) || (length(drop) == 1 && is.numeric(drop) && drop >= 0 && drop <= 0.25)),
+    'error_model must be either "free" or "ARMA"' = (is.character(error_model) && (all(error_model == c("free", "ARMA")) || (length(error_model) == 1 && error_model %in% c("free", "ARMA"))))   
+    
+  )   
+  
+}

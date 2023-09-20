@@ -30,7 +30,9 @@ Consider an ARMA model
 where \eqn{a_1, ..., a_p} and \eqn{b_1, ..., b_q} are its real-valued 
 coefficients. The function \code{arma_to_ar()} uses these coefficients as 
 input to calculate the coefficients of the truncated infinite-order 
-AR-representation of the model defined through these coefficients.
+AR-representation of the model defined through these coefficients. Note that 
+the stationarity and invertibility of the model defined through the provided 
+coefficients is not being checked.
 
 NOTE:
 

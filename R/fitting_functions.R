@@ -74,6 +74,17 @@
 
 select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA")) {
   
+  check_input_deseats(
+    y,
+    smoothing_options,
+    bwidth_start,
+    inflation_rate,
+    correction_factor,
+    autocor,
+    drop,
+    error_model
+  )
+  
   # Identify exact smoothing options from input
   det_options <- determine_options(y, smoothing_options)
 
@@ -331,6 +342,17 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
   
   y <- stats::as.ts(y)
   att <- attributes(y)
+  
+  check_input_deseats(
+    y,
+    smoothing_options,
+    bwidth_start,
+    inflation_rate,
+    correction_factor,
+    autocor,
+    drop,
+    error_model
+  )
   
   # Identify exact smoothing options from input
   det_options <- determine_options(y, smoothing_options)

@@ -64,7 +64,12 @@ Set the smoothing specifications for locally weighted regression for
 identifying the trend and the seasonality in an equidistant time series.
 }
 \details{
-Work in progress. Details will be added in the release version of this package.
+An object of class \code{"smoothing_options"} is created that contains 
+all required information to conduct a locally weighted regression for 
+decomposing a seasonal time series. The information include the order 
+of the trend polynomials, the frequency of the observed series, the 
+second-order kernel function to use in the weighting process, the 
+(relative) bandwidth to employ, and the boundary method for the bandwidth.
 }
 \author{
 \itemize{
