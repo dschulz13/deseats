@@ -17,7 +17,9 @@
 #'where \eqn{a_1, ..., a_p} and \eqn{b_1, ..., b_q} are its real-valued 
 #'coefficients. The function \code{arma_to_ar()} uses these coefficients as 
 #'input to calculate the coefficients of the truncated infinite-order 
-#'AR-representation of the model defined through these coefficients.
+#'AR-representation of the model defined through these coefficients. Note that 
+#'the stationarity and invertibility of the model defined through the provided 
+#'coefficients is not being checked.
 #'
 #'NOTE:
 #'
@@ -45,6 +47,11 @@
 #' 
 
 arma_to_ar <- function(ar = numeric(0), ma = numeric(0), max_i = 1000) {
+  stopifnot(
+    "ar must be a numeric vector" = (is.numeric(ar)),
+    "ma must be a numeric vector" = (is.numeric(ma)),
+    "max_i must be a numeric vector of length one" = (is.numeric(max_i) && length(max_i) == 1)
+  )
   c(ARinftySHORT(ar = ar, ma = ma, max_i = max_i))
 }
 
@@ -67,7 +74,9 @@ arma_to_ar <- function(ar = numeric(0), ma = numeric(0), max_i = 1000) {
 #'where \eqn{a_1, ..., a_p} and \eqn{b_1, ..., b_q} are its real-valued 
 #'coefficients. The function \code{arma_to_ar()} uses these coefficients as 
 #'input to calculate the coefficients of the truncated infinite-order 
-#'MA-representation of the model defined through these coefficients.
+#'MA-representation of the model defined through these coefficients. Note that 
+#'the stationarity and invertibility of the model defined through the provided 
+#'coefficients is not being checked.
 #'
 #'NOTE:
 #'
@@ -97,5 +106,11 @@ arma_to_ar <- function(ar = numeric(0), ma = numeric(0), max_i = 1000) {
 #' 
 
 arma_to_ma <- function(ar = numeric(0), ma = numeric(0), max_i = 1000) {
+  stopifnot(
+    "ar must be a numeric vector" = (is.numeric(ar)),
+    "ma must be a numeric vector" = (is.numeric(ma)),
+    "max_i must be a numeric vector of length one" = (is.numeric(max_i) && length(max_i) == 1)
+  )
+  
   c(MAinftySHORT(ar = ar, ma = ma, max_i = max_i))
 }

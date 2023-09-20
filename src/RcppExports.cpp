@@ -28,34 +28,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// FARIMAforecastAR
-arma::vec FARIMAforecastAR(arma::vec& obs, const arma::rowvec& ar_inf, const int meanObs, const int m);
-RcppExport SEXP _deseats_FARIMAforecastAR(SEXP obsSEXP, SEXP ar_infSEXP, SEXP meanObsSEXP, SEXP mSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec& >::type obs(obsSEXP);
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar_inf(ar_infSEXP);
-    Rcpp::traits::input_parameter< const int >::type meanObs(meanObsSEXP);
-    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
-    rcpp_result_gen = Rcpp::wrap(FARIMAforecastAR(obs, ar_inf, meanObs, m));
-    return rcpp_result_gen;
-END_RCPP
-}
-// FARIMAfutureObs
-arma::vec FARIMAfutureObs(arma::vec& obs, const arma::rowvec& ar_inf, const arma::vec& et, const int meanObs);
-RcppExport SEXP _deseats_FARIMAfutureObs(SEXP obsSEXP, SEXP ar_infSEXP, SEXP etSEXP, SEXP meanObsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec& >::type obs(obsSEXP);
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar_inf(ar_infSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type et(etSEXP);
-    Rcpp::traits::input_parameter< const int >::type meanObs(meanObsSEXP);
-    rcpp_result_gen = Rcpp::wrap(FARIMAfutureObs(obs, ar_inf, et, meanObs));
-    return rcpp_result_gen;
-END_RCPP
-}
 // JumpVarsBV41Cpp
 arma::mat JumpVarsBV41Cpp(arma::vec& jumpPoints, const int n);
 RcppExport SEXP _deseats_JumpVarsBV41Cpp(SEXP jumpPointsSEXP, SEXP nSEXP) {
@@ -200,6 +172,290 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// seqCpp
+arma::vec seqCpp(const int from, const int to);
+RcppExport SEXP _deseats_seqCpp(SEXP fromSEXP, SEXP toSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type from(fromSEXP);
+    Rcpp::traits::input_parameter< const int >::type to(toSEXP);
+    rcpp_result_gen = Rcpp::wrap(seqCpp(from, to));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rseqCpp
+arma::rowvec rseqCpp(const int from, const int to);
+RcppExport SEXP _deseats_rseqCpp(SEXP fromSEXP, SEXP toSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type from(fromSEXP);
+    Rcpp::traits::input_parameter< const int >::type to(toSEXP);
+    rcpp_result_gen = Rcpp::wrap(rseqCpp(from, to));
+    return rcpp_result_gen;
+END_RCPP
+}
+// factorialCpp
+int factorialCpp(const int k);
+RcppExport SEXP _deseats_factorialCpp(SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(factorialCpp(k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// armaCpp
+Rcpp::List armaCpp(const arma::vec& Xt, const int p, const int q);
+RcppExport SEXP _deseats_armaCpp(SEXP XtSEXP, SEXP pSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(armaCpp(Xt, p, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// BICarmaCpp
+double BICarmaCpp(const arma::vec& Xt, const int p, const int q);
+RcppExport SEXP _deseats_BICarmaCpp(SEXP XtSEXP, SEXP pSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(BICarmaCpp(Xt, p, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// selectOrderBIC
+Rcpp::NumericVector selectOrderBIC(const arma::vec& Xt, const int pmax, const int qmax);
+RcppExport SEXP _deseats_selectOrderBIC(SEXP XtSEXP, SEXP pmaxSEXP, SEXP qmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< const int >::type pmax(pmaxSEXP);
+    Rcpp::traits::input_parameter< const int >::type qmax(qmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(selectOrderBIC(Xt, pmax, qmax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// armaoptCpp
+Rcpp::List armaoptCpp(const arma::vec& Xt);
+RcppExport SEXP _deseats_armaoptCpp(SEXP XtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type Xt(XtSEXP);
+    rcpp_result_gen = Rcpp::wrap(armaoptCpp(Xt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// arma_sumacovCpp
+double arma_sumacovCpp(Rcpp::List arma);
+RcppExport SEXP _deseats_arma_sumacovCpp(SEXP armaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type arma(armaSEXP);
+    rcpp_result_gen = Rcpp::wrap(arma_sumacovCpp(arma));
+    return rcpp_result_gen;
+END_RCPP
+}
+// acovCpp
+arma::vec acovCpp(const arma::vec& Xt, const int lagMax);
+RcppExport SEXP _deseats_acovCpp(SEXP XtSEXP, SEXP lagMaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< const int >::type lagMax(lagMaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(acovCpp(Xt, lagMax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// c1GlobalCpp
+double c1GlobalCpp(const arma::vec& autocovs);
+RcppExport SEXP _deseats_c1GlobalCpp(SEXP autocovsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type autocovs(autocovsSEXP);
+    rcpp_result_gen = Rcpp::wrap(c1GlobalCpp(autocovs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// c1LocalCpp
+double c1LocalCpp(const arma::vec& w_autocovs);
+RcppExport SEXP _deseats_c1LocalCpp(SEXP w_autocovsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type w_autocovs(w_autocovsSEXP);
+    rcpp_result_gen = Rcpp::wrap(c1LocalCpp(w_autocovs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// c2LocalCpp
+double c2LocalCpp(const arma::vec& w_autocovs);
+RcppExport SEXP _deseats_c2LocalCpp(SEXP w_autocovsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type w_autocovs(w_autocovsSEXP);
+    rcpp_result_gen = Rcpp::wrap(c2LocalCpp(w_autocovs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// L1Cpp
+int L1Cpp(const int L1old, const int n);
+RcppExport SEXP _deseats_L1Cpp(SEXP L1oldSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type L1old(L1oldSEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(L1Cpp(L1old, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// wGCpp
+arma::vec wGCpp(const int L1);
+RcppExport SEXP _deseats_wGCpp(SEXP L1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type L1(L1SEXP);
+    rcpp_result_gen = Rcpp::wrap(wGCpp(L1));
+    return rcpp_result_gen;
+END_RCPP
+}
+// w_acovG_Cpp
+arma::vec w_acovG_Cpp(const arma::vec& autocovs, const int L1, const arma::vec& w1);
+RcppExport SEXP _deseats_w_acovG_Cpp(SEXP autocovsSEXP, SEXP L1SEXP, SEXP w1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type autocovs(autocovsSEXP);
+    Rcpp::traits::input_parameter< const int >::type L1(L1SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type w1(w1SEXP);
+    rcpp_result_gen = Rcpp::wrap(w_acovG_Cpp(autocovs, L1, w1));
+    return rcpp_result_gen;
+END_RCPP
+}
+// c2GlobalCpp
+double c2GlobalCpp(const arma::vec& w_autocovs);
+RcppExport SEXP _deseats_c2GlobalCpp(SEXP w_autocovsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type w_autocovs(w_autocovsSEXP);
+    rcpp_result_gen = Rcpp::wrap(c2GlobalCpp(w_autocovs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// updateLGCpp
+int updateLGCpp(const int n, const double c1, const double c2);
+RcppExport SEXP _deseats_updateLGCpp(SEXP nSEXP, SEXP c1SEXP, SEXP c2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const double >::type c1(c1SEXP);
+    Rcpp::traits::input_parameter< const double >::type c2(c2SEXP);
+    rcpp_result_gen = Rcpp::wrap(updateLGCpp(n, c1, c2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// LGoptCpp
+int LGoptCpp(const arma::vec& autocovs);
+RcppExport SEXP _deseats_LGoptCpp(SEXP autocovsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type autocovs(autocovsSEXP);
+    rcpp_result_gen = Rcpp::wrap(LGoptCpp(autocovs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// wLCpp
+arma::vec wLCpp(const int L1);
+RcppExport SEXP _deseats_wLCpp(SEXP L1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type L1(L1SEXP);
+    rcpp_result_gen = Rcpp::wrap(wLCpp(L1));
+    return rcpp_result_gen;
+END_RCPP
+}
+// w_autocov_L_Cpp
+arma::vec w_autocov_L_Cpp(const arma::vec& autocovs, const int L1, const arma::vec& w);
+RcppExport SEXP _deseats_w_autocov_L_Cpp(SEXP autocovsSEXP, SEXP L1SEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type autocovs(autocovsSEXP);
+    Rcpp::traits::input_parameter< const int >::type L1(L1SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(w_autocov_L_Cpp(autocovs, L1, w));
+    return rcpp_result_gen;
+END_RCPP
+}
+// LLcalcCpp
+int LLcalcCpp(const int n, const double c1, const double c2);
+RcppExport SEXP _deseats_LLcalcCpp(SEXP nSEXP, SEXP c1SEXP, SEXP c2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const double >::type c1(c1SEXP);
+    Rcpp::traits::input_parameter< const double >::type c2(c2SEXP);
+    rcpp_result_gen = Rcpp::wrap(LLcalcCpp(n, c1, c2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// LLoptCpp
+int LLoptCpp(const arma::vec& autocovs, const int LGopt);
+RcppExport SEXP _deseats_LLoptCpp(SEXP autocovsSEXP, SEXP LGoptSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type autocovs(autocovsSEXP);
+    Rcpp::traits::input_parameter< const int >::type LGopt(LGoptSEXP);
+    rcpp_result_gen = Rcpp::wrap(LLoptCpp(autocovs, LGopt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// weights_finalCpp
+arma::vec weights_finalCpp(const int L0opt);
+RcppExport SEXP _deseats_weights_finalCpp(SEXP L0optSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type L0opt(L0optSEXP);
+    rcpp_result_gen = Rcpp::wrap(weights_finalCpp(L0opt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cf0_calc_Cpp
+double cf0_calc_Cpp(const arma::vec& autocovs_sub, const arma::vec& weights);
+RcppExport SEXP _deseats_cf0_calc_Cpp(SEXP autocovs_subSEXP, SEXP weightsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type autocovs_sub(autocovs_subSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type weights(weightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cf0_calc_Cpp(autocovs_sub, weights));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cf0Cpp
 double cf0Cpp(const arma::vec& Xt);
 RcppExport SEXP _deseats_cf0Cpp(SEXP XtSEXP) {
@@ -284,8 +540,6 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_deseats_BV41filterCpp", (DL_FUNC) &_deseats_BV41filterCpp, 7},
-    {"_deseats_FARIMAforecastAR", (DL_FUNC) &_deseats_FARIMAforecastAR, 4},
-    {"_deseats_FARIMAfutureObs", (DL_FUNC) &_deseats_FARIMAfutureObs, 4},
     {"_deseats_JumpVarsBV41Cpp", (DL_FUNC) &_deseats_JumpVarsBV41Cpp, 2},
     {"_deseats_ARinftySHORT", (DL_FUNC) &_deseats_ARinftySHORT, 3},
     {"_deseats_MAinftySHORT", (DL_FUNC) &_deseats_MAinftySHORT, 3},
@@ -297,6 +551,30 @@ static const R_CallMethodDef CallEntries[] = {
     {"_deseats_outlierDetectBV41Cpp", (DL_FUNC) &_deseats_outlierDetectBV41Cpp, 4},
     {"_deseats_fcastCpp", (DL_FUNC) &_deseats_fcastCpp, 5},
     {"_deseats_tfcastCpp", (DL_FUNC) &_deseats_tfcastCpp, 6},
+    {"_deseats_seqCpp", (DL_FUNC) &_deseats_seqCpp, 2},
+    {"_deseats_rseqCpp", (DL_FUNC) &_deseats_rseqCpp, 2},
+    {"_deseats_factorialCpp", (DL_FUNC) &_deseats_factorialCpp, 1},
+    {"_deseats_armaCpp", (DL_FUNC) &_deseats_armaCpp, 3},
+    {"_deseats_BICarmaCpp", (DL_FUNC) &_deseats_BICarmaCpp, 3},
+    {"_deseats_selectOrderBIC", (DL_FUNC) &_deseats_selectOrderBIC, 3},
+    {"_deseats_armaoptCpp", (DL_FUNC) &_deseats_armaoptCpp, 1},
+    {"_deseats_arma_sumacovCpp", (DL_FUNC) &_deseats_arma_sumacovCpp, 1},
+    {"_deseats_acovCpp", (DL_FUNC) &_deseats_acovCpp, 2},
+    {"_deseats_c1GlobalCpp", (DL_FUNC) &_deseats_c1GlobalCpp, 1},
+    {"_deseats_c1LocalCpp", (DL_FUNC) &_deseats_c1LocalCpp, 1},
+    {"_deseats_c2LocalCpp", (DL_FUNC) &_deseats_c2LocalCpp, 1},
+    {"_deseats_L1Cpp", (DL_FUNC) &_deseats_L1Cpp, 2},
+    {"_deseats_wGCpp", (DL_FUNC) &_deseats_wGCpp, 1},
+    {"_deseats_w_acovG_Cpp", (DL_FUNC) &_deseats_w_acovG_Cpp, 3},
+    {"_deseats_c2GlobalCpp", (DL_FUNC) &_deseats_c2GlobalCpp, 1},
+    {"_deseats_updateLGCpp", (DL_FUNC) &_deseats_updateLGCpp, 3},
+    {"_deseats_LGoptCpp", (DL_FUNC) &_deseats_LGoptCpp, 1},
+    {"_deseats_wLCpp", (DL_FUNC) &_deseats_wLCpp, 1},
+    {"_deseats_w_autocov_L_Cpp", (DL_FUNC) &_deseats_w_autocov_L_Cpp, 3},
+    {"_deseats_LLcalcCpp", (DL_FUNC) &_deseats_LLcalcCpp, 3},
+    {"_deseats_LLoptCpp", (DL_FUNC) &_deseats_LLoptCpp, 2},
+    {"_deseats_weights_finalCpp", (DL_FUNC) &_deseats_weights_finalCpp, 1},
+    {"_deseats_cf0_calc_Cpp", (DL_FUNC) &_deseats_cf0_calc_Cpp, 2},
     {"_deseats_cf0Cpp", (DL_FUNC) &_deseats_cf0Cpp, 1},
     {"_deseats_fitteddeseatsCpp", (DL_FUNC) &_deseats_fitteddeseatsCpp, 6},
     {"_deseats_residdeseatsCpp", (DL_FUNC) &_deseats_residdeseatsCpp, 6},

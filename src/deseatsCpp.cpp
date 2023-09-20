@@ -8,6 +8,7 @@ using namespace Rcpp;
 
 // Function to help obtain a sequence from 'from' to 'to' by step 1
 // in C++
+// [[Rcpp::export]]
 arma::vec seqCpp(const int from, const int to){
   const int n = to - from + 1;
   arma::vec seqOut(n);
@@ -19,6 +20,7 @@ arma::vec seqCpp(const int from, const int to){
 
 // Function to help obtain a sequence from 'from' to 'to' by step 1
 // in C++ (returns a rowvec instead)
+// [[Rcpp::export]]
 arma::rowvec rseqCpp(const int from, const int to) {
   const int n = to - from + 1;
   arma::rowvec seqOut(n);
@@ -29,6 +31,7 @@ arma::rowvec rseqCpp(const int from, const int to) {
 }
 
 // Function to calculate the factorial of an 'int' in C++
+// [[Rcpp::export]]
 int factorialCpp(const int k) {
   int fac = 1;
   if (k > 1) {
@@ -41,6 +44,7 @@ int factorialCpp(const int k) {
 
 
 // Fit ARMA
+// [[Rcpp::export]]
 Rcpp::List armaCpp(const arma::vec& Xt, const int p, const int q) {
   Rcpp::Environment pkg = Rcpp::Environment::namespace_env("deseats");
   // Rcpp::Function f = pkg["arima"];    
@@ -52,6 +56,7 @@ Rcpp::List armaCpp(const arma::vec& Xt, const int p, const int q) {
   
 }
 
+// [[Rcpp::export]]
 double BICarmaCpp(const arma::vec& Xt, const int p, const int q) {
   
   Rcpp::List arma = armaCpp(Xt, p, q);
@@ -61,6 +66,7 @@ double BICarmaCpp(const arma::vec& Xt, const int p, const int q) {
   
 } 
 
+// [[Rcpp::export]]
 Rcpp::NumericVector selectOrderBIC(const arma::vec& Xt, const int pmax, const int qmax) {
   
   arma::mat bicmat = arma::zeros<arma::mat>(pmax + 1, qmax + 1);
@@ -86,6 +92,7 @@ Rcpp::NumericVector selectOrderBIC(const arma::vec& Xt, const int pmax, const in
   
 }
 
+// [[Rcpp::export]]
 Rcpp::List armaoptCpp(const arma::vec& Xt) {
   
   Rcpp::NumericVector order = selectOrderBIC(Xt, 3, 3);
@@ -102,6 +109,7 @@ Rcpp::List armaoptCpp(const arma::vec& Xt) {
   
 }
   
+// [[Rcpp::export]]  
 double arma_sumacovCpp(Rcpp::List arma) {
   
   const arma::vec info = arma["arma"];
@@ -127,6 +135,7 @@ double arma_sumacovCpp(Rcpp::List arma) {
 }  
   
 // Autocovariance calculation from given data
+// [[Rcpp::export]]
 arma::vec acovCpp(const arma::vec& Xt, const int lagMax) {
   const double meanX = arma::mean(Xt);
   arma::vec XtDM = Xt - meanX;
@@ -139,55 +148,157 @@ arma::vec acovCpp(const arma::vec& Xt, const int lagMax) {
   return out;
 }
 
-// Buehlmann algorithm for estimating cf0
+// Calculate c1 (Buehlmann) in the global step
 // [[Rcpp::export]]
-double cf0Cpp(const arma::vec& Xt) {
-  const int n = Xt.size();
-  arma::vec ga = acovCpp(Xt, n - 1);
+double c1GlobalCpp(const arma::vec& autocovs) {
+  const int n = autocovs.size();
+  return (std::pow(autocovs(0), 2.0) + 2.0 * arma::accu(arma::pow(autocovs.subvec(1, n - 1), 2.0))) / (4.0 * M_PI);
+}
+
+// Calculate c1 (Buehlmann) in the local step
+// [[Rcpp::export]]
+double c1LocalCpp(const arma::vec& w_autocovs) {
+  return std::pow(2.0 * arma::accu(w_autocovs) - w_autocovs(0), 2.0) / (2.0 * M_PI);
+}
+
+// Calculate c2 (Buehlmann) in the local step
+// [[Rcpp::export]]
+double c2LocalCpp(const arma::vec& w_autocovs) {
+  return 3.0 * std::pow(2.0 * arma::accu(w_autocovs), 2.0) / (2.0 * M_PI);
+}
+
+// Calculate L1 (Buehlmann)
+// [[Rcpp::export]]
+int L1Cpp(const int L1old, const int n) {
+  return std::trunc(L1old / std::pow(n, 2.0 / 21.0)) + 1;
+}
+
+// Calculate weights in global step (Buehlmann)
+// [[Rcpp::export]]
+arma::vec wGCpp(const int L1) {
+   arma::vec x1 = seqCpp(0, L1 - 1) / L1;
+   return 1.0 - x1;
+}
+
+// Obtain weighted autocovariances in global step (Buehlmann)
+// [[Rcpp::export]]
+arma::vec w_acovG_Cpp(const arma::vec& autocovs, const int L1, const arma::vec& w1) {
+  return seqCpp(0, L1 - 1) % autocovs.subvec(0, L1 - 1) % w1;
+}
+
+// Calculate c2 (Buehlmann) in the global step
+// [[Rcpp::export]]
+double c2GlobalCpp(const arma::vec& w_autocovs) {
+  return 3.0 * (2.0 * arma::accu(arma::pow(w_autocovs, 2.0))) / (2.0 * M_PI);
+}
+
+// Update global L (Buehlmann)
+// [[Rcpp::export]]
+int updateLGCpp(const int n, const double c1, const double c2) {
+  return std::trunc(std::pow(n, 1.0 / 3.0) * std::pow(c2 / c1, 1.0 / 3.0)) + 1;
+}
+
+// Iterate through the global procedure (Buehlmann)
+// [[Rcpp::export]]
+int LGoptCpp(const arma::vec& autocovs) {
+  
+  const int n = autocovs.size();
   const int nit = 20;
   int runc = 1;
   arma::vec L(nit + 1);
   L(0) = std::trunc(n / 2.0 + 0.5);
-  const double c1 = (std::pow(ga(0), 2.0) + 2.0 * arma::accu(arma::pow(ga.subvec(1, n - 1), 2.0))) / (4.0 * M_PI);
+  const double c1 = c1GlobalCpp(autocovs);
   double c2 = 0;
   int L1 = 0;
   int LGopt = 0;
-
+  
   for(int i = 0; i < nit; i++) {
     if(runc == 1) {
-      L1 = std::trunc(L(i) / std::pow(n, 2.0 / 21.0)) + 1;
-      arma::vec x1 = seqCpp(0, L1 - 1) / L1;
-      arma::vec w1 = 1.0 - x1;
-      arma::vec gai = seqCpp(0, L1 - 1) % ga.subvec(0, L1 - 1) % w1;
-      c2 = 3.0 * (2.0 * arma::accu(arma::pow(gai.subvec(0, L1 - 1), 2.0))) / (2.0 * M_PI);
-      L(i + 1) = std::trunc(std::pow(n, 1.0 / 3.0) * std::pow(c2 / c1, 1.0 / 3.0)) + 1;
+      L1 = L1Cpp(L(i), n);
+      arma::vec w1 = wGCpp(L1);
+      arma::vec w_autocovs = w_acovG_Cpp(autocovs, L1, w1);
+      c2 = c2GlobalCpp(w_autocovs);
+      L(i + 1) = updateLGCpp(n, c1, c2);
 
       if (L(i + 1) == L(i)) {
         runc = 0;
         LGopt = L(i + 1);
       }
-
-
     }
   }
   if (runc == 1) {
     LGopt = L(nit);
-  }
+  }  
+  
+  return LGopt;
+  
+}
 
-  L1 = std::trunc(LGopt / std::pow(n, 2.0 / 21.0)) + 1;
+// Weights in the local step (Buehlmann)
+// [[Rcpp::export]]
+arma::vec wLCpp(const int L1) {
   arma::vec x1 = seqCpp(0, L1 - 1) / L1;
-  arma::vec w1 = 1.0 - x1;
-  arma::vec ga1 = seqCpp(0, L1 - 1) % ga.subvec(0, L1 - 1) % w1;
-  const double c20 = 3.0 * std::pow(2.0 * arma::accu((ga1.subvec(0, L1 - 1))), 2.0) / (2.0 * M_PI);
-  const arma::vec w0 = (1.0 + cos(M_PI * x1)) / 2.0;
-  arma::vec ga0 = ga.subvec(0, L1 - 1) % w0;
-  const double c10 = std::pow(2.0 * arma::accu((ga0.subvec(0, L1 - 1))) - ga0(0), 2.0) / (2.0 * M_PI);
-  const int L0opt = std::trunc(std::pow(n, 1.0 / 3.0) * std::pow((c20 / c10) / 2.0, 1.0 / 3.0)) + 1;
-  const arma::vec wacf = arma::reverse(seqCpp(1, L0opt + 1)) / (L0opt + 1.0);
-  const arma::vec acfX = ga.subvec(0, L0opt);
-  const double cf0LW = 2.0 * arma::accu(acfX % wacf) - acfX(0);
+  return (1.0 + arma::cos(M_PI * x1)) / 2.0;
+}
 
-  return cf0LW;
+// Weighted autocovariances in the local step (Buehlmann)
+// [[Rcpp::export]]
+arma::vec w_autocov_L_Cpp(const arma::vec& autocovs, const int L1, const arma::vec& w) {
+  return autocovs.subvec(0, L1 - 1) % w;
+}
+
+// Calculate local L (Buehlmann)
+// [[Rcpp::export]]
+int LLcalcCpp(const int n, const double c1, const double c2) {
+  return std::trunc(std::pow(n, 1.0 / 3.0) * std::pow((c2 / c1) / 2.0, 1.0 / 3.0)) + 1;
+}
+
+// Conduct the local procedure at frequency 0 (Buehlmann)
+// [[Rcpp::export]]
+int LLoptCpp(const arma::vec& autocovs, const int LGopt) {
+  
+  const int n = autocovs.size();
+  
+  const int L1 = L1Cpp(LGopt, n);
+  
+  arma::vec w1 = wGCpp(L1);
+  arma::vec w_autocovs = w_acovG_Cpp(autocovs, L1, w1);
+  const double c2L = c2LocalCpp(w_autocovs);
+  const arma::vec w0 = wLCpp(L1);
+  arma::vec ga0 = w_autocov_L_Cpp(autocovs, L1, w0);
+  const double c1L = c1LocalCpp(ga0);
+  
+  return LLcalcCpp(n, c1L, c2L);
+  
+}
+
+
+// Obtain final weights for autocovariances (Buehlmann)
+// [[Rcpp::export]]
+arma::vec weights_finalCpp(const int L0opt) {
+  return arma::reverse(seqCpp(1, L0opt + 1)) / (L0opt + 1.0);
+}
+
+// Calculate cf0 given final weights (Buehlmann)
+// [[Rcpp::export]]
+double cf0_calc_Cpp(const arma::vec& autocovs_sub, const arma::vec& weights) {
+  return 2.0 * arma::accu(autocovs_sub % weights) - autocovs_sub(0);
+}
+
+// Buehlmann algorithm for estimating cf0
+// [[Rcpp::export]]
+double cf0Cpp(const arma::vec& Xt) {
+  
+  const int n = Xt.size();
+  const arma::vec ga = acovCpp(Xt, n - 1);
+
+  const int LGopt = LGoptCpp(ga);
+  const int LLopt = LLoptCpp(ga, LGopt);
+
+  const arma::vec wacf = weights_finalCpp(LLopt);
+  const arma::vec acfX = ga.subvec(0, LLopt);
+
+  return cf0_calc_Cpp(acfX, wacf);
 }
 
 // C++ version of deseats smoothing
@@ -627,7 +738,7 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
   const double diffvalue = 1.0 / n;
   arma::vec bwidths = arma::zeros<arma::vec>(itMax + 1);
   bwidths(0) = bopt;
-  
+
   while (it < itMax + 1 && stopreason == 0) {
     
     bv = std::pow(bopt, expo);
@@ -645,9 +756,9 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
     if (errors == 1) {
       
       if (errm == 1) {
-      
+
         cf0 = cf0Cpp(resAdj);
-        
+
       } else if (errm == 0) {
         
         Rcpp::List arma = armaoptCpp(resAdj);

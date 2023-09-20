@@ -5,14 +5,6 @@ BV41filterCpp <- function(xt, wst, wss, nrowst, nrowss, maxt, maxs) {
     .Call('_deseats_BV41filterCpp', PACKAGE = 'deseats', xt, wst, wss, nrowst, nrowss, maxt, maxs)
 }
 
-FARIMAforecastAR <- function(obs, ar_inf, meanObs, m) {
-    .Call('_deseats_FARIMAforecastAR', PACKAGE = 'deseats', obs, ar_inf, meanObs, m)
-}
-
-FARIMAfutureObs <- function(obs, ar_inf, et, meanObs) {
-    .Call('_deseats_FARIMAfutureObs', PACKAGE = 'deseats', obs, ar_inf, et, meanObs)
-}
-
 JumpVarsBV41Cpp <- function(jumpPoints, n) {
     .Call('_deseats_JumpVarsBV41Cpp', PACKAGE = 'deseats', jumpPoints, n)
 }
@@ -55,6 +47,102 @@ fcastCpp <- function(X, innov, ar, ma, h) {
 
 tfcastCpp <- function(X, innov, epsBoot, ar, ma, h) {
     .Call('_deseats_tfcastCpp', PACKAGE = 'deseats', X, innov, epsBoot, ar, ma, h)
+}
+
+seqCpp <- function(from, to) {
+    .Call('_deseats_seqCpp', PACKAGE = 'deseats', from, to)
+}
+
+rseqCpp <- function(from, to) {
+    .Call('_deseats_rseqCpp', PACKAGE = 'deseats', from, to)
+}
+
+factorialCpp <- function(k) {
+    .Call('_deseats_factorialCpp', PACKAGE = 'deseats', k)
+}
+
+armaCpp <- function(Xt, p, q) {
+    .Call('_deseats_armaCpp', PACKAGE = 'deseats', Xt, p, q)
+}
+
+BICarmaCpp <- function(Xt, p, q) {
+    .Call('_deseats_BICarmaCpp', PACKAGE = 'deseats', Xt, p, q)
+}
+
+selectOrderBIC <- function(Xt, pmax, qmax) {
+    .Call('_deseats_selectOrderBIC', PACKAGE = 'deseats', Xt, pmax, qmax)
+}
+
+armaoptCpp <- function(Xt) {
+    .Call('_deseats_armaoptCpp', PACKAGE = 'deseats', Xt)
+}
+
+arma_sumacovCpp <- function(arma) {
+    .Call('_deseats_arma_sumacovCpp', PACKAGE = 'deseats', arma)
+}
+
+acovCpp <- function(Xt, lagMax) {
+    .Call('_deseats_acovCpp', PACKAGE = 'deseats', Xt, lagMax)
+}
+
+c1GlobalCpp <- function(autocovs) {
+    .Call('_deseats_c1GlobalCpp', PACKAGE = 'deseats', autocovs)
+}
+
+c1LocalCpp <- function(w_autocovs) {
+    .Call('_deseats_c1LocalCpp', PACKAGE = 'deseats', w_autocovs)
+}
+
+c2LocalCpp <- function(w_autocovs) {
+    .Call('_deseats_c2LocalCpp', PACKAGE = 'deseats', w_autocovs)
+}
+
+L1Cpp <- function(L1old, n) {
+    .Call('_deseats_L1Cpp', PACKAGE = 'deseats', L1old, n)
+}
+
+wGCpp <- function(L1) {
+    .Call('_deseats_wGCpp', PACKAGE = 'deseats', L1)
+}
+
+w_acovG_Cpp <- function(autocovs, L1, w1) {
+    .Call('_deseats_w_acovG_Cpp', PACKAGE = 'deseats', autocovs, L1, w1)
+}
+
+c2GlobalCpp <- function(w_autocovs) {
+    .Call('_deseats_c2GlobalCpp', PACKAGE = 'deseats', w_autocovs)
+}
+
+updateLGCpp <- function(n, c1, c2) {
+    .Call('_deseats_updateLGCpp', PACKAGE = 'deseats', n, c1, c2)
+}
+
+LGoptCpp <- function(autocovs) {
+    .Call('_deseats_LGoptCpp', PACKAGE = 'deseats', autocovs)
+}
+
+wLCpp <- function(L1) {
+    .Call('_deseats_wLCpp', PACKAGE = 'deseats', L1)
+}
+
+w_autocov_L_Cpp <- function(autocovs, L1, w) {
+    .Call('_deseats_w_autocov_L_Cpp', PACKAGE = 'deseats', autocovs, L1, w)
+}
+
+LLcalcCpp <- function(n, c1, c2) {
+    .Call('_deseats_LLcalcCpp', PACKAGE = 'deseats', n, c1, c2)
+}
+
+LLoptCpp <- function(autocovs, LGopt) {
+    .Call('_deseats_LLoptCpp', PACKAGE = 'deseats', autocovs, LGopt)
+}
+
+weights_finalCpp <- function(L0opt) {
+    .Call('_deseats_weights_finalCpp', PACKAGE = 'deseats', L0opt)
+}
+
+cf0_calc_Cpp <- function(autocovs_sub, weights) {
+    .Call('_deseats_cf0_calc_Cpp', PACKAGE = 'deseats', autocovs_sub, weights)
 }
 
 cf0Cpp <- function(Xt) {
