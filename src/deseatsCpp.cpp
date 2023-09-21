@@ -155,6 +155,12 @@ double c1GlobalCpp(const arma::vec& autocovs) {
   return (std::pow(autocovs(0), 2.0) + 2.0 * arma::accu(arma::pow(autocovs.subvec(1, n - 1), 2.0))) / (4.0 * M_PI);
 }
 
+// Calculate c2 (Buehlmann) in the global step
+// [[Rcpp::export]]
+double c2GlobalCpp(const arma::vec& w_autocovs) {
+  return 3.0 * (2.0 * arma::accu(arma::pow(w_autocovs, 2.0))) / (2.0 * M_PI);
+}
+
 // Calculate c1 (Buehlmann) in the local step
 // [[Rcpp::export]]
 double c1LocalCpp(const arma::vec& w_autocovs) {
@@ -180,16 +186,23 @@ arma::vec wGCpp(const int L1) {
    return 1.0 - x1;
 }
 
+// Weights in the local step (Buehlmann)
+// [[Rcpp::export]]
+arma::vec wLCpp(const int L1) {
+  arma::vec x1 = seqCpp(0, L1 - 1) / L1;
+  return (1.0 + arma::cos(M_PI * x1)) / 2.0;
+}
+
 // Obtain weighted autocovariances in global step (Buehlmann)
 // [[Rcpp::export]]
 arma::vec w_acovG_Cpp(const arma::vec& autocovs, const int L1, const arma::vec& w1) {
   return seqCpp(0, L1 - 1) % autocovs.subvec(0, L1 - 1) % w1;
 }
 
-// Calculate c2 (Buehlmann) in the global step
+// Weighted autocovariances in the local step (Buehlmann)
 // [[Rcpp::export]]
-double c2GlobalCpp(const arma::vec& w_autocovs) {
-  return 3.0 * (2.0 * arma::accu(arma::pow(w_autocovs, 2.0))) / (2.0 * M_PI);
+arma::vec w_autocov_L_Cpp(const arma::vec& autocovs, const int L1, const arma::vec& w) {
+  return autocovs.subvec(0, L1 - 1) % w;
 }
 
 // Update global L (Buehlmann)
@@ -232,19 +245,6 @@ int LGoptCpp(const arma::vec& autocovs) {
   
   return LGopt;
   
-}
-
-// Weights in the local step (Buehlmann)
-// [[Rcpp::export]]
-arma::vec wLCpp(const int L1) {
-  arma::vec x1 = seqCpp(0, L1 - 1) / L1;
-  return (1.0 + arma::cos(M_PI * x1)) / 2.0;
-}
-
-// Weighted autocovariances in the local step (Buehlmann)
-// [[Rcpp::export]]
-arma::vec w_autocov_L_Cpp(const arma::vec& autocovs, const int L1, const arma::vec& w) {
-  return autocovs.subvec(0, L1 - 1) % w;
 }
 
 // Calculate local L (Buehlmann)
@@ -301,111 +301,280 @@ double cf0Cpp(const arma::vec& Xt) {
   return cf0_calc_Cpp(acfX, wacf);
 }
 
-// C++ version of deseats smoothing
+// Given a relative bandwidth, obtain the corresponding one-hand side absolute bandwidth
 // [[Rcpp::export]]
-Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
-  const int s, const int mu, const double b, const int bb) {
+int bwidthAbsCpp(const int n, const double bwidth) {
+  return std::trunc(n * bwidth + 0.5);
+}
 
-  const int n = y.size();
-  arma::vec grG(n);
-  arma::vec grS(n);
-  const int bwidthAbs = std::trunc(n * b + 0.5);
-  const int bwidthMax = 2 * bwidthAbs + 1;
-  
-  arma::mat wsG(bwidthMax, bwidthMax);
-  arma::mat wsS = wsG;
-  arma::mat wsK = wsG;
-  arma::rowvec wk = arma::zeros<arma::rowvec>(bwidthMax);
-  arma::mat xt = arma::zeros<arma::mat>((p + s), bwidthMax);
-  
-  arma::mat xw = xt;
+// Given an absolute one-hand side bandwidth, obtain the total both-hand side absolute bandwidth
+// [[Rcpp::export]]
+int bwidthTotalCpp(const int bwidthAbs) {
+  return 2 * bwidthAbs + 1;
+}
 
-  const arma::vec seqhh = seqCpp(0, bwidthAbs);
-  const arma::vec allLowB = bwidthAbs - seqhh;
-  const arma::vec hr = bwidthAbs + bb * allLowB;
-  const arma::vec hr2 = arma::pow(hr + 1, 2.0);
-  const arma::vec ht = seqhh + hr;
-  arma::mat xa = xt;
+// Set up a single empty matrix for either G, S and so on
+// [[Rcpp::export]]
+arma::mat setup_wsMat_single_Cpp(const int bwidthTotal) {
+  return arma::zeros<arma::mat>(bwidthTotal, bwidthTotal);
+}
+
+// Set up wk
+// [[Rcpp::export]]
+arma::rowvec setup_wk_Cpp(const int bwidthTotal) {
+  return arma::zeros<arma::rowvec>(bwidthTotal);
+}
+
+// Set up xt
+// [[Rcpp::export]]
+arma::mat setup_xt_Cpp(const int p, const int s, const int bwidthTotal) {
+  return arma::zeros<arma::mat>((p + s), bwidthTotal);
+}
+
+// Set of lower indexes
+// [[Rcpp::export]]
+arma::vec lowIndexCpp(const int bwidthAbs, const arma::vec& seqhh) {
+  return bwidthAbs - seqhh;
+}
+
+// Set of upper indexes
+// [[Rcpp::export]]
+arma::vec upIndexCpp(const int bwidthAbs, const arma::vec& bwidthRight) {
+  return bwidthAbs + bwidthRight;
+}
+
+// Collection of right-hand side absolute bandwidths
+// [[Rcpp::export]]
+arma::vec bwidthRightCpp(const int bwidthAbs, const int bb, const arma::vec& allLowInd) {
+  return bwidthAbs + bb * allLowInd;
+}
+
+// Collection of total absolute bandwidths
+// [[Rcpp::export]]
+arma::vec bwidthAllTotalCpp(const arma::vec& seqhh, const arma::vec& bwidthRight) {
+  return seqhh + bwidthRight;
+}
+
+// Setup the data matrix for the polynomial time points and the harmonic function values
+// [[Rcpp::export]]
+arma::mat dataMatCpp(const int p, const int s, const int ntpoints, const int bwidthAbs, const arma::rowvec& all_tp) {
   
-  const arma::rowvec allsequ = rseqCpp(-bwidthAbs, hr(0));
-  const int m = allsequ.size();
-  const arma::rowvec allsequ2 = arma::pow(allsequ, 2.0);
-  const arma::rowvec allsequhh = allsequ / bwidthAbs;
+  const arma::rowvec all_tp_scaled = all_tp / bwidthAbs;  
+  arma::mat dataMat = arma::ones<arma::mat>((p + s), ntpoints);
   
-  arma::mat dataMat = arma::ones<arma::mat>((p + s), m);  
-  dataMat.row(1) = allsequhh;
+  dataMat.row(1) = all_tp_scaled;
   
   for (int i = 2; i < p + 1; ++i) {
-    dataMat.row(i) = arma::pow(allsequhh, i);
+    dataMat.row(i) = arma::pow(all_tp_scaled, i);
   }
   
   const double l1 = 2.0 * M_PI / s;
   
   for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
-    dataMat.row(p + 2 * i - 1) = arma::cos(i * l1 * allsequ); //look here
-    dataMat.row(p + 2 * i) = arma::sin(i * l1 * allsequ);
+    dataMat.row(p + 2 * i - 1) = arma::cos(i * l1 * all_tp); //look here
+    dataMat.row(p + 2 * i) = arma::sin(i * l1 * all_tp);
   }
   
   if ((s / 2.0) == std::trunc(s / 2.0)) {
-    dataMat.row(p + s - 1) = arma::cos(M_PI * allsequ);
-  }  
+    dataMat.row(p + s - 1) = arma::cos(M_PI * all_tp);
+  }    
+  
+  return dataMat;
+  
+}
+
+// Selector for the trend or its derivatives
+// [[Rcpp::export]]
+arma::rowvec derivSelectorCpp(const int p, const int s, const int deriv) {
   
   arma::rowvec ej = arma::zeros<arma::rowvec>(p + s);
-  arma::rowvec phi = ej;  
+  ej(deriv) = 1;
   
-  ej(0) = 1;
+  return ej;
+}
+
+// Selector for the seasonality
+// [[Rcpp::export]]
+arma::rowvec seasonSelectorCpp(const int p, const int s) {
   
+  arma::rowvec phi = arma::zeros<arma::rowvec>(p + s);
   for (int i = 1; i < s; i++) {
     if (i % 2 == 1) {
       phi(p + i) = 1;
     }
   }
   
-  const arma::vec allUpB = bwidthAbs + hr;
+  return phi;
+}
+
+// Adjustment of the weighting vector for mu = 0
+// [[Rcpp::export]]
+arma::rowvec wk_mu0_Cpp(const int l) {
+  
+  return arma::ones<arma::rowvec>(l);
+}
+
+// Adjustment of the weighting vector for mu = 1
+// [[Rcpp::export]]
+arma::rowvec wk_mu1_Cpp(const arma::rowvec& all_tp2_subset, const int bwidthRight2) {
+  
+  return 1.0 - all_tp2_subset / bwidthRight2;
+  
+}
+
+// Adjustment of the weighting vector for mu > 1
+// [[Rcpp::export]]
+arma::rowvec wk_mu23_Cpp(const arma::rowvec& all_tp2_subset, const int bwidthRight2, const int mu) {
+  
+  return arma::pow(1.0 - all_tp2_subset / bwidthRight2, mu);
+
+}
+
+// Adjustment of the weighting vector generally
+// [[Rcpp::export]]
+arma::rowvec wkAdjCpp(const arma::rowvec& all_tp2_subset, const int bwidthRight2, const int mu) {
+  
+  const int l = all_tp2_subset.size();
+  
+  arma::rowvec wkAdj;
+  
+  if (mu == 0) {
+    wkAdj = wk_mu0_Cpp(l);
+  } else if (mu == 1) {
+  
+    wkAdj = wk_mu1_Cpp(all_tp2_subset, bwidthRight2);
+
+  } else {
+    wkAdj = wk_mu23_Cpp(all_tp2_subset, bwidthRight2, mu);
+  }
+  
+  return wkAdj;
+}
+
+// Run regression for deseats
+// [[Rcpp::export]]
+arma::mat deseatsRegCpp(const arma::rowvec& wk, const arma::mat& xt) {
+  
+  arma::mat xw = xt * diagmat(wk);
+  arma::mat xa = arma::solve(xw * xt.t(), xw);  
+  
+  return xa;
+}
+
+// Complete a weighting systems second half
+// [[Rcpp::export]]
+arma::mat completeWeightingCpp(const arma::mat& ws, const int bwidthAbs, const int bwidthTotal) {
+  
+  return arma::flipud(arma::fliplr(ws.submat(0, 0, bwidthAbs - 1, bwidthTotal - 1))); 
+
+}
+
+// Obtain left-boundary estimates
+// [[Rcpp::export]]
+arma::vec fitLeftCpp(const arma::vec& y, const arma::mat& ws, const int bwidthAbs, const int bwidthTotal) {
+  
+  arma::vec gr = ws.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthTotal - 1);
+
+  return gr;
+}
+
+// Obtain middle point estimates
+// [[Rcpp::export]]
+arma::vec fitMiddleCpp(const arma::vec& y, const arma::mat& ws, const int bwidthAbs, const int bwidthTotal, const int n) {
+  
+  arma::mat ym(bwidthTotal, n - bwidthTotal + 1);
+  for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
+    ym.col(i - bwidthAbs) = y.subvec(i - bwidthAbs, i + bwidthAbs);
+  }
+  
+  arma::vec gr = (ws.row(bwidthAbs) * ym).t();
+
+  return gr;
+}
+
+// Obtain right-boundary estimates
+// [[Rcpp::export]]
+arma::vec fitRightCpp(const arma::vec& y, const arma::mat& ws, const int bwidthAbs, const int bwidthTotal, const int n) {
+  
+  arma::vec gr = ws.rows(bwidthAbs + 1, bwidthTotal - 1) * y.subvec(n - bwidthTotal, n - 1);
+
+  return gr;
+}
+
+// Obtain estimates based on weighting system
+// [[Rcpp::export]]
+arma::vec fitOverallCpp(const arma::vec& y, const arma::mat& ws, const int bwidthAbs, const int bwidthTotal, const int n) {
+  
+  arma::vec gr(n);
+  
+  gr.subvec(0, bwidthAbs - 1) = fitLeftCpp(y, ws, bwidthAbs, bwidthTotal);
+  gr.subvec(bwidthAbs, n - bwidthAbs - 1) = fitMiddleCpp(y, ws, bwidthAbs, bwidthTotal, n);
+  gr.subvec(n - bwidthAbs, n - 1) = fitRightCpp(y, ws, bwidthAbs, bwidthTotal, n);
+  
+  return gr;
+}
+
+// C++ version of deseats smoothing
+// [[Rcpp::export]]
+Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
+  const int s, const int mu, const double b, const int bb) {
+
+  const int n = y.size();
+  const int bwidthAbs = bwidthAbsCpp(n, b);
+  const int bwidthTotal = bwidthTotalCpp(bwidthAbs);
+
+  arma::mat wsG = setup_wsMat_single_Cpp(bwidthTotal);
+  arma::mat wsS = setup_wsMat_single_Cpp(bwidthTotal);
+  arma::mat wsK = setup_wsMat_single_Cpp(bwidthTotal);
+
+  arma::rowvec wk = setup_wk_Cpp(bwidthTotal);
+  
+  arma::mat xt = setup_xt_Cpp(p, s, bwidthTotal);
+  arma::mat xa;
+
+  const arma::vec seqhh = seqCpp(0, bwidthAbs);
+  const arma::vec allLowInd = lowIndexCpp(bwidthAbs, seqhh);
+  const arma::vec bwidthRight = bwidthRightCpp(bwidthAbs, bb, allLowInd);
+  const arma::vec bwidthRight2 = arma::pow(bwidthRight + 1, 2.0);
+  const arma::vec allbwidthTotal = bwidthAllTotalCpp(seqhh, bwidthRight);
+  const arma::vec allUpInd = upIndexCpp(bwidthAbs, bwidthRight);
+
+  const arma::rowvec all_tp = rseqCpp(-bwidthAbs, bwidthRight(0));
+  const int ntpoints = all_tp.size();
+  const arma::rowvec all_tp2 = arma::pow(all_tp, 2.0);
+
+  arma::mat dataMat = dataMatCpp(p, s, ntpoints, bwidthAbs, all_tp);  
+
+  arma::rowvec ej = derivSelectorCpp(p, s, 0);
+  arma::rowvec phi = seasonSelectorCpp(p, s);
 
   int lowB;
   int upB;
   
   for (int i = 0; i < bwidthAbs + 1; ++i) {
 
-    lowB = allLowB(i);
-    upB = allUpB(i);
-    
-    if (mu == 0) {
-      wk.subvec(0, ht(i)).fill(1.0);
-    } else if (mu == 1) {
-      wk.subvec(0, ht(i)) = 1.0 - allsequ2.subvec(lowB, upB) / hr2(i);
-    } else {
-      wk.subvec(0, ht(i)) = arma::pow(1.0 - allsequ2.subvec(lowB, upB) / hr2(i), mu);
-    }
-    
+    lowB = allLowInd(i);
+    upB = allUpInd(i);
+  
+    wk.subvec(0, allbwidthTotal(i)) = wkAdjCpp(all_tp2.subvec(lowB, upB), bwidthRight2(i), mu);
     wsK.row(i) = wk;
-    xt.submat(0, 0, p + s - 1, ht(i)) = dataMat.cols(lowB, upB);
-    xw = xt * diagmat(wk);
-    xa = arma::solve(xw * xt.t(), xw);
+
+    xt.submat(0, 0, p + s - 1, allbwidthTotal(i)) = dataMat.cols(lowB, upB);
+    xa = deseatsRegCpp(wk, xt);
 
     wsG.row(i) = ej * xa;
     wsS.row(i) = phi * xa;
     
   }
+
+  wsG.rows(bwidthAbs + 1, bwidthTotal - 1) = completeWeightingCpp(wsG, bwidthAbs, bwidthTotal);
+  wsS.rows(bwidthAbs + 1, bwidthTotal - 1) = completeWeightingCpp(wsS, bwidthAbs, bwidthTotal);
+  wsK.rows(bwidthAbs + 1, bwidthTotal - 1) = completeWeightingCpp(wsK, bwidthAbs, bwidthTotal);
+
+  arma::mat ws = wsG + wsS;
   
-  wsG.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsG.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
-  wsS.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsS.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));  
-  wsK.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsK.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));  
-  
-  arma::mat ws = wsG + wsS;  
-  
-  arma::mat ym(bwidthMax, n - bwidthMax + 1);
-  for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
-    ym.col(i - bwidthAbs) = y.subvec(i - bwidthAbs, i + bwidthAbs);
-  }
-  grG.subvec(0, bwidthAbs - 1) = wsG.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
-  grG.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsG.row(bwidthAbs) * ym).t();
-  grG.subvec(n - bwidthAbs, n - 1) = wsG.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);
-  
-  grS.subvec(0, bwidthAbs - 1) = wsS.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
-  grS.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsS.row(bwidthAbs) * ym).t();
-  grS.subvec(n - bwidthAbs, n - 1) = wsS.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);  
+  arma::vec grG = fitOverallCpp(y, wsG, bwidthAbs, bwidthTotal, n);
+  arma::vec grS = fitOverallCpp(y, wsS, bwidthAbs, bwidthTotal, n);  
   
   arma::vec gr = grG + grS;
   arma::vec resid = y - gr;

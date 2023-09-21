@@ -18,15 +18,15 @@ setClass("smoothing_options",
 )
 
 setValidity("smoothing_options", function(object) {
-  if (length(object@order_poly) > 1) {
-    "@order_poly must be of length 1"
-  } else if (length(object@season) > 1) {
-    "@season must be of length 1"
-  } else if (length(object@kernel_fun) > 1) {
-    "@kernel_fun must be of length 1"
-  } else if (length(object@bwidth) > 1) {
-    "@bwidth must be of length 1"
-  } else if (length(object@boundary_method) > 1) {
+  if (length(object@order_poly) > 1 || !(object@order_poly %in% c(1, 3))) {
+    "@order_poly must be of length 1 and set to either 1 or 3"
+  } else if (length(object@season) > 1 || !(is.na(object@season) || (object@season %in% c(1, 4, 12)))) {
+    "@season must be of length 1 and set to either NA, 1, 4 or 12"
+  } else if (length(object@kernel_fun) > 1 || !(object@kernel_fun %in% c("uniform", "epanechnikov", "bisquare", "triweight"))) {
+    '@kernel_fun must be of length 1 and set to either "uniform", "epanechnikov", "bisquare" or "triweight"'
+  } else if (length(object@bwidth) > 1 || !(is.na(object@bwidth) || (object@bwidth > 0 && object@bwidth < 0.5))) {
+    "@bwidth must be of length 1 and must be either set to NA or to a numeric value between 0 and 0.5"
+  } else if (length(object@boundary_method) > 1 || !(object@boundary_method %in% c("extend", "shorten"))) {
     "@boundary_method must be of length 1"
   } else {
     TRUE
@@ -60,11 +60,11 @@ setValidity("smoothing_options", function(object) {
 #'consider in the smoothing process; the default is \code{NA}, which then
 #'triggers a data-driven selection of an globally optimal bandwidth when
 #'the output of this function is passed to a smoothing function.
-#'@param boundary_method a single character value; it indicates, what method
-#'to use at boundary points; for \code{"extend"}, the default, the smoothing
-#'window around boundary points will be extended towards the center of the data; 
-#'for \code{"shorten"}, the window width will keep decreasing at boundary points 
-#'when approaching the very first and the very last observation.
+#'@param boundary_method a single character value; it indicates, what bandwidth 
+#'method to use at boundary points; for \code{"extend"}, the default, the 
+#'smoothing window around boundary points will be extended towards the center of 
+#'the data; for \code{"shorten"}, the window width will keep decreasing at 
+#'boundary points when approaching the very first and the very last observation.
 #'
 #'@export
 #' 

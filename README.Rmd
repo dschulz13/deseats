@@ -139,9 +139,9 @@ The package contains several seasonal example time series from official sources.
 
 ## Authors
 
-- Yuanhua Feng (Department Economics, Paderborn University, Germany) [Author]
+- Yuanhua Feng (Department Economics, Paderborn University, Germany) (Author)
 
-- Dominik Schulz (Department Economics, Paderborn University, Germany) [Author, Maintainer]
+- Dominik Schulz (Department Economics, Paderborn University, Germany) (Author, Maintainer)
 
 ## Contact
 

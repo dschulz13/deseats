@@ -89,6 +89,10 @@ c1GlobalCpp <- function(autocovs) {
     .Call('_deseats_c1GlobalCpp', PACKAGE = 'deseats', autocovs)
 }
 
+c2GlobalCpp <- function(w_autocovs) {
+    .Call('_deseats_c2GlobalCpp', PACKAGE = 'deseats', w_autocovs)
+}
+
 c1LocalCpp <- function(w_autocovs) {
     .Call('_deseats_c1LocalCpp', PACKAGE = 'deseats', w_autocovs)
 }
@@ -105,12 +109,16 @@ wGCpp <- function(L1) {
     .Call('_deseats_wGCpp', PACKAGE = 'deseats', L1)
 }
 
+wLCpp <- function(L1) {
+    .Call('_deseats_wLCpp', PACKAGE = 'deseats', L1)
+}
+
 w_acovG_Cpp <- function(autocovs, L1, w1) {
     .Call('_deseats_w_acovG_Cpp', PACKAGE = 'deseats', autocovs, L1, w1)
 }
 
-c2GlobalCpp <- function(w_autocovs) {
-    .Call('_deseats_c2GlobalCpp', PACKAGE = 'deseats', w_autocovs)
+w_autocov_L_Cpp <- function(autocovs, L1, w) {
+    .Call('_deseats_w_autocov_L_Cpp', PACKAGE = 'deseats', autocovs, L1, w)
 }
 
 updateLGCpp <- function(n, c1, c2) {
@@ -119,14 +127,6 @@ updateLGCpp <- function(n, c1, c2) {
 
 LGoptCpp <- function(autocovs) {
     .Call('_deseats_LGoptCpp', PACKAGE = 'deseats', autocovs)
-}
-
-wLCpp <- function(L1) {
-    .Call('_deseats_wLCpp', PACKAGE = 'deseats', L1)
-}
-
-w_autocov_L_Cpp <- function(autocovs, L1, w) {
-    .Call('_deseats_w_autocov_L_Cpp', PACKAGE = 'deseats', autocovs, L1, w)
 }
 
 LLcalcCpp <- function(n, c1, c2) {
@@ -147,6 +147,94 @@ cf0_calc_Cpp <- function(autocovs_sub, weights) {
 
 cf0Cpp <- function(Xt) {
     .Call('_deseats_cf0Cpp', PACKAGE = 'deseats', Xt)
+}
+
+bwidthAbsCpp <- function(n, bwidth) {
+    .Call('_deseats_bwidthAbsCpp', PACKAGE = 'deseats', n, bwidth)
+}
+
+bwidthTotalCpp <- function(bwidthAbs) {
+    .Call('_deseats_bwidthTotalCpp', PACKAGE = 'deseats', bwidthAbs)
+}
+
+setup_wsMat_single_Cpp <- function(bwidthTotal) {
+    .Call('_deseats_setup_wsMat_single_Cpp', PACKAGE = 'deseats', bwidthTotal)
+}
+
+setup_wk_Cpp <- function(bwidthTotal) {
+    .Call('_deseats_setup_wk_Cpp', PACKAGE = 'deseats', bwidthTotal)
+}
+
+setup_xt_Cpp <- function(p, s, bwidthTotal) {
+    .Call('_deseats_setup_xt_Cpp', PACKAGE = 'deseats', p, s, bwidthTotal)
+}
+
+lowIndexCpp <- function(bwidthAbs, seqhh) {
+    .Call('_deseats_lowIndexCpp', PACKAGE = 'deseats', bwidthAbs, seqhh)
+}
+
+upIndexCpp <- function(bwidthAbs, bwidthRight) {
+    .Call('_deseats_upIndexCpp', PACKAGE = 'deseats', bwidthAbs, bwidthRight)
+}
+
+bwidthRightCpp <- function(bwidthAbs, bb, allLowInd) {
+    .Call('_deseats_bwidthRightCpp', PACKAGE = 'deseats', bwidthAbs, bb, allLowInd)
+}
+
+bwidthAllTotalCpp <- function(seqhh, bwidthRight) {
+    .Call('_deseats_bwidthAllTotalCpp', PACKAGE = 'deseats', seqhh, bwidthRight)
+}
+
+dataMatCpp <- function(p, s, ntpoints, bwidthAbs, all_tp) {
+    .Call('_deseats_dataMatCpp', PACKAGE = 'deseats', p, s, ntpoints, bwidthAbs, all_tp)
+}
+
+derivSelectorCpp <- function(p, s, deriv) {
+    .Call('_deseats_derivSelectorCpp', PACKAGE = 'deseats', p, s, deriv)
+}
+
+seasonSelectorCpp <- function(p, s) {
+    .Call('_deseats_seasonSelectorCpp', PACKAGE = 'deseats', p, s)
+}
+
+wk_mu0_Cpp <- function(l) {
+    .Call('_deseats_wk_mu0_Cpp', PACKAGE = 'deseats', l)
+}
+
+wk_mu1_Cpp <- function(all_tp2_subset, bwidthRight2) {
+    .Call('_deseats_wk_mu1_Cpp', PACKAGE = 'deseats', all_tp2_subset, bwidthRight2)
+}
+
+wk_mu23_Cpp <- function(all_tp2_subset, bwidthRight2, mu) {
+    .Call('_deseats_wk_mu23_Cpp', PACKAGE = 'deseats', all_tp2_subset, bwidthRight2, mu)
+}
+
+wkAdjCpp <- function(all_tp2_subset, bwidthRight2, mu) {
+    .Call('_deseats_wkAdjCpp', PACKAGE = 'deseats', all_tp2_subset, bwidthRight2, mu)
+}
+
+deseatsRegCpp <- function(wk, xt) {
+    .Call('_deseats_deseatsRegCpp', PACKAGE = 'deseats', wk, xt)
+}
+
+completeWeightingCpp <- function(ws, bwidthAbs, bwidthTotal) {
+    .Call('_deseats_completeWeightingCpp', PACKAGE = 'deseats', ws, bwidthAbs, bwidthTotal)
+}
+
+fitLeftCpp <- function(y, ws, bwidthAbs, bwidthTotal) {
+    .Call('_deseats_fitLeftCpp', PACKAGE = 'deseats', y, ws, bwidthAbs, bwidthTotal)
+}
+
+fitMiddleCpp <- function(y, ws, bwidthAbs, bwidthTotal, n) {
+    .Call('_deseats_fitMiddleCpp', PACKAGE = 'deseats', y, ws, bwidthAbs, bwidthTotal, n)
+}
+
+fitRightCpp <- function(y, ws, bwidthAbs, bwidthTotal, n) {
+    .Call('_deseats_fitRightCpp', PACKAGE = 'deseats', y, ws, bwidthAbs, bwidthTotal, n)
+}
+
+fitOverallCpp <- function(y, ws, bwidthAbs, bwidthTotal, n) {
+    .Call('_deseats_fitOverallCpp', PACKAGE = 'deseats', y, ws, bwidthAbs, bwidthTotal, n)
 }
 
 fitteddeseatsCpp <- function(y, p, s, mu, b, bb) {
