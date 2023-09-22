@@ -301,6 +301,10 @@ double cf0Cpp(const arma::vec& Xt) {
   return cf0_calc_Cpp(acfX, wacf);
 }
 
+
+
+
+
 // Given a relative bandwidth, obtain the corresponding one-hand side absolute bandwidth
 // [[Rcpp::export]]
 int bwidthAbsCpp(const int n, const double bwidth) {
