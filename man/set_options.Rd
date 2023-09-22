@@ -36,11 +36,11 @@ consider in the smoothing process; the default is \code{NA}, which then
 triggers a data-driven selection of an globally optimal bandwidth when
 the output of this function is passed to a smoothing function.}
 
-\item{boundary_method}{a single character value; it indicates, what method
-to use at boundary points; for \code{"extend"}, the default, the smoothing
-window around boundary points will be extended towards the center of the data; 
-for \code{"shorten"}, the window width will keep decreasing at boundary points 
-when approaching the very first and the very last observation.}
+\item{boundary_method}{a single character value; it indicates, what bandwidth 
+method to use at boundary points; for \code{"extend"}, the default, the 
+smoothing window around boundary points will be extended towards the center of 
+the data; for \code{"shorten"}, the window width will keep decreasing at 
+boundary points when approaching the very first and the very last observation.}
 }
 \value{
 The function returns an S4 object with the following elements (access via 
