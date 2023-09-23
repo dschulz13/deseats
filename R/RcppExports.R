@@ -249,6 +249,58 @@ derivdeseatsCpp <- function(y, p, s, mu, b, bb, v) {
     .Call('_deseats_derivdeseatsCpp', PACKAGE = 'deseats', y, p, s, mu, b, bb, v)
 }
 
+setup_u_Cpp <- function(m) {
+    .Call('_deseats_setup_u_Cpp', PACKAGE = 'deseats', m)
+}
+
+setup_wk_alg_Cpp <- function(u, mu, m) {
+    .Call('_deseats_setup_wk_alg_Cpp', PACKAGE = 'deseats', u, mu, m)
+}
+
+setup_R2_Cpp <- function(wk, m) {
+    .Call('_deseats_setup_R2_Cpp', PACKAGE = 'deseats', wk, m)
+}
+
+setup_wkp_Cpp <- function(wk, u, m, p, mu) {
+    .Call('_deseats_setup_wkp_Cpp', PACKAGE = 'deseats', wk, u, m, p, mu)
+}
+
+setup_Rp_Cpp <- function(wkp, m) {
+    .Call('_deseats_setup_Rp_Cpp', PACKAGE = 'deseats', wkp, m)
+}
+
+setup_mukp_Cpp <- function(wkp, u, m, k) {
+    .Call('_deseats_setup_mukp_Cpp', PACKAGE = 'deseats', wkp, u, m, k)
+}
+
+setup_constant1_Cpp <- function(k) {
+    .Call('_deseats_setup_constant1_Cpp', PACKAGE = 'deseats', k)
+}
+
+setup_constant2_Cpp <- function(Rp, R2, mukp, cb, s) {
+    .Call('_deseats_setup_constant2_Cpp', PACKAGE = 'deseats', Rp, R2, mukp, cb, s)
+}
+
+setup_adjFactor_Cpp <- function(p, s, mu, CF) {
+    .Call('_deseats_setup_adjFactor_Cpp', PACKAGE = 'deseats', p, s, mu, CF)
+}
+
+adjust_bandwidth <- function(b, expo, bmin, bmax) {
+    .Call('_deseats_adjust_bandwidth', PACKAGE = 'deseats', b, expo, bmin, bmax)
+}
+
+calculate_I2_Cpp <- function(yt, pv, s, mu, bv, bb, v, n, n1) {
+    .Call('_deseats_calculate_I2_Cpp', PACKAGE = 'deseats', yt, pv, s, mu, bv, bb, v, n, n1)
+}
+
+calculate_cf0_Cpp <- function(yt, p, s, mu, bAdj, bb, errors, errm) {
+    .Call('_deseats_calculate_cf0_Cpp', PACKAGE = 'deseats', yt, p, s, mu, bAdj, bb, errors, errm)
+}
+
+calculate_bopt_Cpp <- function(c1, c2, c3, k, n) {
+    .Call('_deseats_calculate_bopt_Cpp', PACKAGE = 'deseats', c1, c2, c3, k, n)
+}
+
 algorithmCpp <- function(yt, p, s, mu, bStart, CF, errors, cb, bb, errm, expo) {
     .Call('_deseats_algorithmCpp', PACKAGE = 'deseats', yt, p, s, mu, bStart, CF, errors, cb, bb, errm, expo)
 }

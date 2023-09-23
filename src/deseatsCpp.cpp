@@ -793,28 +793,23 @@ arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
 }
 
 // [[Rcpp::export]]
-Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm, const double expo) {
-  
-  double bopt = bStart;
-  double boptOld = -100;
-  double boptOld2 = -100;
-  const int n = yt.size();
-  const int k = p + 1;
-  
-  double bmax = 0.45;       // The maximum bandwidth 
-  double bmin = 0.01;       // The minimum bandwidth 
+arma::vec setup_u_Cpp(const int m) {
+  return seqCpp(-m, m) / (m + 0.5);
+}
 
-  const int v = k;
-  const int pv = k + 1;
-
-  const int n1 = std::trunc(n * cb);  
-  
-  const int m = 1000000;
-  const arma::vec u = seqCpp(-m, m) / (m + 0.5);
-
+// [[Rcpp::export]]
+arma::vec setup_wk_alg_Cpp(const arma::vec& u, const int mu, const int m) {
   arma::vec wk = arma::pow((1 - arma::pow(u, 2.0)), mu);
-  wk = wk / arma::accu(wk) * m;
-  const double R2 = arma::accu(arma::pow(wk, 2.0)) / m;  
+  return wk / arma::accu(wk) * m;
+}
+
+// [[Rcpp::export]]
+double setup_R2_Cpp(const arma::vec& wk, const int m) {
+  return arma::accu(arma::pow(wk, 2.0)) / m;
+}
+
+// [[Rcpp::export]]
+arma::vec setup_wkp_Cpp(const arma::vec& wk, const arma::vec& u, const int m, const int p, const int mu) {
   
   arma::vec wkp;
   
@@ -832,22 +827,32 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
     }
   }
   
-  wkp = wkp / arma::accu(wkp) * m;
-  
-  const double Rp = arma::accu(arma::pow(wkp, 2.0)) / m;
-  const double mukp = arma::accu(arma::pow(u, k) % wkp) / m;  
-  
-  const double c1 = std::pow(factorialCpp(k), 2.0) / (2 * k);
-  const double c2 = (1.0 - 2.0 * cb) * (Rp + (s - 1.0) * R2) / std::pow(mukp, 2.0);  
-  
-  const int itMax = 20;
-  
-  int it = 1;
-  double bv;
-  
-  arma::vec gv;
-  double I2;
-  
+  return wkp = wkp / arma::accu(wkp) * m; 
+}
+
+// [[Rcpp::export]]
+double setup_Rp_Cpp(const arma::vec& wkp, const int m) {
+  return arma::accu(arma::pow(wkp, 2.0)) / m;
+}
+
+// [[Rcpp::export]]
+double setup_mukp_Cpp(const arma::vec& wkp, const arma::vec& u, const int m, const int k) {
+  return arma::accu(arma::pow(u, k) % wkp) / m;
+}
+
+// [[Rcpp::export]]
+double setup_constant1_Cpp(const int k) {
+  return std::pow(factorialCpp(k), 2.0) / (2 * k);
+}
+
+// [[Rcpp::export]]
+double setup_constant2_Cpp(const double Rp, const double R2, const double mukp, const double cb, const int s) {
+  return (1.0 - 2.0 * cb) * (Rp + (s - 1.0) * R2) / std::pow(mukp, 2.0);
+}
+
+// [[Rcpp::export]]
+double setup_adjFactor_Cpp(const int p, const int s, const int mu, const int CF) {
+
   double adjFactor = 1.0;
 
   if (CF == 1) {  
@@ -902,29 +907,31 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
     }
   }  
   
-  double bAdj;
-  arma::vec resAdj;
-  double cf0 = 0;
-  double c3;
-  arma::vec resAdj2;
-  int stopreason = 0;
-  const double diffvalue = 1.0 / n;
-  arma::vec bwidths = arma::zeros<arma::vec>(itMax + 1);
-  bwidths(0) = bopt;
+  return adjFactor;
+}
 
-  while (it < itMax + 1 && stopreason == 0) {
-    
-    bv = std::pow(bopt, expo);
+// [[Rcpp::export]]
+double adjust_bandwidth(const double b, const double expo, const double bmin, const double bmax) {
+    double bv = std::pow(b, expo);
     bv = std::max(bv, bmin);
     bv = std::min(bv, bmax);
+    return bv;
+}
+
+// [[Rcpp::export]]
+double calculate_I2_Cpp(const arma::vec& yt, const int pv, const int s, const int mu, const double bv, const int bb, const int v, const int n, const int n1) {
     
-    gv = derivdeseatsCpp(yt, pv, s, mu, bv, bb, v);
+    const arma::vec gv = derivdeseatsCpp(yt, pv, s, mu, bv, bb, v);
   
-    I2 = arma::accu(arma::pow(gv.subvec(n1, n - n1 - 1), 2.0)) / (n - 2 * n1);
-    
-    bAdj = bopt * adjFactor;
-    
-    resAdj = residdeseatsCpp(yt, p, s, mu, bAdj, bb);
+    return arma::accu(arma::pow(gv.subvec(n1, n - n1 - 1), 2.0)) / (n - 2 * n1);
+}
+
+// [[Rcpp::export]]
+double calculate_cf0_Cpp(const arma::vec& yt, const int p, const int s, const int mu, const double bAdj, const int bb, const int errors, const int errm) {
+  
+    arma::vec resAdj = residdeseatsCpp(yt, p, s, mu, bAdj, bb);
+      
+    double cf0 = 0;
       
     if (errors == 1) {
       
@@ -941,16 +948,81 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
       
     } else if (errors == 0) {
       
-      resAdj2 = arma::pow(resAdj, 2.0);
+      arma::vec resAdj2 = arma::pow(resAdj, 2.0);
       cf0 = arma::mean(resAdj2);
       
-    }
+    }  
+    
+    return cf0;
+  
+}
+
+// [[Rcpp::export]]
+double calculate_bopt_Cpp(const int c1, const int c2, const int c3, const int k, const int n) {
+  return std::pow((c1 * c2 * c3), (1.0 / (2 * k + 1))) * std::pow(n, (-1.0 / (2 * k + 1))); 
+}
+
+// [[Rcpp::export]]
+Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int mu, const double bStart, const int CF, const int errors, const double cb, const int bb, const int errm, const double expo) {
+  
+  double bopt = bStart;
+  double boptOld = -100;
+  double boptOld2 = -100;
+  const int n = yt.size();
+  const int k = p + 1;
+  
+  double bmax = 0.45;       // The maximum bandwidth 
+  double bmin = 0.01;       // The minimum bandwidth 
+
+  const int v = k;
+  const int pv = k + 1;
+
+  const int n1 = std::trunc(n * cb);  
+  
+  const int m = 1000000;
+  
+  const arma::vec u = setup_u_Cpp(m);
+  const arma::vec wk = setup_wk_alg_Cpp(u, mu, m);
+  const double R2 = setup_R2_Cpp(wk, m);  
+  const arma::vec wkp = setup_wkp_Cpp(wk, u, m, p, mu);
+  
+  const double Rp = setup_Rp_Cpp(wkp, m);
+  const double mukp = setup_mukp_Cpp(wkp, u, m, k);  
+  
+  const double c1 = setup_constant1_Cpp(k);
+  const double c2 = setup_constant2_Cpp(Rp, R2, mukp, cb, s);
+  
+  const int itMax = 20;
+  
+  int it = 1;
+  
+  double I2;
+  
+  const double adjFactor = setup_adjFactor_Cpp(p, s, mu, CF);
+  
+  double bAdj;
+  double cf0 = 0;
+  double c3;
+
+  int stopreason = 0;
+  const double diffvalue = 1.0 / n;
+  arma::vec bwidths = arma::zeros<arma::vec>(itMax + 1);
+  bwidths(0) = bopt;
+  double bv;
+
+  while (it < itMax + 1 && stopreason == 0) {
+    
+    bv = adjust_bandwidth(bopt, expo, bmin, bmax);
+    I2 = calculate_I2_Cpp(yt, pv, s, mu, bv, bb, v, n, n1);
+    
+    bAdj = bopt * adjFactor;
+    cf0 = calculate_cf0_Cpp(yt, p, s, mu, bAdj, bb, errors, errm);
     
     c3 = cf0 / I2;
     
     boptOld2 = boptOld;
     boptOld = bopt;
-    bopt = std::pow((c1 * c2 * c3), (1.0 / (2 * k + 1))) * std::pow(n, (-1.0 / (2 * k + 1)));
+    bopt = calculate_bopt_Cpp(c1, c2, c3, k, n);
    
     bopt = std::max(bopt, bmin);
     bopt = std::min(bopt, bmax);   
