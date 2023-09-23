@@ -194,11 +194,11 @@ setMethod("autoplot", "deseats_fc", function(object, ...) {
     
     p_out <- p_out +
       ggplot2::geom_ribbon(data = .df4, ggplot2::aes(x = .data[["Time"]], ymin = .data[["ymin"]], ymax = .data[["ymax"]],
-                                                            alpha = .data[["Case"]]), fill = "blue",
-                           inherit.aes = FALSE) +
+                                                            fill = .data[["Case"]]),
+                           inherit.aes = FALSE, show.legend = FALSE) +
       ggplot2::geom_ribbon(data = .df5, ggplot2::aes(x = .data[["Time"]], ymin = .data[["ymin"]], ymax = .data[["ymax"]],
-                                                            alpha = .data[["Case"]]), fill = "blue",
-                           inherit.aes = FALSE)
+                                                            fill = .data[["Case"]]),
+                           inherit.aes = FALSE, show.legend = FALSE)
   }
   
   .df6 <- data.frame(
@@ -210,8 +210,13 @@ setMethod("autoplot", "deseats_fc", function(object, ...) {
   
   p_out <- p_out + 
     ggplot2::geom_ribbon(data = .df6, ggplot2::aes(x = .data[["Time"]], ymin = .data[["ymin"]], ymax = .data[["ymax"]],
-      alpha = .data[["Case"]]), fill = "blue", inherit.aes = FALSE)
+      fill = .data[["Case"]]), inherit.aes = FALSE)
     
+  fill_color <- ggplot2::alpha("blue", rev(seq(0.1, 0.1 + (m - 1) * 0.15, 0.15)))
+  names(fill_color) <- 1:m
+  labels_legend <- rev(paste0((1 - 2 * (as.numeric(substr(cnames[1:m], 1, nchar(cnames[1:m]) - 1)) / 100)) * 100, "%"))
+  names(labels_legend) <- 1:m  
+  
   p_out <- p_out +
     ggplot2::geom_line(data = .df2, ggplot2::aes(x = .data[["Time"]], y = .data[["Forecasts"]], color = .data[["Color"]]),
                        inherit.aes = FALSE) +
@@ -220,10 +225,10 @@ setMethod("autoplot", "deseats_fc", function(object, ...) {
     ggplot2::ggtitle(paste0('The observations of "', object@ts_name, '" together with point and interval forecasts')) +
     ggplot2::scale_color_manual(name = "Series", values = c("black", "blue"), 
                                 labels = c("Observations", "Forecasts")) +    
-    ggplot2::scale_alpha_manual(name = "Intervals", values = rev(seq(0.1, 0.1 + (m - 1) * 0.15, 0.15)),
-                               labels = rev(paste0((1 - 2 * (as.numeric(substr(cnames[1:m], 1, nchar(cnames[1:m]) - 1)) / 100)) * 100, "%"))) +
+    ggplot2::scale_fill_manual(name = "Intervals", values = fill_color,
+                               labels = labels_legend) +
     ggplot2::guides(color = ggplot2::guide_legend(order = 1),
-                    alpha = ggplot2::guide_legend(order = 2))
+                    fill = ggplot2::guide_legend(order = 2))
 
   
   p_out
