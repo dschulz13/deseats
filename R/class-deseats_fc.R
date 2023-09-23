@@ -98,13 +98,21 @@ setMethod("plot", "deseats_fc", function(x, y = NULL, ...) {
   do.call(plot, args = dots)
   m <- length(x@interv[1, ])
   n <- m / 2
-  for (i in 1:n) {
-    t <- c(time(x@interv))
-    graphics::polygon(c(t, rev(t)), c(c(x@interv[, i]), rev(c(x@interv[, m - (i - 1)]))),
-            border = NA, col = ggplot2::alpha(col2, 0.1 + (i - 1) * 0.05))
-    graphics::lines(c(time(x@obs)), c(x@obs), col = col1)
-    graphics::lines(c(time(x@pred)), c(x@pred), col = col2)
+  if (n > 1) {
+    for (i in 1:(n - 1)) {
+      t <- c(time(x@interv))
+      graphics::polygon(c(t, rev(t)), c(c(x@interv[, m - i]), rev(c(x@interv[, m - (i - 1)]))),
+              border = NA, col = ggplot2::alpha(col2, 0.1 + (i - 1) * 0.15))
+      graphics::polygon(c(t, rev(t)), c(c(x@interv[, i]), rev(c(x@interv[, i + 1]))),
+              border = NA, col = ggplot2::alpha(col2, 0.1 + (i - 1) * 0.15))      
+    }
   }
+  i <- n
+  graphics::polygon(c(t, rev(t)), c(c(x@interv[, i]), rev(c(x@interv[, i + 1]))),
+    border = NA, col = ggplot2::alpha(col2, 0.1 + (i - 1) * 0.15))   
+  
+  graphics::lines(c(time(x@obs)), c(x@obs), col = col1)
+  graphics::lines(c(time(x@pred)), c(x@pred), col = col2)  
   
 })
 
@@ -161,33 +169,62 @@ setMethod("autoplot", "deseats_fc", function(object, ...) {
   n <- length(object@interv[1, ])
   m <- n / 2  
   
-  .df4 <- data.frame(
-    ymin = c(unname(unlist(.df3[, 1:m]))),
-    ymax = c(unname(unlist(.df3[, n:(n - m + 1)]))),
-    Time = rep(c(time(object@pred)), m),
-    Case = rep(as.character(1:m), each = length(object@pred))
-  )
+   # ymax = c(unname(unlist(.df3[, n:(n - m + 1)]))),  
+  
+
 
   p_out <- ggplot2::ggplot(.df1) +
-    ggplot2::geom_line(ggplot2::aes_string(x = "Time", y = "Observations", color = "Color"))
+    ggplot2::geom_line(ggplot2::aes(x = .data[["Time"]], y = .data[["Observations"]], color = .data[["Color"]]))
   
+  if (m > 1) {  
+  
+    .df4 <- data.frame(
+      ymin = c(unname(unlist(.df3[, 1:(m - 1)]))),
+      ymax = c(unname(unlist(.df3[, 2:m]))),
+      Time = rep(c(time(object@pred)), m - 1),
+      Case = rev(rep(as.character(2:m), each = length(object@pred)))
+    )
+  
+    .df5 <- data.frame(
+      ymin = c(unname(unlist(.df3[, (m + 1):(n - 1)]))),
+      ymax = c(unname(unlist(.df3[, (m + 2):n]))),
+      Time = rep(c(time(object@pred)), m - 1),
+      Case = rev(rep(as.character(m:2), each = length(object@pred)))
+    )      
+    
     p_out <- p_out +
-      ggplot2::geom_ribbon(data = .df4, ggplot2::aes_string(x = "Time", ymin = "ymin", ymax = "ymax",
-                                                            fill = "Case"),
+      ggplot2::geom_ribbon(data = .df4, ggplot2::aes(x = .data[["Time"]], ymin = .data[["ymin"]], ymax = .data[["ymax"]],
+                                                            alpha = .data[["Case"]]), fill = "blue",
+                           inherit.aes = FALSE) +
+      ggplot2::geom_ribbon(data = .df5, ggplot2::aes(x = .data[["Time"]], ymin = .data[["ymin"]], ymax = .data[["ymax"]],
+                                                            alpha = .data[["Case"]]), fill = "blue",
                            inherit.aes = FALSE)
+  }
   
-  fill_color = ggplot2::alpha("blue", seq(0.1, 0.1 + (m - 1) * 0.05, 0.05))  
+  .df6 <- data.frame(
+    ymin = c(unname(unlist(.df3[, m]))),
+    ymax = c(unname(unlist(.df3[, m + 1]))),
+    Time = rep(c(time(object@pred)), 1),
+    Case = rep(as.character(1), each = length(object@pred))
+  )
+  
+  p_out <- p_out + 
+    ggplot2::geom_ribbon(data = .df6, ggplot2::aes(x = .data[["Time"]], ymin = .data[["ymin"]], ymax = .data[["ymax"]],
+      alpha = .data[["Case"]]), fill = "blue", inherit.aes = FALSE)
     
   p_out <- p_out +
-    ggplot2::geom_line(data = .df2, ggplot2::aes_string(x = "Time", y = "Forecasts", color = "Color"),
+    ggplot2::geom_line(data = .df2, ggplot2::aes(x = .data[["Time"]], y = .data[["Forecasts"]], color = .data[["Color"]]),
                        inherit.aes = FALSE) +
     ggplot2::xlab("Time") +
     ggplot2::ylab(object@ts_name) +
     ggplot2::ggtitle(paste0('The observations of "', object@ts_name, '" together with point and interval forecasts')) +
-    ggplot2::scale_fill_manual(name = "Intervals", values = fill_color, 
-                               labels = paste0((1 - 2 * (as.numeric(substr(cnames[1:m], 1, nchar(cnames[1:m]) - 1)) / 100)) * 100, "%")) +
     ggplot2::scale_color_manual(name = "Series", values = c("black", "blue"), 
-                                labels = c("Observations", "Forecasts"))
+                                labels = c("Observations", "Forecasts")) +    
+    ggplot2::scale_alpha_manual(name = "Intervals", values = rev(seq(0.1, 0.1 + (m - 1) * 0.15, 0.15)),
+                               labels = rev(paste0((1 - 2 * (as.numeric(substr(cnames[1:m], 1, nchar(cnames[1:m]) - 1)) / 100)) * 100, "%"))) +
+    ggplot2::guides(color = ggplot2::guide_legend(order = 1),
+                    alpha = ggplot2::guide_legend(order = 2))
+
   
   p_out
   

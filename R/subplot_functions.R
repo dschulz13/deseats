@@ -145,7 +145,7 @@ plot_facets_gg <- function(obj, ...) {
       )       
     })
 
-    ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
+    ggplot2::ggplot(df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]])) +
       ggplot2::geom_line() +
       ggplot2::ggtitle(paste0('Decomposition of the time series "', obj@ts_name, '"')) +
       ggplot2::xlab("Time") +
@@ -163,7 +163,7 @@ plot_resid_gg <- function(obj, ...) {
     Value = c(res)
   )
 
-  ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
+  ggplot2::ggplot(df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]])) +
     ggplot2::geom_line() +
     ggplot2::ylab("Residual value") +
     ggplot2::ggtitle(paste0('The estimated rest in the time series "', obj@ts_name, '"')) 
@@ -187,8 +187,8 @@ plot_fit_gg <- function(obj, ...) {
       Series = factor(c(rep(1:2, each = n)), labels = c("Observations", "Fitted values"))
     )
 
-    p1 <- ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
-      ggplot2::geom_line(ggplot2::aes_string(color = "Series")) +
+    p1 <- ggplot2::ggplot(df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]])) +
+      ggplot2::geom_line(ggplot2::aes(color = .data[["Series"]])) +
       ggplot2::ggtitle(paste0('The time series "', obj@ts_name,
                   '" together with estimated trend and seasonality')) +
       ggplot2::ylab(obj@ts_name) +
@@ -217,8 +217,8 @@ plot_fit_detailed_gg <- function(obj, ...) {
       Series = factor(c(rep(1:3, each = n)), labels = c("Observations", "Fitted values", "Estimated trend"))
     )
 
-    p1 <- ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
-      ggplot2::geom_line(ggplot2::aes_string(color = "Series")) +
+    p1 <- ggplot2::ggplot(df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]])) +
+      ggplot2::geom_line(ggplot2::aes(color = .data[["Series"]])) +
       ggplot2::ggtitle(paste0('The time series "', obj@ts_name,
                   '" together with fitted values and estimated trend')) +
       ggplot2::ylab(obj@ts_name) +
@@ -252,10 +252,10 @@ plot_components_gg <- function(obj, ...) {
     )
 
     p1 <- ggplot2::ggplot(df) +
-      ggplot2::geom_line(data = df2, ggplot2::aes_string(x = "Time", y = "Line"), 
+      ggplot2::geom_line(data = df2, ggplot2::aes(x = .data[["Time"]], y = .data[["Line"]]), 
                          color = "lightgray", inherit.aes = FALSE,
                          linetype = "dashed") +
-      ggplot2::geom_line(data = df, ggplot2::aes_string(x = "Time", y = "Value", color = "Series"), inherit.aes = FALSE) +
+      ggplot2::geom_line(data = df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]], color = .data[["Series"]]), inherit.aes = FALSE) +
       ggplot2::ggtitle(paste0('The estimated trend and seasonality (displayed around',
                   '\nthe series mean) in the time series "', obj@ts_name, '"')) +
       ggplot2::ylab(obj@ts_name) +
@@ -270,7 +270,7 @@ plot_obs_gg <- function(obj, ...) {
     Value = c(obj@decomp[, c(1)])
   )
 
-  ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) + 
+  ggplot2::ggplot(df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]])) + 
     ggplot2::geom_line() +
     ggplot2::ylab(obj@ts_name) +
     ggplot2::ggtitle(paste0('The observed time series "', obj@ts_name, '"')) 
@@ -282,7 +282,7 @@ plot_deseason_gg <- function(obj, ...) {
     Value = c(deseasonalize(obj))
   )
 
-  ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
+  ggplot2::ggplot(df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]])) +
     ggplot2::geom_line() +
     ggplot2::ylab("Seasonally adjusted value") +
     ggplot2::ggtitle(paste0('The deseasonalized version of "', obj@ts_name, '"'))   
@@ -294,7 +294,7 @@ plot_detrend_gg <- function(obj, ...) {
     Value = c(detrend(obj))
   )
 
-  ggplot2::ggplot(df, ggplot2::aes_string(x = "Time", y = "Value")) +
+  ggplot2::ggplot(df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]])) +
     ggplot2::geom_line() +
     ggplot2::ylab("Detrended value") +
     ggplot2::ggtitle(paste0('The detrended version of "', obj@ts_name, '"'))   
