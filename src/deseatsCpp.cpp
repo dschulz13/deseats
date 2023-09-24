@@ -904,6 +904,30 @@ double setup_adjFactor_Cpp(const int p, const int s, const int mu, const int CF)
           adjFactor = 1.3307;
         }
       }
+    } else if (s == 7) {
+      
+      if (p == 1) {
+        if (mu == 0) {
+          adjFactor = 1.3195;
+        } else if (mu == 1) {
+          adjFactor = 1.4310;
+        } else if (mu == 2) {
+          adjFactor = 1.4541;
+        } else if (mu == 3) {
+          adjFactor = 1.4640;
+        }
+      } else if (p == 3) {
+        if (mu == 0) {
+          adjFactor = 1.2599;
+        } else if (mu == 1) {
+          adjFactor = 1.3116;
+        } else if (mu == 2) {
+          adjFactor = 1.3230;
+        } else if (mu == 3) {
+          adjFactor = 1.3281;
+        }
+      }
+      
     }
   }  
   

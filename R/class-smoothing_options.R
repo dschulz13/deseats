@@ -20,8 +20,8 @@ setClass("smoothing_options",
 setValidity("smoothing_options", function(object) {
   if (length(object@order_poly) > 1 || !(object@order_poly %in% c(1, 3))) {
     "@order_poly must be of length 1 and set to either 1 or 3"
-  } else if (length(object@season) > 1 || !(is.na(object@season) || (object@season %in% c(1, 4, 12)))) {
-    "@season must be of length 1 and set to either NA, 1, 4 or 12"
+  } else if (length(object@season) > 1 || !(is.na(object@season) || (object@season %in% c(1, 4, 7, 12)))) {
+    "@season must be of length 1 and set to either NA, 1, 4, 7 or 12"
   } else if (length(object@kernel_fun) > 1 || !(object@kernel_fun %in% c("uniform", "epanechnikov", "bisquare", "triweight"))) {
     '@kernel_fun must be of length 1 and set to either "uniform", "epanechnikov", "bisquare" or "triweight"'
   } else if (length(object@bwidth) > 1 || !(is.na(object@bwidth) || (object@bwidth > 0 && object@bwidth < 0.5))) {

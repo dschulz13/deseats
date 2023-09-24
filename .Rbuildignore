@@ -29,3 +29,4 @@
 ^logo_creation\.R$
 ^_pkgdown\.yml$
 ^pkgdown$
+^DEU\.csv$
