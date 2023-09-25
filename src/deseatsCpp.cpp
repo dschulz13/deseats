@@ -982,8 +982,8 @@ double calculate_cf0_Cpp(const arma::vec& yt, const int p, const int s, const in
 }
 
 // [[Rcpp::export]]
-double calculate_bopt_Cpp(const int c1, const int c2, const int c3, const int k, const int n) {
-  return std::pow((c1 * c2 * c3), (1.0 / (2 * k + 1))) * std::pow(n, (-1.0 / (2 * k + 1))); 
+double calculate_bopt_Cpp(const double c1, const double c2, const double c3, const int k, const int n) {
+  return std::pow((c1 * c2 * c3 / n), (1.0 / (2 * k + 1))); 
 }
 
 // [[Rcpp::export]]
@@ -1037,9 +1037,11 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
   while (it < itMax + 1 && stopreason == 0) {
     
     bv = adjust_bandwidth(bopt, expo, bmin, bmax);
+    
     I2 = calculate_I2_Cpp(yt, pv, s, mu, bv, bb, v, n, n1);
     
     bAdj = bopt * adjFactor;
+    
     cf0 = calculate_cf0_Cpp(yt, p, s, mu, bAdj, bb, errors, errm);
     
     c3 = cf0 / I2;

@@ -965,14 +965,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // calculate_bopt_Cpp
-double calculate_bopt_Cpp(const int c1, const int c2, const int c3, const int k, const int n);
+double calculate_bopt_Cpp(const double c1, const double c2, const double c3, const int k, const int n);
 RcppExport SEXP _deseats_calculate_bopt_Cpp(SEXP c1SEXP, SEXP c2SEXP, SEXP c3SEXP, SEXP kSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int >::type c1(c1SEXP);
-    Rcpp::traits::input_parameter< const int >::type c2(c2SEXP);
-    Rcpp::traits::input_parameter< const int >::type c3(c3SEXP);
+    Rcpp::traits::input_parameter< const double >::type c1(c1SEXP);
+    Rcpp::traits::input_parameter< const double >::type c2(c2SEXP);
+    Rcpp::traits::input_parameter< const double >::type c3(c3SEXP);
     Rcpp::traits::input_parameter< const int >::type k(kSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
     rcpp_result_gen = Rcpp::wrap(calculate_bopt_Cpp(c1, c2, c3, k, n));
