@@ -748,8 +748,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // fitteddeseatsCpp
-Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb);
-RcppExport SEXP _deseats_fitteddeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
+Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p, const int s, const int mu, const double b, const int bb, const int v);
+RcppExport SEXP _deseats_fitteddeseatsCpp(SEXP ySEXP, SEXP pSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP, SEXP vSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -759,7 +759,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
     Rcpp::traits::input_parameter< const double >::type b(bSEXP);
     Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
-    rcpp_result_gen = Rcpp::wrap(fitteddeseatsCpp(y, p, s, mu, b, bb));
+    Rcpp::traits::input_parameter< const int >::type v(vSEXP);
+    rcpp_result_gen = Rcpp::wrap(fitteddeseatsCpp(y, p, s, mu, b, bb, v));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -913,20 +914,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// adjust_bandwidth
-double adjust_bandwidth(const double b, const double expo, const double bmin, const double bmax);
-RcppExport SEXP _deseats_adjust_bandwidth(SEXP bSEXP, SEXP expoSEXP, SEXP bminSEXP, SEXP bmaxSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
-    Rcpp::traits::input_parameter< const double >::type expo(expoSEXP);
-    Rcpp::traits::input_parameter< const double >::type bmin(bminSEXP);
-    Rcpp::traits::input_parameter< const double >::type bmax(bmaxSEXP);
-    rcpp_result_gen = Rcpp::wrap(adjust_bandwidth(b, expo, bmin, bmax));
-    return rcpp_result_gen;
-END_RCPP
-}
 // calculate_I2_Cpp
 double calculate_I2_Cpp(const arma::vec& yt, const int pv, const int s, const int mu, const double bv, const int bb, const int v, const int n, const int n1);
 RcppExport SEXP _deseats_calculate_I2_Cpp(SEXP ytSEXP, SEXP pvSEXP, SEXP sSEXP, SEXP muSEXP, SEXP bvSEXP, SEXP bbSEXP, SEXP vSEXP, SEXP nSEXP, SEXP n1SEXP) {
@@ -1061,7 +1048,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_deseats_fitMiddleCpp", (DL_FUNC) &_deseats_fitMiddleCpp, 5},
     {"_deseats_fitRightCpp", (DL_FUNC) &_deseats_fitRightCpp, 5},
     {"_deseats_fitOverallCpp", (DL_FUNC) &_deseats_fitOverallCpp, 5},
-    {"_deseats_fitteddeseatsCpp", (DL_FUNC) &_deseats_fitteddeseatsCpp, 6},
+    {"_deseats_fitteddeseatsCpp", (DL_FUNC) &_deseats_fitteddeseatsCpp, 7},
     {"_deseats_residdeseatsCpp", (DL_FUNC) &_deseats_residdeseatsCpp, 6},
     {"_deseats_derivdeseatsCpp", (DL_FUNC) &_deseats_derivdeseatsCpp, 7},
     {"_deseats_setup_u_Cpp", (DL_FUNC) &_deseats_setup_u_Cpp, 1},
@@ -1073,7 +1060,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_deseats_setup_constant1_Cpp", (DL_FUNC) &_deseats_setup_constant1_Cpp, 1},
     {"_deseats_setup_constant2_Cpp", (DL_FUNC) &_deseats_setup_constant2_Cpp, 5},
     {"_deseats_setup_adjFactor_Cpp", (DL_FUNC) &_deseats_setup_adjFactor_Cpp, 4},
-    {"_deseats_adjust_bandwidth", (DL_FUNC) &_deseats_adjust_bandwidth, 4},
     {"_deseats_calculate_I2_Cpp", (DL_FUNC) &_deseats_calculate_I2_Cpp, 9},
     {"_deseats_calculate_cf0_Cpp", (DL_FUNC) &_deseats_calculate_cf0_Cpp, 8},
     {"_deseats_calculate_bopt_Cpp", (DL_FUNC) &_deseats_calculate_bopt_Cpp, 5},

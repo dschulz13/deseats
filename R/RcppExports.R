@@ -237,8 +237,8 @@ fitOverallCpp <- function(y, ws, bwidthAbs, bwidthTotal, n) {
     .Call('_deseats_fitOverallCpp', PACKAGE = 'deseats', y, ws, bwidthAbs, bwidthTotal, n)
 }
 
-fitteddeseatsCpp <- function(y, p, s, mu, b, bb) {
-    .Call('_deseats_fitteddeseatsCpp', PACKAGE = 'deseats', y, p, s, mu, b, bb)
+fitteddeseatsCpp <- function(y, p, s, mu, b, bb, v) {
+    .Call('_deseats_fitteddeseatsCpp', PACKAGE = 'deseats', y, p, s, mu, b, bb, v)
 }
 
 residdeseatsCpp <- function(y, p, s, mu, b, bb) {
@@ -283,10 +283,6 @@ setup_constant2_Cpp <- function(Rp, R2, mukp, cb, s) {
 
 setup_adjFactor_Cpp <- function(p, s, mu, CF) {
     .Call('_deseats_setup_adjFactor_Cpp', PACKAGE = 'deseats', p, s, mu, CF)
-}
-
-adjust_bandwidth <- function(b, expo, bmin, bmax) {
-    .Call('_deseats_adjust_bandwidth', PACKAGE = 'deseats', b, expo, bmin, bmax)
 }
 
 calculate_I2_Cpp <- function(yt, pv, s, mu, bv, bb, v, n, n1) {

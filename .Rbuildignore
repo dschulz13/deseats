@@ -30,3 +30,6 @@
 ^_pkgdown\.yml$
 ^pkgdown$
 ^DEU\.csv$
+^US GDP\.csv$
+^TEMP\.csv$
+^RAINFALL\.csv$

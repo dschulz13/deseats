@@ -5,11 +5,11 @@
 \alias{SUNSHINE}
 \title{Monthly Hours of Sunshine in Germany}
 \format{
-An object of class \code{ts} of length 864.
+An object of class \code{ts} of length 872.
 }
 \source{
 The data was obtained from the databank of the 
-German Weather Service (DWD) (accessed: 2023-06-15) and 
+German Weather Service (DWD) (accessed: 2023-09-25) and 
 then transformed into a time series
 object using R. 
 
@@ -20,7 +20,7 @@ SUNSHINE
 }
 \description{
 A \code{ts} object that contains the monthly observed hours of sunshine
-in Germany from January 1951 to December 2022.
-The object contains 864 observations.
+in Germany from January 1951 to August 2023.
+The object contains 872 observations.
 }
 \keyword{datasets}

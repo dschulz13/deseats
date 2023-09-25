@@ -82,6 +82,8 @@ zoo_to_ts <- function(xt) {
 #'
 #'@importFrom stats as.ts
 #'
+#'@importFrom utils read.table
+#'
 #'@examples
 #'\dontrun{
 #'### Create an example data file

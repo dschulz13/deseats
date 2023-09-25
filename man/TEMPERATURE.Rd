@@ -5,11 +5,11 @@
 \alias{TEMPERATURE}
 \title{Monthly Average Temperature in Germany}
 \format{
-An object of class \code{ts} of length 1476.
+An object of class \code{ts} of length 1712.
 }
 \source{
 The data was obtained from the databank of the 
-German Weather Service (DWD) (accessed: 2023-06-16) and 
+German Weather Service (DWD) (accessed: 2023-09-25) and 
 then transformed into a time series
 object using R. 
 
@@ -20,7 +20,7 @@ TEMPERATURE
 }
 \description{
 A \code{ts} object that contains the monthly observed average temperature
-in Germany (in degrees Celsius) from January 1900 to December 2022.
-The object contains 1476 observations.
+in Germany (in degrees Celsius) from January 1881 to August 2023.
+The object contains 1712 observations.
 }
 \keyword{datasets}

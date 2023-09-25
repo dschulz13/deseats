@@ -111,6 +111,11 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
   drop <- alg_options[["drop"]]
   bwidth_start <- alg_options[["bwidth_start"]]
   
+  if (CF == 1 && err_m == 1 && err == 1 && !(s %in% c(1, 4, 7, 12))) {
+    CF <- 0
+    message("correction_factor switched to FALSE, because no correction factor is available for the frequency of the input time series")
+  }
+  
   tryCatch({
     alg_result <- algorithmCpp(y, p, s, mu, bwidth_start, CF, err, drop, bb, err_m, infr)
   }, error = function(e1) {
@@ -380,7 +385,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
   
   }
 
-  est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bb)
+  est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bb, 0)
   Trend <- est[[2]]
   Season <- est[[3]]
   Residuals <- est[[4]]

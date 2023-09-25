@@ -90,19 +90,20 @@ out
 
 }
 
-CFs <- vector(mode = "list", length = 3)
+CFs <- vector(mode = "list", length = 4)
 
 mat1 <- matrix(NA, nrow = 4, ncol = 2)
 rownames(mat1) <- as.character(0:3)
 colnames(mat1) <- as.character(c(1, 3))
 
-names(CFs) <- c("4", "7", "12")
+names(CFs) <- c("1", "4", "7", "12")
 
+CFs$`1` <- mat1
 CFs$`4` <- mat1
 CFs$`7` <- mat1
 CFs$`12` <- mat1
 
-s_all <- c(4, 7, 12)
+s_all <- c(1, 4, 7, 12)
 mu_all <- 0:3
 
 p_all <- c(1, 3)

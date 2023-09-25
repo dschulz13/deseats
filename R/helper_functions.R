@@ -21,10 +21,6 @@ define_frequency <- function(y, season_input) {
   if (is.na(season_input)) {
     if (inherits(y, c("ts", "zoo", "xts"))) {
       s <- stats::frequency(y)
-      if (s == 1) {
-        stop('A seasonal period is required in the element "@season" of ', 
-             'the argument "smoothing_options".')
-      }
     } else {
       s <- 1
     }

@@ -82,11 +82,11 @@
 #' Monthly Hours of Sunshine in Germany
 #'
 #' A \code{ts} object that contains the monthly observed hours of sunshine
-#' in Germany from January 1951 to December 2022.
-#' The object contains 864 observations.
+#' in Germany from January 1951 to August 2023.
+#' The object contains 872 observations.
 #' 
 #'@source The data was obtained from the databank of the 
-#'German Weather Service (DWD) (accessed: 2023-06-15) and 
+#'German Weather Service (DWD) (accessed: 2023-09-25) and 
 #'then transformed into a time series
 #'object using R. 
 #'
@@ -96,13 +96,58 @@
 #' Monthly Average Temperature in Germany
 #'
 #' A \code{ts} object that contains the monthly observed average temperature
-#' in Germany (in degrees Celsius) from January 1900 to December 2022.
-#' The object contains 1476 observations.
+#' in Germany (in degrees Celsius) from January 1881 to August 2023.
+#' The object contains 1712 observations.
 #' 
 #'@source The data was obtained from the databank of the 
-#'German Weather Service (DWD) (accessed: 2023-06-16) and 
+#'German Weather Service (DWD) (accessed: 2023-09-25) and 
 #'then transformed into a time series
 #'object using R. 
 #'
 #'\url{https://www.dwd.de/DE/leistungen/zeitreihen/zeitreihen.html#buehneTop}
 "TEMPERATURE"
+
+#' Monthly Average Rainfall in Germany
+#'
+#' A \code{ts} object that contains the monthly observed average rainfall
+#' in Germany (in mm) from January 1881 to August 2023.
+#' The object contains 1712 observations.
+#' 
+#'@source The data was obtained from the databank of the 
+#'German Weather Service (DWD) (accessed: 2023-09-25) and 
+#'then transformed into a time series
+#'object using R. 
+#'
+#'\url{https://www.dwd.de/DE/leistungen/zeitreihen/zeitreihen.html#buehneTop}
+"RAINFALL"
+
+#' Daily Confirmed New Covid-19 Cases in Germany 
+#'
+#' A \code{ts} object that contains the daily confirmed new COVID-19 cases
+#' in Germany (in thousands of cases) from June 2021 to November 2021.
+#' The object contains 183 observations. The time series object is created 
+#' as a time series object with frequency 7, i.e. the time unit is in calendar 
+#' weeks of the year 2021 and not in years.
+#' 
+#'@source The data was obtained from the COVID-19 Data Hub 
+#'(accessed: 2023-09-25) and 
+#'then transformed into a time series
+#'object using R. 
+#'
+#'\url{https://covid19datahub.io/}
+"COVID"
+
+#' Quarterly US GDP
+#'
+#' A \code{ts} object that contains the quarterly US GDP
+#' (in billions of USD) from the first quarter of 1947 to the last quarter in 
+#' 2019. The object contains 292 observations.
+#' 
+#'@source The data was obtained from the databank of the Federal Reserve Bank 
+#'of St. Louis
+#'(accessed: 2023-09-25) and 
+#'then transformed into a time series
+#'object using R. 
+#'
+#'\url{https://fred.stlouisfed.org/series/NA000334Q}
+"GDP"

@@ -521,7 +521,7 @@ arma::vec fitOverallCpp(const arma::vec& y, const arma::mat& ws, const int bwidt
 // C++ version of deseats smoothing
 // [[Rcpp::export]]
 Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
-  const int s, const int mu, const double b, const int bb) {
+  const int s, const int mu, const double b, const int bb, const int v) {
 
   const int n = y.size();
   const int bwidthAbs = bwidthAbsCpp(n, b);
@@ -549,7 +549,7 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
 
   arma::mat dataMat = dataMatCpp(p, s, ntpoints, bwidthAbs, all_tp);  
 
-  arma::rowvec ej = derivSelectorCpp(p, s, 0);
+  arma::rowvec ej = derivSelectorCpp(p, s, v);
   arma::rowvec phi = seasonSelectorCpp(p, s);
 
   int lowB;
@@ -575,6 +575,10 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
   wsS.rows(bwidthAbs + 1, bwidthTotal - 1) = completeWeightingCpp(wsS, bwidthAbs, bwidthTotal);
   wsK.rows(bwidthAbs + 1, bwidthTotal - 1) = completeWeightingCpp(wsK, bwidthAbs, bwidthTotal);
 
+  if (v > 0) {
+    wsG = factorialCpp(v) * wsG * std::pow((n / double(bwidthAbs)), v);    
+  }
+  
   arma::mat ws = wsG + wsS;
   
   arma::vec grG = fitOverallCpp(y, wsG, bwidthAbs, bwidthTotal, n);
@@ -601,103 +605,10 @@ Rcpp::List fitteddeseatsCpp(const arma::vec& y, const int p,
 arma::vec residdeseatsCpp(const arma::vec& y, const int p,
   const int s, const int mu, const double b, const int bb) {
 
-  const int n = y.size();
-  arma::vec gr(n);
-  const int bwidthAbs = std::trunc(n * b + 0.5);
-  const int bwidthMax = 2 * bwidthAbs + 1;
+  Rcpp::List results = fitteddeseatsCpp(y, p, s, mu, b, bb, 0);
+  const arma::vec resids = results["Residuals"];
   
-  arma::mat ws(bwidthMax, bwidthMax);
-
-  arma::rowvec wk = arma::zeros<arma::rowvec>(bwidthMax);
-  arma::mat xt = arma::zeros<arma::mat>((p + s), bwidthMax);
-  
-  arma::mat xw = xt;
-
-  const arma::vec seqhh = seqCpp(0, bwidthAbs);
-  const arma::vec allLowB = bwidthAbs - seqhh;
-  const arma::vec hr = bwidthAbs + bb * allLowB;
-  const arma::vec hr2 = arma::pow(hr + 1, 2.0);
-  const arma::vec ht = seqhh + hr;
-  arma::mat xa = xt;
-  
-  const arma::rowvec allsequ = rseqCpp(-bwidthAbs, hr(0));
-  const int m = allsequ.size();
-  const arma::rowvec allsequ2 = arma::pow(allsequ, 2.0);
-  const arma::rowvec allsequhh = allsequ / bwidthAbs;
-  
-  arma::mat dataMat = arma::ones<arma::mat>((p + s), m);  
-  dataMat.row(1) = allsequhh;
-  
-  for (int i = 2; i < p + 1; ++i) {
-    dataMat.row(i) = arma::pow(allsequhh, i);
-  }
-  
-  const double l1 = 2.0 * M_PI / s;  
-  
-  for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
-    dataMat.row(p + 2 * i - 1) = arma::cos(i * l1 * allsequ); //look here
-    dataMat.row(p + 2 * i) = arma::sin(i * l1 * allsequ);
-  }
-  
-  if ((s / 2.0) == std::trunc(s / 2.0)) {
-    dataMat.row(p + s - 1) = arma::cos(M_PI * allsequ);
-  }  
-  
-  arma::rowvec ej = arma::zeros<arma::rowvec>(p + s);
-  arma::rowvec phi = ej;  
-  arma::rowvec prevec = ej;   
-  
-  ej(0) = 1;
-  
-  for (int i = 1; i < s; i++) {
-    if (i % 2 == 1) {
-      phi(p + i) = 1;
-    }
-  }
-  
-  prevec.subvec(0, p) = ej.subvec(0, p); 
-
-  prevec.subvec(p + 1, p + s - 1) = phi.subvec(p + 1, p + s - 1);  
-  
-  const arma::vec allUpB = bwidthAbs + hr;
-
-  int lowB;
-  int upB;
-  
-  for (int i = 0; i < bwidthAbs + 1; ++i) {
-
-    lowB = allLowB(i);
-    upB = allUpB(i);
-    
-    if (mu == 0) {
-      wk.subvec(0, ht(i)).fill(1.0);
-    } else if (mu == 1) {
-      wk.subvec(0, ht(i)) = 1.0 - allsequ2.subvec(lowB, upB) / hr2(i);
-    } else {
-      wk.subvec(0, ht(i)) = arma::pow(1.0 - allsequ2.subvec(lowB, upB) / hr2(i), mu);
-    }
-    
-    xt.submat(0, 0, p + s - 1, ht(i)) = dataMat.cols(lowB, upB);
-    xw = xt * diagmat(wk);
-    xa = arma::solve(xw * xt.t(), xw);
-
-    ws.row(i) = prevec * xa;
-    
-  }
-  
-  ws.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(ws.submat(0, 0, bwidthAbs - 1, bwidthMax - 1)));
-
-  arma::mat ym(bwidthMax, n - bwidthMax + 1);
-  for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
-    ym.col(i - bwidthAbs) = y.subvec(i - bwidthAbs, i + bwidthAbs);
-  }
-  gr.subvec(0, bwidthAbs - 1) = ws.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
-  gr.subvec(bwidthAbs, n - bwidthAbs - 1) = (ws.row(bwidthAbs) * ym).t();
-  gr.subvec(n - bwidthAbs, n - 1) = ws.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);
-  
-  arma::vec resid = y - gr;
-  
-  return resid;
+  return resids;
   
 }
 
@@ -706,89 +617,10 @@ arma::vec residdeseatsCpp(const arma::vec& y, const int p,
 arma::vec derivdeseatsCpp(const arma::vec& y, const int p,
   const int s, const int mu, const double b, const int bb, const int v) {
 
-  const int n = y.size();
-  arma::vec grG(n);
-  const int bwidthAbs = std::trunc(n * b + 0.5);
-  const int bwidthMax = 2 * bwidthAbs + 1;
+  Rcpp::List results = fitteddeseatsCpp(y, p, s, mu, b, bb, v);
+  const arma::vec out = results["Trend"];
   
-  arma::mat wsG(bwidthMax, bwidthMax);
-  arma::rowvec wk = arma::zeros<arma::rowvec>(bwidthMax);
-  arma::mat xt = arma::zeros<arma::mat>((p + s), bwidthMax);
-  
-  arma::mat xw = xt;
-
-  const arma::vec seqhh = seqCpp(0, bwidthAbs);
-  const arma::vec allLowB = bwidthAbs - seqhh;
-  const arma::vec hr = bwidthAbs + bb * allLowB;
-  const arma::vec hr2 = arma::pow(hr + 1, 2.0);
-  const arma::vec ht = seqhh + hr;
-  arma::mat xa = xt;
-  
-  const arma::rowvec allsequ = rseqCpp(-bwidthAbs, hr(0));
-  const int m = allsequ.size();
-  const arma::rowvec allsequ2 = arma::pow(allsequ, 2.0);
-  const arma::rowvec allsequhh = allsequ / bwidthAbs;
-  
-  arma::mat dataMat = arma::ones<arma::mat>((p + s), m);  
-  dataMat.row(1) = allsequhh;
-  
-  for (int i = 2; i < p + 1; ++i) {
-    dataMat.row(i) = arma::pow(allsequhh, i);
-  }
-  
-  const double l1 = 2.0 * M_PI / s;  
-  
-  for (int i = 1; i < std::trunc((s - 1.0) / 2) + 1; ++i) {
-    dataMat.row(p + 2 * i - 1) = arma::cos(i * l1 * allsequ); //look here
-    dataMat.row(p + 2 * i) = arma::sin(i * l1 * allsequ);
-  }
-  
-  if ((s / 2.0) == std::trunc(s / 2.0)) {
-    dataMat.row(p + s - 1) = arma::cos(M_PI * allsequ);
-  }  
-  
-  arma::rowvec ej = arma::zeros<arma::rowvec>(p + s);
-  
-  ej(v) = 1;
-  
-  const arma::vec allUpB = bwidthAbs + hr;
-
-  int lowB;
-  int upB;
-  
-  for (int i = 0; i < bwidthAbs + 1; ++i) {
-
-    lowB = allLowB(i);
-    upB = allUpB(i);
-    
-    if (mu == 0) {
-      wk.subvec(0, ht(i)).fill(1.0);
-    } else if (mu == 1) {
-      wk.subvec(0, ht(i)) = 1.0 - allsequ2.subvec(lowB, upB) / hr2(i);
-    } else {
-      wk.subvec(0, ht(i)) = arma::pow(1.0 - allsequ2.subvec(lowB, upB) / hr2(i), mu);
-    }
-    
-    xt.submat(0, 0, p + s - 1, ht(i)) = dataMat.cols(lowB, upB);
-    xw = xt * diagmat(wk);
-    xa = arma::solve(xw * xt.t(), xw);
-
-    wsG.row(i) = ej * xa;
-    
-  }
-  
-  wsG.rows(bwidthAbs + 1, bwidthMax - 1) = arma::flipud(arma::fliplr(wsG.submat(0, 0, bwidthAbs - 1, bwidthMax - 1))) * std::pow(-1.0, v);
-  wsG = factorialCpp(v) * wsG * std::pow((n / double(bwidthAbs)), v);
-  
-  arma::mat ym(bwidthMax, n - bwidthMax + 1);
-  for (int i = bwidthAbs; i < n - bwidthAbs; ++i) {
-    ym.col(i - bwidthAbs) = y.subvec(i - bwidthAbs, i + bwidthAbs);
-  }
-  grG.subvec(0, bwidthAbs - 1) = wsG.rows(0, bwidthAbs - 1) * y.subvec(0, bwidthMax - 1);
-  grG.subvec(bwidthAbs, n - bwidthAbs - 1) = (wsG.row(bwidthAbs) * ym).t();
-  grG.subvec(n - bwidthAbs, n - 1) = wsG.rows(bwidthAbs + 1, bwidthMax - 1) * y.subvec(n - bwidthMax, n - 1);
-  
-  return grG;
+  return out;
   
 }
 
@@ -928,18 +760,34 @@ double setup_adjFactor_Cpp(const int p, const int s, const int mu, const int CF)
         }
       }
       
+    } else if (s == 1) {
+      
+      if (p == 1) {
+        if (mu == 0) {
+          adjFactor = 1.3195;
+        } else if (mu == 1) {
+          adjFactor = 1.4310;
+        } else if (mu == 2) {
+          adjFactor = 1.4541;
+        } else if (mu == 3) {
+          adjFactor = 1.4640;
+        }
+      } else if (p == 3) {
+        if (mu == 0) {
+          adjFactor = 1.2599;
+        } else if (mu == 1) {
+          adjFactor = 1.2915;
+        } else if (mu == 2) {
+          adjFactor = 1.3006;
+        } else if (mu == 3) {
+          adjFactor = 1.3052;
+        }
+      }
+      
     }
-  }  
+  } 
   
   return adjFactor;
-}
-
-// [[Rcpp::export]]
-double adjust_bandwidth(const double b, const double expo, const double bmin, const double bmax) {
-    double bv = std::pow(b, expo);
-    bv = std::max(bv, bmin);
-    bv = std::min(bv, bmax);
-    return bv;
 }
 
 // [[Rcpp::export]]
@@ -995,9 +843,11 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
   const int n = yt.size();
   const int k = p + 1;
   
-  double bmax = 0.45;       // The maximum bandwidth 
-  double bmin = 0.01;       // The minimum bandwidth 
-
+  const double adjFactor = setup_adjFactor_Cpp(p, s, mu, CF);  
+  
+  double bmin = 0.01;   // The minimum bandwidth 
+  double bmax = std::min(std::pow(0.49, 1.0 / expo), 0.49 / adjFactor); // The maximum bandwidth
+  
   const int v = k;
   const int pv = k + 1;
 
@@ -1022,8 +872,6 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
   
   double I2;
   
-  const double adjFactor = setup_adjFactor_Cpp(p, s, mu, CF);
-  
   double bAdj;
   double cf0 = 0;
   double c3;
@@ -1036,7 +884,7 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
 
   while (it < itMax + 1 && stopreason == 0) {
     
-    bv = adjust_bandwidth(bopt, expo, bmin, bmax);
+    bv = std::pow(bopt, expo);
     
     I2 = calculate_I2_Cpp(yt, pv, s, mu, bv, bb, v, n, n1);
     
