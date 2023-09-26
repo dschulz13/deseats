@@ -20,6 +20,7 @@
 #'selected bandwidth for decomposition,}
 #'\item{\code{\link{BV4.1}}:}{BV4.1 base model for decomposition,}
 #'\item{\code{\link{lm_decomp}}:}{ordinary least squares for decomposition,}
+#'\item{\code{\link{llin_decomp}}:}{local linear regression for decomposition,}
 #'\item{\code{\link{ma_decomp}}:}{moving averages for decomposition,}
 #'\item{\code{\link{hamilton_filter}}:}{the time series filter by Hamilton.}
 #'}
@@ -30,13 +31,16 @@
 #'sources.
 #'\describe{
 #'\item{\code{\link{CIVLABOR}}:}{civilian labor force level in the USA.}
+#'\item{\code{\link{COVID}}:}{new COVID-19 cases in Germany.}
 #'\item{\code{\link{DEATHS}}:}{recorded number of deaths in Germany.}
 #'\item{\code{\link{EXPENDITURES}}:}{consumption expenditures in the USA.}
+#'\item{\code{\link{GDP}}:}{GDP of the USA.}
 #'\item{\code{\link{LIVEBIRTHS}}:}{recorded number of livebirths in Germany.}
 #'\item{\code{\link{NOLABORFORCE}}:}{number of persons in the USA not belonging 
 #'to the labor force.}
+#'\item{\code{\link{RAINFALL}}:}{average amount of rain in Germany.}
 #'\item{\code{\link{SAVINGS}}:}{savings of private households in Germany.}
-#'\item{\code{\link{SUNSHINE}}:}{hours of sunshine in Germany.}
+#'\item{\code{\link{SUNSHINE}}:}{average hours of sunshine in Germany.}
 #'\item{\code{\link{TEMPERATURE}}:}{average temperature in Germany.}
 #'}
 #'

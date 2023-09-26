@@ -422,7 +422,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
   decomp <- cbind(
     Observations = y,
     Trend = Trend,
-    Season = Season,
+    Seasonality = Season,
     Rest = Residuals
   )
   
@@ -570,7 +570,7 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
   colnames(decomp) <- c(
     "Observations",
     "Trend",
-    "Season",
+    "Seasonality",
     "Rest",
     "Fitted ARMA",
     "Residuals ARMA"
@@ -719,85 +719,10 @@ BV4.1_base <- function(yt, type = NULL) {
   
   rest <- yt - trend_e - season_e
   
-  decomp <- cbind(Observations = yt, Trend = trend_e, Season = season_e, Rest = rest)
+  decomp <- cbind(Observations = yt, Trend = trend_e, Seasonality = season_e, Rest = rest)
   out <- create_bv41(decomp, ts_name, freq)
   out
   
-}
-
-#'Combining the BV4.1 Approach with ARMA Errors
-#'
-#'Estimate trend and seasonality in a time series using BV4.1 and 
-#'fit an ARMA model to the resulting residuals.
-#'
-#'@param yt a time series object of class \code{"ts"}.
-#'@param arma_options a list with elements \code{ar_order} and 
-#'\code{ma_order}, which represent the AR and MA orders to consider 
-#'when fitting an ARMA model to the residuals of the BV4.1 approach; 
-#'if both are set to \code{NULL}, the BIC is used to select the optimal 
-#'orders.
-#'
-#'@details
-#'The BV4.1 method is first used to estimate trend and seasonality in a 
-#'time series. Afterwards, an ARMA model is fitted to the resulting 
-#'residuals.
-#'
-#'@return
-#'An S4 object of class \code{"bv41_arma"} with the following elements 
-#'is created.
-#'\describe{
-#'\item{\code{decomp}}{an object of class \code{"mts"} that includes the 
-#'observed time series and its estimated components.}
-#'\item{\code{nonpar_model}}{an object of class \code{"bv41"}; this is 
-#'the result of applying \code{\link{BV4.1}}.}
-#'\item{\code{par_model}}{an object of class \code{"Arima"}; the result of 
-#'applying \code{\link[stats]{arima}} to the residuals of the nonparametric 
-#'estimation step.}
-#'}
-#'
-#'@export
-#'
-#'@examples
-#'Xt <- log(EXPENDITURES)
-#'est <- BV4.1_arma(Xt)
-#'est
-#'
-BV4.1_arma <- function(yt, 
-                  arma_options = list(ar_order = NULL, ma_order = NULL)) {
-  
-  ts_name <- deparse(substitute(yt))
-  
-  nonpar_model <- BV4.1(yt)
-  nonpar_model@ts_name <- ts_name
-  
-  res <- residuals(nonpar_model)
-  
-  ar_ma_select <- select_arma_orders(res, arma_options$ar_order, 
-                                     arma_options$ma_order)
-  
-  ar <- ar_ma_select[[1]]
-  ma <- ar_ma_select[[2]]
-
-  par_est <- stats::arima(res, order = c(ar, 0, ma),
-                        include.mean = FALSE)
-
-  arma_res <- par_est$residuals
-  attributes(arma_res) <- attributes(nonpar_model@decomp[, 1])
-  arma_fitted <- residuals(nonpar_model) - arma_res
-  
-  decomp <- cbind(nonpar_model@decomp, arma_fitted, arma_res)
-  colnames(decomp) <- c(
-    "Observations",
-    "Trend",
-    "Season",
-    "Rest",
-    "Fitted ARMA",
-    "Residuals ARMA"
-  )
-  
-  out <- create_bv41_arma(decomp = decomp, nonpar_model = nonpar_model, 
-                           par_model = par_est)
-  out
 }
 
 
@@ -1007,7 +932,7 @@ lm_decomp <- function(yt, order_poly = 1, order_poly_s = 1, season = NULL) {
   
   out <- create_lmdecomp(
     decomp = cbind("Observations" = yt, "Trend" = trend, 
-          "Season" = seasonality, "Rest" = remainder),
+          "Seasonality" = seasonality, "Rest" = remainder),
     ts_name = ts_name,
     frequency = season,
     regression_output = reg
@@ -1113,7 +1038,7 @@ ma_decomp <- function(yt, k_trend = 4, k_season = 5, season = NULL) {
   
   out <- create_madecomp(
     decomp = cbind("Observations" = yt, "Trend" = trend, 
-          "Season" = seasonality, "Rest" = remainder),
+          "Seasonality" = seasonality, "Rest" = remainder),
     ts_name = ts_name,
     frequency = season,
     k_trend = k_trend,
@@ -1123,4 +1048,161 @@ ma_decomp <- function(yt, k_trend = 4, k_season = 5, season = NULL) {
   out
 }
 
+#------------------------------------------------------------------------------#
 
+#'Decomposition of Time Series Using Local Linear Regression
+#'
+#'Trend and seasonality are modelled in a two-step approach, where first the 
+#'trend is being estimated using local linear regression and then the 
+#'seasonality is being estimated using various local linear regressions as 
+#'well. In both cases a manually selected bandwidth is required.
+#'
+#'@param yt a time series object of class \code{"ts"} or an object that can be 
+#'transformed to that class using \code{\link[stats]{as.ts}}.
+#'@param bwidth_trend half of the absolute bandwidth (in years); represents the 
+#'amount of data to use around the estimation time point to consider 
+#'for trend smoothing.
+#'@param bwidth_season half of the absolute bandwidth (in years); represents the  
+#'amount of data (only from the same quarter, month, etc.) to use around the 
+#'estimation time point for the seasonality estimation.
+#'@param kernel_par the smoothness parameter for the second-order kernel function 
+#'used in the weighting process; for \code{kernel_par = 0} a uniform kernel 
+#'is used, for \code{kernel_par = 1} an epanechnikov kernel, and so on.
+#'@param boundary_method a single character value; it indicates, what bandwidth 
+#'method to use at boundary points; for \code{"extend"}, the default, the 
+#'smoothing window around boundary points will be extended towards the center of 
+#'the data; for \code{"shorten"}, the window width will keep decreasing at 
+#'boundary points when approaching the very first and the very last observation.
+#'@param season the seasonal period in \code{yt}; by default, the seasonal 
+#'period is obtained automatically from \code{yt}.
+#'
+#'@details
+#'Apply local linear regression to estimate trend and seasonality 
+#'in a given time series \eqn{y_t}. Assume that \eqn{y_t} follows an additive 
+#'component model with trend and seasonality components. First, a local linear 
+#'regression with a first (absolute) bandwidth is conducted to estimate the trend 
+#'from the series. If the seasonal period is \eqn{s}, then afterwards \eqn{s} 
+#'local linear regressions (for each individual seasonal subseries of the 
+#'detrended series) are conducted with a second (absolute) bandwidth to obtain 
+#'seasonality estimates.
+#'
+#'@export
+#'
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+#'
+#'@return
+#'An S4 object with the following elements is returned.
+#'\describe{
+#'\item{decomp}{an object of class \code{"mts"} that consists of the
+#'decomposed time series data.}
+#'\item{ts_name}{the object name of the initially provided time series object.}
+#'\item{frequency}{the frequency of the time series.}
+#'\item{bwidth_trend}{the same as the input argument \code{bwidth_trend}.}
+#'\item{bwidth_season}{the same as the input argument \code{bwidth_season}.}
+#'\item{boundary_method}{the same as the input argument \code{boundary_method}.}
+#'\item{kernel_par}{the same as the input argument \code{kernel_par}.}
+#'}
+#'
+#'@examples
+#'est <- llin_decomp(log(EXPENDITURES), bwidth_trend = 4, bwidth_season = 28)
+#'est
+#'
+
+
+llin_decomp <- function(yt, bwidth_trend = 4, bwidth_season = 5, kernel_par = 1, boundary_method = c("extend", "shorten"), season = NULL) {
+  
+  boundary_method <- match.arg(boundary_method)  
+  
+  stopifnot(
+    "yt is missing with no default" = !(missing(yt)),
+    'boundary_method must be either "extend" or "shorten"' = is.character(boundary_method) && boundary_method %in% c("extend", "shorten"),
+    "kernel_par must be a single numeric value" = is.numeric(kernel_par)
+  )
+
+  bb <- switch(
+    boundary_method,
+    "extend" = 1,
+    "shorten" = 0
+  )
+  
+  mu <- trunc(kernel_par)
+  
+  ts_name <- deparse(substitute(yt))
+  if (is.null(season)) {
+    season <- frequency(yt)
+  }    
+  
+  P <- season
+  t <- as.numeric(time(yt))
+  trend_e <- season_e <- yt
+  n <- length(yt)
+  trend_e[1:n] <- NA
+  
+  bwidth <- bwidth_trend
+  
+  for (i in 1:n) {
+    t0 <- t[[i]]
+    if (i <= bwidth * P) {
+      j <- i
+    } else if (i >= n - bwidth * P + 1) {
+      j <- n - i + 1
+    }
+    interior_bwidth <- ifelse(i <= bwidth * P || i >= n - bwidth * P + 1,
+      yes = (bb + 1) * bwidth - bb * (j - 1) * (1 / P),
+      no = bwidth
+    )
+    subs <- abs(t - t0) <= interior_bwidth
+    
+    t_subset <- t[subs]
+    t_cent <- t_subset - t0
+    yt_subset <- as.numeric(yt[subs])
+    u <- t_cent / interior_bwidth
+    Ku <- (1 - u^2)^mu
+    est <- lm(yt_subset ~ t_cent, weights = Ku)
+    trend_e[[i]] <- est$coefficients[[1]]
+  }
+  
+  resids <- yt - trend_e
+  
+  bwidth <- bwidth_season
+  
+  for (i in 1:n) {
+    t0 <- t[[i]]
+    if (i <= bwidth * P) {
+      j <- i
+    } else if (i >= n - bwidth * P + 1) {
+      j <- n - i + 1
+    }    
+    interior_bwidth <- ifelse(i <= bwidth * P || i >= n - bwidth * P + 1,
+      yes = (bb + 1) * bwidth - bb * (j - 1) * (1 / P),
+      no = bwidth
+    )
+    subs <- (abs(t - t0) <= interior_bwidth) & ((t - t0) %% 1 == 0)
+    t_subset <- t[subs]
+    t_cent <- t_subset - t0
+    rt_subset <- as.numeric(resids[subs])
+    u <- t_cent / interior_bwidth
+    Ku <- (1 - u^2)^mu
+    est <- lm(rt_subset ~ t_cent, weights = Ku)
+    season_e[[i]] <- est$coefficients[[1]]
+  }
+  
+  out <- create_llindecomp(
+    decomp = cbind("Observations" = yt, "Trend" = trend_e, 
+          "Seasonality" = season_e, "Rest" = resids - season_e),
+    ts_name = ts_name,
+    frequency = season,
+    bwidth_trend = bwidth_trend,
+    bwidth_season = bwidth_season,
+    boundary_method = boundary_method,
+    kernel_par = mu
+  )
+
+  out  
+  
+}

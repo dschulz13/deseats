@@ -1,3 +1,5 @@
+
+
 #' Bootstrapping Confidence Intervals for Locally Weighted Regression Bandwidths
 #' 
 #' A stationary block bootstrap is applied to resample from a time 
@@ -21,9 +23,9 @@
 #' not to employ parallel programming for the resampling and the subsequently 
 #' data-driven bandwidth estimations from the bootstrapped samples; the default 
 #' is \code{patrallel = TRUE}.
-#' @param num.cores a numeric vector of length one that indicates the number of
+#' @param num_cores a numeric vector of length one that indicates the number of
 #' CPU cores to use for parallel programming, if \code{parallel = TRUE}; the 
-#' default is \code{num.cores = future::availableCores() - 1}.
+#' default is \code{num_cores = future::availableCores() - 1}.
 #' @param ... further arguments to pass to \code{\link{deseats}}.
 #' 
 #' @export
@@ -51,7 +53,7 @@
 #' 99 percent confidence intervals of the bandwidth.}
 #' \item{\code{bwidth_estimates}}{a vector with all the obtained bandwidths 
 #' for the bootstrapped series.}
-#' \item{\code{sd_bwidth}}{the sample standard deviation of 
+#' \item{\code{se_bwidth}}{the sample standard deviation of 
 #' \code{bwidth_estimates}.}
 #' }
 #' 
@@ -65,11 +67,21 @@
 #' @examples
 #' xt <- log(EXPENDITURES)
 #' est <- deseats(xt, set_options(order_poly = 3))
-#' conf <- bwidth_confint(est, npaths = 200, num.cores = 2)
+#' conf <- bwidth_confint(est, npaths = 200, num_cores = 2)
 #' conf
 #' 
 
-bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, parallel = TRUE, num.cores = future::availableCores() - 1, ...) {
+bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, parallel = TRUE, num_cores = future::availableCores() - 1, ...) {
+  
+  stopifnot(
+    "nonpar_model is missing with no default" = !is.missing(nonpar_model),
+    'nonpar_model must be an object of class "deseats"' = inherits(nonpar_model, "deseats"),
+    "blocklen must a be either NULL or a numeric vector of length one" = is.null(blocklen) || (is.numeric(blocklen) && length(blocklen) == 1),
+    "npaths must be a numeric vector of length one" = is.numeric(npaths) && length(npaths) == 1,
+    "parallel must be a single logical value" = is.logical(parallel) && length(parallel) == 1,
+    "num_cores must be a numeric vector of length one" = is.numeric(num_cores) && length(num_cores) == 1
+  )
+  
   gxt <- fitted(nonpar_model)
   fr <- frequency(gxt)
   if (is.null(blocklen)) {
@@ -88,7 +100,7 @@ bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, paralle
   
   if (parallel) {
     oldplan <- future::plan()
-    future::plan(strategy = future::multisession(), workers = num.cores)
+    future::plan(strategy = future::multisession(), workers = num_cores)
     on.exit({
       future::plan(oldplan)
     }, add = TRUE, after = TRUE)
@@ -132,7 +144,7 @@ bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, paralle
       quantile(b0_all, probs = c(0.005, 0.025, 0.975, 0.995))
     ),
     bwidth_estimates = b0_all,
-    sd_bwidth = stats::sd(b0_all)
+    se_bwidth = stats::sd(b0_all)
   )
   
   out

@@ -221,7 +221,7 @@ methods::setMethod("trend", "decomp", function(object, ...) {
 #'@export
 methods::setMethod("season", "decomp", function(object, ...) {
   tryCatch({
-    object@decomp[, "Season"]
+    object@decomp[, "Seasonality"]
   }, error = function(c1) {stop("No seasonal component to retrieve.", call. = FALSE)})
   
 })

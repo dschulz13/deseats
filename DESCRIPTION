@@ -62,6 +62,7 @@ Collate:
     'class-hfilter.R'
     'class-lmdecomp.R'
     'class-madecomp.R'
+    'class-llindecomp.R'
     'data_documentation.R'
     'fitting_functions.R'
     'runDecomposition.R'

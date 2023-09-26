@@ -9,7 +9,7 @@ bwidth_confint(
   blocklen = NULL,
   npaths = 1000,
   parallel = TRUE,
-  num.cores = future::availableCores() - 1,
+  num_cores = future::availableCores() - 1,
   ...
 )
 }
@@ -32,9 +32,9 @@ not to employ parallel programming for the resampling and the subsequently
 data-driven bandwidth estimations from the bootstrapped samples; the default 
 is \code{patrallel = TRUE}.}
 
-\item{num.cores}{a numeric vector of length one that indicates the number of
+\item{num_cores}{a numeric vector of length one that indicates the number of
 CPU cores to use for parallel programming, if \code{parallel = TRUE}; the 
-default is \code{num.cores = future::availableCores() - 1}.}
+default is \code{num_cores = future::availableCores() - 1}.}
 
 \item{...}{further arguments to pass to \code{\link{deseats}}.}
 }
@@ -46,7 +46,7 @@ bandwidth estimate as well as the bootstrapped bounds of the 95 and
 99 percent confidence intervals of the bandwidth.}
 \item{\code{bwidth_estimates}}{a vector with all the obtained bandwidths 
 for the bootstrapped series.}
-\item{\code{sd_bwidth}}{the sample standard deviation of 
+\item{\code{se_bwidth}}{the sample standard deviation of 
 \code{bwidth_estimates}.}
 }
 }
@@ -72,7 +72,7 @@ the number of workers, is employed.
 \examples{
 xt <- log(EXPENDITURES)
 est <- deseats(xt, set_options(order_poly = 3))
-conf <- bwidth_confint(est, npaths = 200, num.cores = 2)
+conf <- bwidth_confint(est, npaths = 200, num_cores = 2)
 conf
 
 }
