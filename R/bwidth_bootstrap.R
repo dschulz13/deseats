@@ -74,7 +74,7 @@
 bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, parallel = TRUE, num_cores = future::availableCores() - 1, ...) {
   
   stopifnot(
-    "nonpar_model is missing with no default" = !is.missing(nonpar_model),
+    "nonpar_model is missing with no default" = !missing(nonpar_model),
     'nonpar_model must be an object of class "deseats"' = inherits(nonpar_model, "deseats"),
     "blocklen must a be either NULL or a numeric vector of length one" = is.null(blocklen) || (is.numeric(blocklen) && length(blocklen) == 1),
     "npaths must be a numeric vector of length one" = is.numeric(npaths) && length(npaths) == 1,

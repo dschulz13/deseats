@@ -241,7 +241,7 @@ server <- function(input, output) {
       req(tseries())
       selectInput("method", "Decomposition method:",
                   choices = c("Locally weighted regression", "Berlin Procedure 4.1",
-                              "Linear regression", "Moving average", "Hamilton filter"),
+                              "Linear regression", "Local linear regression", "Moving average", "Hamilton filter"),
                   selected = "Locally weighted regression")
     })
     
@@ -270,6 +270,7 @@ server <- function(input, output) {
                         max = 0.4,
                         value = 0.1,
                         step = 0.005),
+            selectInput("infR", "Inflation rate:", choices = c("optimal", "naive"), selected = "optimal"),
             actionButton("automate", "Automatically select optimal bandwidth")        
         )        
       } else if (input$method == "Berlin Procedure 4.1") {
@@ -290,6 +291,30 @@ server <- function(input, output) {
                         value = 1
                         )
         )
+        
+      } else if (input$method == "Local linear regression") {
+        out <- list(
+            sliderInput("bwidth_trend",
+                        "Bandwidth for trend estimation:",
+                        min = 1,
+                        max = 50,
+                        value = 4,
+                        step = 1),
+            sliderInput("bwidth_season",
+                        "Bandwidth for seasonality estimation:",
+                        min = 1,
+                        max = 50,
+                        step = 1,
+                        value = 5
+                        ),
+            sliderInput("kernel_par",
+                        "Kernel function smoothness parameter:",
+                        min = 0,
+                        max = 5,
+                        step = 1,
+                        value = 1
+                        )
+        )        
         
       } else if (input$method == "Moving average") {
         out <- list(
@@ -353,11 +378,13 @@ server <- function(input, output) {
         if (input$method == "Locally weighted regression") {
           req(input$bwidth)
           req(opts)
-          est <- deseats::deseats(ts_tr(), opts())           
+          est <- deseats::deseats(ts_tr(), opts(), inflation_rate = input$infR)           
         } else if (input$method == "Berlin Procedure 4.1") {
           est <- deseats::BV4.1(ts_tr())
         } else if (input$method == "Linear regression") {
           est <- deseats::lm_decomp(ts_tr(), input$opoly, input$opoly_s, input$frequ)
+        } else if (input$method == "Local linear regression") {
+          est <- deseats::llin_decomp(ts_tr(), kernel_par = input$kernel_par, bwidth_trend = input$bwidth_trend, bwidth_season = input$bwidth_season, season = input$frequ)          
         } else if (input$method == "Moving average") {
           est <- deseats::ma_decomp(ts_tr(), input$bwidth_t, input$bwidth_s, input$frequ)          
         } else if (input$method == "Hamilton filter") {
@@ -376,12 +403,12 @@ server <- function(input, output) {
 
         req(est_result())
         
-        deseats::autoplot(est_result(), which = 3) +
-          ggplot2::ggtitle(paste0('Observations "', ts_name_tr(), '" togerther with estimated trend and seasonality')) +
+        deseats::autoplot(est_result(), which = 4) +
+          ggplot2::ggtitle(paste0('Observations "', ts_name_tr(), '" together with estimated trend and seasonality')) +
           ggplot2::theme_bw() +
           ggplot2::theme(legend.position = "bottom",
                          plot.title = ggplot2::element_text(hjust = 0.5, face = "bold")) +
-          ggplot2::ylab("Observation and trend + seasonality")
+          ggplot2::ylab("Observations and trend + seasonality")
 
 
     })    

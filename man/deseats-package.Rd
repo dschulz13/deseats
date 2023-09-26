@@ -12,7 +12,7 @@ trend and seasonality.
 \code{deseats} is an R package for the decomposition of equidistant time 
 series with trend and seasonality. First and foremost, an own algorithm 
 for bandwidth selection in locally weighted regression of such time series 
-(with short-range dependence) is implemented (see also ???). For comparison,
+(with short-range dependence) is implemented. For comparison,
 a simplified version of the BV4.1 (Berlin Procedure 4.1, Speth, 2004), is 
 implemented as well that allows to implement the BV4.1 base model (trend 
 component + seasonality component + irregular component) with or without a 
