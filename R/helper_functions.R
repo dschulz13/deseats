@@ -159,14 +159,14 @@ check_which <-function(which) {
         "(6) residuals:",
         "(7) deseasonalized:", "(8) detrended:"),
       c(
-        "Facet plot of the estimated components",
-        "The observed time series",
-        "The observations together with estimated trend + seasonality",
-        "The observations together with the fitted values and with the estimated trend",
-        "The observations together with the estimated trend and the estimated seasonality separately",
-        "The both detrended and seasonally adjusted series",
-        "The seasonally adjusted series",
-        "The detrended series"
+        "Facet plot of the components",
+        "Observed time series",
+        "Obs. together with trend + seasonality",
+        "Obs. together with fitted values and trend",
+        "Obs. together with trend and seasonality separately",
+        "Residual series",
+        "Seasonally adjusted series",
+        "Detrended series"
       )
     )
     colnames(text_prompt) <- NULL
@@ -197,12 +197,12 @@ check_which_hf <- function(which) {
   
     if (is.null(which)) {
     text_prompt <- data.frame(
-      c("facets:", "observations:", "fitted:", "residuals:"),
+      c("(1) facets:", "(2) observations:", "(3) fitted:", "(4) residuals:"),
       c(
-        "Facet plot of the estimated components",
-        "The observed time series",
-        "The observations together with estimated trend + seasonality",
-        "The both detrended and seasonally adjusted series"
+        "Facet plot of the components",
+        "Observed time series",
+        "Obs. together with trend + seasonality",
+        "Residual series"
       )
     )
     colnames(text_prompt) <- NULL

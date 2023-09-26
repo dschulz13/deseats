@@ -33,3 +33,6 @@
 ^US GDP\.csv$
 ^TEMP\.csv$
 ^RAINFALL\.csv$
+^ICNSA\.csv$
+^HOUSTNSA\.csv$
+^IPB50001N\.csv$

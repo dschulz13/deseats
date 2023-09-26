@@ -39,6 +39,7 @@ documentation of the datasets to find additional information including the
 sources.
 \describe{
 \item{\code{\link{CIVLABOR}}:}{civilian labor force level in the USA.}
+\item{\code{\link{CONSUMPTION}}:}{real final consumption expenditure for Australia.}
 \item{\code{\link{COVID}}:}{new COVID-19 cases in Germany.}
 \item{\code{\link{DEATHS}}:}{recorded number of deaths in Germany.}
 \item{\code{\link{EXPENDITURES}}:}{consumption expenditures in the USA.}

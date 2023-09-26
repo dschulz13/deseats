@@ -366,7 +366,7 @@ server <- function(input, output) {
       req(opts())
       op <- opts()
       op@bwidth <- NA_real_
-      est <- deseats::deseats(ts_tr(), op, bwidth_start = 0.1)
+      est <- deseats::deseats(ts_tr(), op, inflation_rate = input$infR)
       bopt <- est@bwidth
       updateSliderInput(inputId = "bwidth", value = bopt)
     })
@@ -378,7 +378,7 @@ server <- function(input, output) {
         if (input$method == "Locally weighted regression") {
           req(input$bwidth)
           req(opts)
-          est <- deseats::deseats(ts_tr(), opts(), inflation_rate = input$infR)           
+          est <- deseats::deseats(ts_tr(), opts())           
         } else if (input$method == "Berlin Procedure 4.1") {
           est <- deseats::BV4.1(ts_tr())
         } else if (input$method == "Linear regression") {
