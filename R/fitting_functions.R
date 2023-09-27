@@ -1139,59 +1139,13 @@ llin_decomp <- function(yt, bwidth_trend = 4, bwidth_season = 5, kernel_par = 1,
   
   P <- season
   t <- as.numeric(time(yt))
-  trend_e <- season_e <- yt
-  n <- length(yt)
-  trend_e[1:n] <- NA
   
-  bwidth <- bwidth_trend
   
-  for (i in 1:n) {
-    t0 <- t[[i]]
-    if (i <= bwidth * P) {
-      j <- i
-    } else if (i >= n - bwidth * P + 1) {
-      j <- n - i + 1
-    }
-    interior_bwidth <- ifelse(i <= bwidth * P || i >= n - bwidth * P + 1,
-      yes = (bb + 1) * bwidth - bb * (j - 1) * (1 / P),
-      no = bwidth
-    )
-    subs <- abs(t - t0) <= interior_bwidth
-    
-    t_subset <- t[subs]
-    t_cent <- t_subset - t0
-    yt_subset <- as.numeric(yt[subs])
-    u <- t_cent / interior_bwidth
-    Ku <- (1 - u^2)^mu
-    est <- lm(yt_subset ~ t_cent, weights = Ku)
-    trend_e[[i]] <- est$coefficients[[1]]
-  }
+  trend_e <- ts(c(llin_calc_Cpp(yt, t, bwidth_trend, P, mu, bb, 0)), start = attributes(yt)$tsp[[1]], frequency = P)
   
   resids <- yt - trend_e
-  
-  bwidth <- bwidth_season
-  
-  for (i in 1:n) {
-    t0 <- t[[i]]
-    if (i <= bwidth * P) {
-      j <- i
-    } else if (i >= n - bwidth * P + 1) {
-      j <- n - i + 1
-    }    
-    interior_bwidth <- ifelse(i <= bwidth * P || i >= n - bwidth * P + 1,
-      yes = (bb + 1) * bwidth - bb * (j - 1) * (1 / P),
-      no = bwidth
-    )
-    subs <- (abs(t - t0) <= interior_bwidth) & ((t - t0) %% 1 == 0)
-    t_subset <- t[subs]
-    t_cent <- t_subset - t0
-    rt_subset <- as.numeric(resids[subs])
-    u <- t_cent / interior_bwidth
-    Ku <- (1 - u^2)^mu
-    est <- lm(rt_subset ~ t_cent, weights = Ku)
-    season_e[[i]] <- est$coefficients[[1]]
-  }
-  
+  season_e <- ts(c(llin_calc_Cpp(resids, t, bwidth_season, P, mu, bb, 1)), start = attributes(yt)$tsp[[1]], frequency = P)
+
   out <- create_llindecomp(
     decomp = cbind("Observations" = yt, "Trend" = trend_e, 
           "Seasonality" = season_e, "Rest" = resids - season_e),

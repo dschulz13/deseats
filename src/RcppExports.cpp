@@ -987,6 +987,50 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// wls_Cpp
+arma::vec wls_Cpp(const arma::vec& x, const arma::vec& y, const arma::vec& wk);
+RcppExport SEXP _deseats_wls_Cpp(SEXP xSEXP, SEXP ySEXP, SEXP wkSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type wk(wkSEXP);
+    rcpp_result_gen = Rcpp::wrap(wls_Cpp(x, y, wk));
+    return rcpp_result_gen;
+END_RCPP
+}
+// find_sub_Cpp
+arma::uvec find_sub_Cpp(const arma::vec& t, const double t0, const double interior_bwidth, const int seasonality);
+RcppExport SEXP _deseats_find_sub_Cpp(SEXP tSEXP, SEXP t0SEXP, SEXP interior_bwidthSEXP, SEXP seasonalitySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type t(tSEXP);
+    Rcpp::traits::input_parameter< const double >::type t0(t0SEXP);
+    Rcpp::traits::input_parameter< const double >::type interior_bwidth(interior_bwidthSEXP);
+    Rcpp::traits::input_parameter< const int >::type seasonality(seasonalitySEXP);
+    rcpp_result_gen = Rcpp::wrap(find_sub_Cpp(t, t0, interior_bwidth, seasonality));
+    return rcpp_result_gen;
+END_RCPP
+}
+// llin_calc_Cpp
+arma::vec llin_calc_Cpp(const arma::vec& yt, const arma::vec& t, const double bwidth, const int P, const int mu, const int bb, const int seasonality);
+RcppExport SEXP _deseats_llin_calc_Cpp(SEXP ytSEXP, SEXP tSEXP, SEXP bwidthSEXP, SEXP PSEXP, SEXP muSEXP, SEXP bbSEXP, SEXP seasonalitySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type yt(ytSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type t(tSEXP);
+    Rcpp::traits::input_parameter< const double >::type bwidth(bwidthSEXP);
+    Rcpp::traits::input_parameter< const int >::type P(PSEXP);
+    Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
+    Rcpp::traits::input_parameter< const int >::type seasonality(seasonalitySEXP);
+    rcpp_result_gen = Rcpp::wrap(llin_calc_Cpp(yt, t, bwidth, P, mu, bb, seasonality));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_deseats_BV41filterCpp", (DL_FUNC) &_deseats_BV41filterCpp, 7},
@@ -1064,6 +1108,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_deseats_calculate_cf0_Cpp", (DL_FUNC) &_deseats_calculate_cf0_Cpp, 8},
     {"_deseats_calculate_bopt_Cpp", (DL_FUNC) &_deseats_calculate_bopt_Cpp, 5},
     {"_deseats_algorithmCpp", (DL_FUNC) &_deseats_algorithmCpp, 11},
+    {"_deseats_wls_Cpp", (DL_FUNC) &_deseats_wls_Cpp, 3},
+    {"_deseats_find_sub_Cpp", (DL_FUNC) &_deseats_find_sub_Cpp, 4},
+    {"_deseats_llin_calc_Cpp", (DL_FUNC) &_deseats_llin_calc_Cpp, 7},
     {NULL, NULL, 0}
 };
 

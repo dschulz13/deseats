@@ -301,3 +301,15 @@ algorithmCpp <- function(yt, p, s, mu, bStart, CF, errors, cb, bb, errm, expo) {
     .Call('_deseats_algorithmCpp', PACKAGE = 'deseats', yt, p, s, mu, bStart, CF, errors, cb, bb, errm, expo)
 }
 
+wls_Cpp <- function(x, y, wk) {
+    .Call('_deseats_wls_Cpp', PACKAGE = 'deseats', x, y, wk)
+}
+
+find_sub_Cpp <- function(t, t0, interior_bwidth, seasonality) {
+    .Call('_deseats_find_sub_Cpp', PACKAGE = 'deseats', t, t0, interior_bwidth, seasonality)
+}
+
+llin_calc_Cpp <- function(yt, t, bwidth, P, mu, bb, seasonality) {
+    .Call('_deseats_llin_calc_Cpp', PACKAGE = 'deseats', yt, t, bwidth, P, mu, bb, seasonality)
+}
+

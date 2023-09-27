@@ -4,7 +4,7 @@
 
 using namespace Rcpp;
 
-// Functions written by Dominik Schulz, 12/05/2020
+// Functions written by Dominik Schulz, 26/09/2023
 
 // Function to help obtain a sequence from 'from' to 'to' by step 1
 // in C++
@@ -459,7 +459,7 @@ arma::rowvec wkAdjCpp(const arma::rowvec& all_tp2_subset, const int bwidthRight2
 // [[Rcpp::export]]
 arma::mat deseatsRegCpp(const arma::rowvec& wk, const arma::mat& xt) {
   
-  arma::mat xw = xt * diagmat(wk);
+  arma::mat xw = xt * arma::diagmat(wk);
   arma::mat xa = arma::solve(xw * xt.t(), xw);  
   
   return xa;
@@ -922,4 +922,94 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
   
   return(out);
 
+}
+
+
+// =============================================================
+
+//Weighted regression function
+// [[Rcpp::export]]
+arma::vec wls_Cpp(const arma::vec& x, const arma::vec& y, const arma::vec& wk) {
+  const int n = y.size();
+  arma::mat xt = arma::ones<arma::mat>(2, n);
+  xt.row(1) = x.t();
+  const arma::mat xw = xt * arma::diagmat(wk);
+  const arma::vec coefs = arma::solve(xw * xt.t(), xw * y);
+  return  coefs;
+}
+
+//Find subset indices
+// [[Rcpp::export]]
+arma::uvec find_sub_Cpp(const arma::vec& t, const double t0, const double interior_bwidth, const int seasonality) {
+  
+  arma::uvec subs;
+  
+  const arma::vec t_c = t - t0;
+  
+  if (seasonality == 0) {
+    subs = arma::find(arma::abs(t_c) <= interior_bwidth);
+  } else if (seasonality == 1) {
+    subs = arma::find((arma::abs(t_c) <= interior_bwidth) && ((t_c - arma::trunc(t_c)) == 0));
+  } 
+  
+  return subs;
+  
+}
+
+
+// Codes for local linear regression in trend and seasonality
+// [[Rcpp::export]]
+arma::vec llin_calc_Cpp(const arma::vec& yt, const arma::vec& t, const double bwidth, const int P, const int mu, const int bb, const int seasonality) {
+  
+  const int n = yt.size();
+  arma::vec trend_e = arma::zeros<arma::vec>(n);
+  
+  double t0 = 0;
+  int j = 0;
+  
+  double interior_bwidth = 0.0;
+  
+  arma::uvec subs;
+  arma::vec t_subset;
+  arma::vec t_cent;
+  arma::vec yt_subset;
+  arma::vec u;
+  arma::vec Ku;
+  
+  arma::vec coefs;
+  
+  for (int i = 0; i < n; ++i) {
+    
+    t0 = t(i);
+    if (i + 1 <= bwidth * P) {
+      j = i + 1;
+    } else if (i + 1 >= n - bwidth * P + 1) {
+      j = n - (i + 1) + 1;
+    }
+    if ((i + 1 <= bwidth * P) || (i + 1 >= n - bwidth * P + 1)) {
+      interior_bwidth = (bb + 1) * bwidth - bb * (j - 1) * (1.0 / P);
+    } else {
+      interior_bwidth = bwidth;
+    }
+
+    subs = find_sub_Cpp(t, t0, interior_bwidth, seasonality);
+
+    t_subset = t.elem(subs);
+
+    t_cent = t_subset - t0;
+    yt_subset = yt.elem(subs);
+    
+    
+    
+    u = t_cent / interior_bwidth;
+    Ku = arma::pow(arma::pow(1 - u, 2.0), mu);
+    
+    coefs = wls_Cpp(t_cent, yt_subset, Ku);
+    
+    trend_e(i) = coefs(0);
+    
+  }  
+  
+  return trend_e;
+  
 }
