@@ -2,3 +2,41 @@ url: ~
 template:
   bootstrap: 5
 
+reference:
+- title: Decomposition functions
+
+- subtitle: Automated methods
+  desc: > 
+   These function allow for mostly automated decomposition of seasonal
+   time series.
+  contents:
+  - deseats
+  - BV4.1
+  - hamilton_filter  
+  
+- subtitle: Non-automated methods
+  desc: >
+   These functions for decomposition of seasonal time series require manual 
+   adjustments of the input arguments.
+  contents:
+  - ma_decomp
+  - lm_decomp
+  - llin_decomp
+
+- title: Helper function for time series
+
+- subtitle: ARMA representations
+  desc: >
+   These functions allow for obtaining the coefficients of the infinite-order 
+   AR and MA representations of ARMA models
+  contents:
+  - arma_to_ar
+  - arma_to_ma
+  
+- subtitle: Handling of time series
+  desc: >
+   These function allow the user to facilitate to work with time series objects.
+  contents:
+  - zoo_to_ts
+  - read_ts
+  
