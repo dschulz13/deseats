@@ -124,7 +124,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
       "other settings or select a bandwidth manually."
     ), call. = FALSE)
   }
-  ) 
+  )
   
   bwidths <- c(alg_result$bwidths)
   alg_result$bopt <- tail(bwidths, 1)  
@@ -385,7 +385,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
   
   }
 
-  est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bb, 0)
+  est <- fitteddeseatsCpp(y, p, s, mu, bwidth, bb)
   Trend <- est[[2]]
   Season <- est[[3]]
   Residuals <- est[[4]]
