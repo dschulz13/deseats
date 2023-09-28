@@ -19,6 +19,7 @@ reference:
   - deseats
   - s_semiarma
   - BV4.1
+  - BV4.1_base
   - hamilton_filter  
   
 - subtitle: Non-automated methods
@@ -59,9 +60,9 @@ reference:
   desc: >
     These functions allow the user to create and handle forecasts.
   contents:
-  - expo-deseats_fc-method
+  - expo,deseats_fc-method
   - measures
-  - predict-s_semiarma-method
+  - predict,s_semiarma-method
   
 - title: Included time series data
   desc: >
@@ -88,36 +89,38 @@ reference:
   contents:
   - set_options
   - order_poly,smoothing_options-method
-  - show-smoothing_options-method
+  - show,smoothing_options-method
   
 - subtitle: Methods for fitted models
   desc: >
     These are methods for objects that include information on fitted models.
   contents:
-  - show-deseats-method
-  - show-s_semiarma-method
-  - trend-decomp-method
+  - bwidth,deseats-method
+  - fitted,hfilter-method  
+  - show,deseats-method
+  - show,s_semiarma-method
+  - trend,decomp-method
   
 - subtitle: Plotting methods for various objects
   desc: >
     These are methods to generate plots from various object with information 
     on fitted models and forecasts.
   contents:
-  - autoplot-decomp-method
-  - autoplot-deseats_fc-method
-  - autoplot-hfilter-method
-  - plot-decomp-method
-  - plot-deseats_fc-method
-  - plot-hfilter-method
+  - autoplot,decomp-method
+  - autoplot,deseats_fc-method
+  - autoplot,hfilter-method
+  - plot,decomp-method
+  - plot,deseats_fc-method
+  - plot,hfilter-method
   
 - subtitle: Further useful functions
   desc: >
     These functions can be applied to output from the "deseats" function to 
     generate further interesting statistics and results.
   contents:
-  - animate-deseats-method
+  - animate,deseats-method
   - bwidth_confint
-  - gain-deseats-method
+  - gain,deseats-method
   
 - subtitle: Generics
   desc: >
@@ -126,6 +129,7 @@ reference:
   - animate
   - expo
   - gain
+  - order_poly
   - trend
   
 - title: Shiny apps

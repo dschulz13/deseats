@@ -42,6 +42,8 @@ Depends:
     methods
 Suggests: 
     badger,
+    knitr,
+    rmarkdown,
     smoots,
     testthat (>= 3.0.0)
 RoxygenNote: 7.2.3
@@ -76,3 +78,4 @@ Collate:
     'arima_no_warn.R'
     'deseats-package.R'
 Config/testthat/edition: 3
+VignetteBuilder: knitr
