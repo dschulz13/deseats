@@ -25,10 +25,21 @@ create_deseats_fc <- function(pred, interv, obs, ts_name) {
 #'obtained via the \code{deseats} package.
 #'
 #'@param object an object of class \code{"deseats_fc"}.
+#'@param ... currently without purpose; included for compatibility only.
 #'
 #'@export
+#'
+#'@return
+#'An object of class \code{"deseats_fc"} is returned.
+#'
+#'@examples
+#'est <- s_semiarma(log(EXPENDITURES), set_options(order_poly = 3))
+#'fc <- predict(est, n.ahead = 8)
+#'fc2 <- expo(fc)
+#'fc2
+#'
 
-setMethod("expo", "deseats_fc", function(object) {
+setMethod("expo", "deseats_fc", function(object, ...) {
   
   object@pred <- exp(object@pred)
   object@interv <- exp(object@interv)

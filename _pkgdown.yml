@@ -3,6 +3,12 @@ template:
   bootstrap: 5
 
 reference:
+- title: Package overview
+  desc: >
+    This entry gives you an overview of the package.
+  contents:
+  - deseats-package
+
 - title: Decomposition functions
 
 - subtitle: Automated methods
@@ -11,6 +17,7 @@ reference:
    time series.
   contents:
   - deseats
+  - s_semiarma
   - BV4.1
   - hamilton_filter  
   
@@ -32,6 +39,7 @@ reference:
   contents:
   - arma_to_ar
   - arma_to_ma
+  - select_bwidth
   
 - subtitle: Handling of time series
   desc: >
@@ -39,4 +47,89 @@ reference:
   contents:
   - zoo_to_ts
   - read_ts
+
+- subtitle: Further functions
+  desc: >
+    These are further interesting functions for time series.
+  contents:
+  - create.gain
+  - hA_calc
   
+- title: Forecasting functions and methods
+  desc: >
+    These functions allow the user to create and handle forecasts.
+  contents:
+  - expo-deseats_fc-method
+  - measures
+  - predict-s_semiarma-method
+  
+- title: Included time series data
+  desc: >
+    These entries are on real-world time series data included in the package.
+  contents:
+  - CIVLABOR
+  - CONSUMPTION
+  - COVID
+  - DEATHS
+  - EXPENDITURES
+  - GDP
+  - LIVEBIRTHS
+  - NOLABORFORCE
+  - RAINFALL
+  - SAVINGS
+  - SUNSHINE
+  - TEMPERATURE
+  
+- title: Generics and methods  
+  
+- subtitle: Related to smoothing options
+  desc: >
+    These are functions and methods to set and adjust smoothing options.
+  contents:
+  - set_options
+  - order_poly,smoothing_options-method
+  - show-smoothing_options-method
+  
+- subtitle: Methods for fitted models
+  desc: >
+    These are methods for objects that include information on fitted models.
+  contents:
+  - show-deseats-method
+  - show-s_semiarma-method
+  - trend-decomp-method
+  
+- subtitle: Plotting methods for various objects
+  desc: >
+    These are methods to generate plots from various object with information 
+    on fitted models and forecasts.
+  contents:
+  - autoplot-decomp-method
+  - autoplot-deseats_fc-method
+  - autoplot-hfilter-method
+  - plot-decomp-method
+  - plot-deseats_fc-method
+  - plot-hfilter-method
+  
+- subtitle: Further useful functions
+  desc: >
+    These functions can be applied to output from the "deseats" function to 
+    generate further interesting statistics and results.
+  contents:
+  - animate-deseats-method
+  - bwidth_confint
+  - gain-deseats-method
+  
+- subtitle: Generics
+  desc: >
+    These are generics introduced in the package.
+  contents:
+  - animate
+  - expo
+  - gain
+  - trend
+  
+- title: Shiny apps
+  desc: >
+    These are functions that start shiny apps.
+  contents:
+  - runDecomposition

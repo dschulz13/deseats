@@ -4,12 +4,24 @@
 \alias{expo,deseats_fc-method}
 \title{Exponentiate \code{deseats} Forecasts}
 \usage{
-\S4method{expo}{deseats_fc}(object)
+\S4method{expo}{deseats_fc}(object, ...)
 }
 \arguments{
 \item{object}{an object of class \code{"deseats_fc"}.}
+
+\item{...}{currently without purpose; included for compatibility only.}
+}
+\value{
+An object of class \code{"deseats_fc"} is returned.
 }
 \description{
 Exponentiate, i.e. as act of retransformation, (point and interval) forecasts 
 obtained via the \code{deseats} package.
+}
+\examples{
+est <- s_semiarma(log(EXPENDITURES), set_options(order_poly = 3))
+fc <- predict(est, n.ahead = 8)
+fc2 <- expo(fc)
+fc2
+
 }

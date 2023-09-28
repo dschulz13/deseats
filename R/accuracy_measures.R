@@ -58,8 +58,16 @@ rmsse <- function(preds, obs) {
 #'@export
 #'
 #'
+#'@examples
+#'xt <- EXPENDITURES
+#'xt_in <- window(xt, end = c(2017, 4))
+#'yt <- log(xt_in)
+#'est <- s_semiarma(yt, set_options(order_poly = 3), inflation_rate = "optimal")
+#'fc_results <- predict(est, n.ahead = 8, expo = TRUE)
+#'point_fc <- fc_results@pred
+#'measures(fc, xt)
 #'
-#'
+
 measures <- function(preds, obs) {
   funs <- c(MAE = mae, RMSE = rmse, PC = pc, MASE = mase, RMSSE = rmsse)
   

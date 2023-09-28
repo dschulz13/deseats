@@ -58,7 +58,6 @@ Collate:
     'class-deseats.R'
     'class-s_semiarma.R'    
     'class-bv41.R'
-    'class-bv41_arma.R'
     'class-hfilter.R'
     'class-lmdecomp.R'
     'class-madecomp.R'

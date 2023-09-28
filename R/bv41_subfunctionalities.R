@@ -1,4 +1,4 @@
-#' BV4.1 Outlier Component
+# BV4.1 Outlier Component
 
 outlier_detect.bv41 <- function(xt, tau = 3, M = NULL) {
   
