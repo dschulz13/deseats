@@ -155,7 +155,7 @@
 #' Quarterly Real Final Consumption Expenditure for Australia
 #'
 #' A \code{ts} object that contains the quarterly real final consumption 
-#' expanditure (in thousands o domestic currency) from the third quarter of 1959 
+#' expanditure (in thousands of domestic currency) from the third quarter of 1959 
 #' to the last quarter in  2019. The object contains 242 observations.
 #' 
 #'@source The data was obtained from the databank of the Federal Reserve Bank 
@@ -166,3 +166,18 @@
 #'
 #'\url{https://fred.stlouisfed.org/series/NCRNSAXDCAUQ}
 "CONSUMPTION"
+
+#' Monthly New One Family Houses Sold in the USA
+#'
+#' A \code{ts} object that contains the monthly new one family houses sold in 
+#' the USA (in thousands of units) from January 1985 
+#' to December 2005. The object contains 252 observations.
+#' 
+#'@source The data was obtained from the databank of the Federal Reserve Bank 
+#'of St. Louis
+#'(accessed: 2023-09-30) and 
+#'then transformed into a time series
+#'object using R. 
+#'
+#'\url{https://fred.stlouisfed.org/series/HSN1FNSA}
+"HOUSES"
