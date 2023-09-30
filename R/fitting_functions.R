@@ -57,6 +57,16 @@
 #'\code{\link[deseats]{deseats}}, where this function is applied internally
 #'by default to select an optimal bandwidth.
 #'
+#'@references
+#'\itemize{
+#'\item{Feng, Y. (2013). An iterative plug-in algorithm for decomposing seasonal 
+#'time series using the Berlin Method. Journal of Applied Statistics, 40(2): 
+#'266-281. DOI: 10.1080/02664763.2012.740626.}
+#'\item{Feng, Y., Gries. T, and Fritz, M. (2020). Data-driven local polynomial 
+#'for the trend and its derivatives in economic time series. Journal of 
+#'Nonparametric Statistics, 32(2): 510-533. DOI: 10.1080/10485252.2020.1759598.}
+#'}
+#'
 #'@author
 #'\itemize{
 #'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
@@ -320,6 +330,16 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'the slice names are \code{"Trend"}, \code{"Season"} and \code{"Combined"},
 #'where \code{"Combined"} are the weights to estimate trend + seasonality 
 #'combined.}
+#'}
+#'
+#'@references
+#'\itemize{
+#'\item{Feng, Y. (2013). An iterative plug-in algorithm for decomposing seasonal 
+#'time series using the Berlin Method. Journal of Applied Statistics, 40(2): 
+#'266-281. DOI: 10.1080/02664763.2012.740626.}
+#'\item{Feng, Y., Gries. T, and Fritz, M. (2020). Data-driven local polynomial 
+#'for the trend and its derivatives in economic time series. Journal of 
+#'Nonparametric Statistics, 32(2): 510-533. DOI: 10.1080/10485252.2020.1759598.}
 #'}
 #'
 #'@author
@@ -635,10 +655,11 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'@export
 #'
 #'@references
-#'Speth, H.-T. (2004). Komponentenzerlegung und Saisonbereinigung ökonomischer 
+#'\itemize{
+#'\item{Speth, H.-T. (2004). Komponentenzerlegung und Saisonbereinigung ökonomischer 
 #'Zeitreihen mit dem Verfahren BV4.1. Methodenberichte 3. Statistisches 
-#'Bundesamt.
-#'
+#'Bundesamt. URL: https://www.destatis.de/DE/Methoden/Saisonbereinigung/BV41-methodenbericht-Heft3_2004.pdf?__blob=publicationFile.}
+#'}
 #'@author
 #'\itemize{
 #'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn

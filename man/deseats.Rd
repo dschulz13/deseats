@@ -210,6 +210,16 @@ est
 plot(est, which = 1)
 
 }
+\references{
+\itemize{
+\item{Feng, Y. (2013). An iterative plug-in algorithm for decomposing seasonal 
+time series using the Berlin Method. Journal of Applied Statistics, 40(2): 
+266-281. DOI: 10.1080/02664763.2012.740626.}
+\item{Feng, Y., Gries. T, and Fritz, M. (2020). Data-driven local polynomial 
+for the trend and its derivatives in economic time series. Journal of 
+Nonparametric Statistics, 32(2): 510-533. DOI: 10.1080/10485252.2020.1759598.}
+}
+}
 \author{
 \itemize{
 \item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn

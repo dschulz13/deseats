@@ -7,7 +7,8 @@
 #'\code{deseats} is an R package for the decomposition of equidistant time 
 #'series with trend and seasonality. First and foremost, an own algorithm 
 #'for bandwidth selection in locally weighted regression of such time series 
-#'(with short-range dependence) is implemented. For comparison,
+#'(with short-range dependence) is implemented that is based on both the 
+#'algorithms by Feng (2013) and Feng et al. (2020). For comparison,
 #'a simplified version of the BV4.1 (Berlin Procedure 4.1, Speth, 2004), is 
 #'implemented as well that allows to implement the BV4.1 base model (trend 
 #'component + seasonality component + irregular component) without any 
@@ -50,9 +51,17 @@
 #'([GPL-3](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3))).
 #'
 #'@references
-#'Speth, H.-T. (2004). Komponentenzerlegung und Saisonbereinigung ökonomischer 
+#'\itemize{
+#'\item{Feng, Y. (2013). An iterative plug-in algorithm for decomposing seasonal 
+#'time series using the Berlin Method. Journal of Applied Statistics, 40(2): 
+#'266-281. DOI: 10.1080/02664763.2012.740626.}
+#'\item{Feng, Y., Gries. T, and Fritz, M. (2020). Data-driven local polynomial 
+#'for the trend and its derivatives in economic time series. Journal of 
+#'Nonparametric Statistics, 32(2): 510-533. DOI: 10.1080/10485252.2020.1759598.}
+#'\item{Speth, H.-T. (2004). Komponentenzerlegung und Saisonbereinigung ökonomischer 
 #'Zeitreihen mit dem Verfahren BV4.1. Methodenberichte 3. Statistisches 
-#'Bundesamt.
+#'Bundesamt. URL: https://www.destatis.de/DE/Methoden/Saisonbereinigung/BV41-methodenbericht-Heft3_2004.pdf?__blob=publicationFile.}
+#'}
 #'
 #'@author
 #'\itemize{
