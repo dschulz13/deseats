@@ -10,8 +10,8 @@
 #'(with short-range dependence) is implemented. For comparison,
 #'a simplified version of the BV4.1 (Berlin Procedure 4.1, Speth, 2004), is 
 #'implemented as well that allows to implement the BV4.1 base model (trend 
-#'component + seasonality component + irregular component) with or without a 
-#'few of the BV4.1 subcomponents.
+#'component + seasonality component + irregular component) without any 
+#'of the additional BV4.1 components (such as the calendar component).
 #'
 #'@section Main Functions:
 #'The main functions of the package are:
@@ -51,7 +51,8 @@
 #'
 #'@references
 #'Speth, H.-T. (2004). Komponentenzerlegung und Saisonbereinigung ökonomischer 
-#'Zeitreihen mit dem Verfahren BV4.1. Statistisches Bundesamt.
+#'Zeitreihen mit dem Verfahren BV4.1. Methodenberichte 3. Statistisches 
+#'Bundesamt.
 #'
 #'@author
 #'\itemize{

@@ -587,10 +587,12 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'
 #'Economic data can be decomposed into a trend, a seasonal and a remainder 
 #'component using the Berlin procedure  4.1 (German: Berliner Verfahren 
-#'4.1), as used by the National Statistical Office of Germany. All further 
+#'4.1), as used by the National Statistical Office of Germany. Currently with 
+#'this version of the R package, only the trend and seasonal components can be 
+#'estimated following BV4.1. All further 
 #'component estimations, for example the estimation of the
-#'calendar component, of the official procedure are not yet implemented. The 
-#'function supports quarterly and monthly data. 
+#'calendar component, of the official procedure BV4.1 are not yet implemented. 
+#'The function supports quarterly and monthly data. 
 #'
 #'@param yt a time series object of class \code{ts} or an object that can be 
 #'converted into such an object with \code{\link[stats]{as.ts}}.
@@ -613,8 +615,9 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'with \eqn{E(\epsilon_t) = 0} that are furthermore assumed to be independent 
 #'but identically distributed (i.i.d.).
 #'
-#'It is assumed that \eqn{m} and \eqn{s} can be approximated by a polynomial of
-#'small order and by a trigonometric polynomial, respectively. Through locally
+#'It is assumed that \eqn{m} and \eqn{s} can be approximated locally by 
+#'polynomials of
+#'small order and by a trigonometric polynomials, respectively. Through locally
 #'weighted regression, \eqn{m} and \eqn{s} can therefore be estimated 
 #'suitably.
 #'
@@ -633,7 +636,8 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'
 #'@references
 #'Speth, H.-T. (2004). Komponentenzerlegung und Saisonbereinigung ökonomischer 
-#'Zeitreihen mit dem Verfahren BV4.1. Statistisches Bundesamt.
+#'Zeitreihen mit dem Verfahren BV4.1. Methodenberichte 3. Statistisches 
+#'Bundesamt.
 #'
 #'@author
 #'\itemize{
@@ -657,7 +661,7 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'est <- BV4.1(Xt)
 #'est
 #'
-BV4.1_base <- function(yt, type = NULL) {
+BV4.1 <- function(yt, type = NULL) {
   
   ts_name <- deparse(substitute(yt))
   
