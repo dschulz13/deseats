@@ -31,6 +31,6 @@ yt <- log(xt_in)
 est <- s_semiarma(yt, set_options(order_poly = 3), inflation_rate = "optimal")
 fc_results <- predict(est, n.ahead = 8, expo = TRUE)
 point_fc <- fc_results@pred
-measures(fc, xt)
+measures(point_fc, xt)
 
 }

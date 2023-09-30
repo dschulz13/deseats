@@ -94,8 +94,8 @@ bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, paralle
   sm_opts <- set_options(
     order_poly = order_p,
     season = fr,
-    kernel_fun = est@kernel_fun,
-    boundary_method = est@boundary_method
+    kernel_fun = nonpar_model@kernel_fun,
+    boundary_method = nonpar_model@boundary_method
   )
   
   if (parallel) {

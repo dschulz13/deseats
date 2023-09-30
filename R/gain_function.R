@@ -72,11 +72,11 @@ methods::setGeneric(
 #'est <- deseats(xt)
 #'
 #'lambda <- seq(0, 0.5, 0.01)
-#'gain_values <- gain(est)
+#'gain_values <- gain(est, lambda = lambda)
 #'m <- length(gain_values$gain_trend[, 1])
 #'k <- (m - 1) / 2
-#' colF <- colorRampPalette(c("deepskyblue4", "deepskyblue"))
-#' cols <- colF(m)
+#'colF <- colorRampPalette(c("deepskyblue4", "deepskyblue"))
+#'cols <- colF(m)
 #'
 #'matplot(lambda, t(gain_values$gain_decomb[1:(k + 1), ]), 
 #'  type = paste0(rep("l", k + 1), collapse = ""),

@@ -129,6 +129,8 @@ setMethod("plot", "decomp", function(x, which = NULL, ...) {
 #'A ggplot2-graphic object is returned, i.e. an object of classes 
 #'\code{"gg"} and \code{"ggplot"}.
 #'
+#'@importFrom rlang .data
+#'
 #'@author
 #'\itemize{
 #'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn

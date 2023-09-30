@@ -2,7 +2,7 @@ Package: deseats
 Type: Package
 Title: Data-driven Locally Weighted Regression for Trend and Seasonality in TS
 Version: 1.0.0
-Date: 2023-08-22
+Date: 2023-09-30
 Authors@R: 
     c(person(given = "Yuanhua",
              family = "Feng",
@@ -19,8 +19,8 @@ Authors@R:
 Maintainer: Dominik Schulz <dominik.schulz@uni-paderborn.de>
 Description: Various methods for the identification of trend and seasonal 
   components in time series are provided. Among them is a data-driven locally 
-  weighted regression approach for equidistant short-memory time series, for 
-  which a bandwidth is selected automatically. The approach is a 
+  weighted regression approach with automatically selected bandwidth for 
+  equidistant short-memory time series. The approach is a 
   combination / extension of the algorithms by 
   Feng (2013) <doi:10.1080/02664763.2012.740626> and Feng, Y., Gries, T., 
     and Fritz, M. (2020) <doi:10.1080/10485252.2020.1759598> and a brief 
@@ -40,7 +40,8 @@ Imports: Rcpp (>= 1.0.6),
          furrr,
          future.apply,
          progressr,
-         purrr
+         purrr,
+         rlang
 License: GPL-3
 Encoding: UTF-8
 LinkingTo: Rcpp, RcppArmadillo
@@ -84,4 +85,3 @@ Collate:
     'arima_no_warn.R'
     'deseats-package.R'
 Config/testthat/edition: 3
-VignetteBuilder: knitr

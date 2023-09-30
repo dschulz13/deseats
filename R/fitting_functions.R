@@ -217,11 +217,17 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'a suitable bandwidth.
 #'
 #'The iterative-plug-in (IPI) algorithm, which numerically minimizes the
-#'Asymptotic Mean Squared Error (AMISE) to select a bandwidth, was proposed 
-#'by Feng and Schulz (2023) 
-#'and is 
-#'an extension of Feng (2013) to the case with autocorrelation or of 
-#'Feng, Gries and Fritz (2020) to a model with a seasonal component.
+#'asymptotic mean squared error (AMISE) to select a bandwidth is 
+#'an extension of Feng (2013) to the case with short-range dependence in the 
+#'errors. To achieve this goal, the error variance in the AMISE in Feng (2013) 
+#'is replaced by the sum of autocovariances of the error process and this 
+#'quantity is being estimated using a slightly adjusted version of the 
+#'Bühlmann (1996) algorithm. This procedure is similar to the method described 
+#'in Feng, Gries and Fritz (2020), 
+#'where data-driven local polynomial regression with an automatically selected 
+#'bandwidth is used to estimate the trend according to a model without 
+#'seasonality and where the same adjusted Bühlmann (1996) algorithm is 
+#'considered to estimate the sum of autocovariances in the error process.
 #'
 #'Define \eqn{I[m^{(k)}] = \int_{c_b}^{d_b} [m^{(k)}(x)]^2 dx}{I[m^(k)] =
 #'int_[c_b]^[d_b] \{m^(k)\}^2 dx}, \eqn{\beta_{(k)} = \int_{-1}^{1} u^k
@@ -334,6 +340,9 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'
 #'@references
 #'\itemize{
+#'\item{Bühlmann, P. (1996). Locally Adaptive Lag-Window Spectral Estimation.
+#'Journal of Time Series Analysis, 17(3): 247-270. 
+#'DOI: 10.1111/j.1467-9892.1996.tb00275.x.}
 #'\item{Feng, Y. (2013). An iterative plug-in algorithm for decomposing seasonal 
 #'time series using the Berlin Method. Journal of Applied Statistics, 40(2): 
 #'266-281. DOI: 10.1080/02664763.2012.740626.}

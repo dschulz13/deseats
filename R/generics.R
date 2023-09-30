@@ -94,13 +94,6 @@ methods::setGeneric("animate", function(object, ...) standardGeneric("animate"))
 
 #------------------------------------------#
 
-methods::setGeneric(".boot_f_generate", function(object, ...) standardGeneric(".boot_f_generate"))
-
-#'@export
-methods::setGeneric("bwidth_interval", function(object, ...) standardGeneric("bwidth_interval"))
-
-#------------------------------------------#
-
 #'Automatic Creation of Animations
 #'
 #'A generic that is the basis for methods that allow the user to exponentiate 
