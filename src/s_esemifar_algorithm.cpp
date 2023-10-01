@@ -57,7 +57,7 @@ Rcpp::List farimaCpp(const arma::vec& Xt, const int p, const int q) {
 double BICfarimaCpp(const arma::vec& Xt, const int p, const int q) {
 
   Rcpp::Environment pkg = Rcpp::Environment::namespace_env("deseats");
-  Rcpp::Function g = pkg["BIC_farima_no_warn"];  
+  Rcpp::Function g = pkg["BIC_farima_no_warn"];
   
   return g(Xt, p, q);
   
