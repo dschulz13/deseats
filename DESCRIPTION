@@ -41,7 +41,8 @@ Imports: Rcpp (>= 1.0.6),
          future.apply,
          progressr,
          purrr,
-         rlang
+         rlang,
+         fracdiff
 License: GPL-3
 Encoding: UTF-8
 LinkingTo: Rcpp, RcppArmadillo

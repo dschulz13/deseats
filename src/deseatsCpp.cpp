@@ -61,7 +61,7 @@ double BICarmaCpp(const arma::vec& Xt, const int p, const int q) {
   
   Rcpp::List arma = armaCpp(Xt, p, q);
   const double llhood = arma["loglik"];
-  int n = Xt.size();
+  const int n = Xt.size();
   return -2.0 * llhood + std::log(n) * (p + q);
   
 } 
