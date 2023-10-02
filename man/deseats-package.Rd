@@ -45,6 +45,7 @@ sources.
 \item{\code{\link{DEATHS}}:}{recorded number of deaths in Germany.}
 \item{\code{\link{EXPENDITURES}}:}{consumption expenditures in the USA.}
 \item{\code{\link{GDP}}:}{GDP of the USA.}
+\item{\code{\link{HOUSES}}:}{new one family houses sold in the USA.}
 \item{\code{\link{LIVEBIRTHS}}:}{recorded number of livebirths in Germany.}
 \item{\code{\link{NOLABORFORCE}}:}{number of persons in the USA not belonging 
 to the labor force.}

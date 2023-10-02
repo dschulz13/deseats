@@ -48,9 +48,9 @@ seasonal period \eqn{p_s} and \eqn{\epsilon_t} are stationary errors
 with \eqn{E(\epsilon_t) = 0} that are furthermore assumed to be independent 
 but identically distributed (i.i.d.).
 
-It is assumed that \eqn{m} and \eqn{s} can be approximated locally by 
-polynomials of
-small order and by a trigonometric polynomials, respectively. Through locally
+It is assumed that \eqn{m} and \eqn{s} can be approximated locally by a
+polynomial of
+small order and by a trigonometric polynomial, respectively. Through locally
 weighted regression, \eqn{m} and \eqn{s} can therefore be estimated 
 suitably.
 

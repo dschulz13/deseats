@@ -211,7 +211,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'with \eqn{E(\epsilon_t) = 0} and short-range dependence (see for example also 
 #'Feng, 2013, for a similar model, where the stochastic term is however i.i.d.).
 #'
-#'It is assumed that \eqn{m} and \eqn{s} can be approximated by a polynomial of
+#'It is assumed that \eqn{m} and \eqn{s} can be approximated locally by a polynomial of
 #'small order and by a trigonometric polynomial, respectively. Through locally
 #'weighted regression, \eqn{m} and \eqn{s} can therefore be estimated given 
 #'a suitable bandwidth.
@@ -281,6 +281,12 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'the trend and the seasonality, any suitable parametric model, e.g. an 
 #'ARMA(\eqn{p,q}) model for \code{errors = "autocor"}, can be fitted to the 
 #'residuals (see \code{\link[stats]{arima}}).
+#'
+#'Usually, a local cubic trend (\code{smoothing_options = set_options(order_poly = 3)})
+#'gives more suitable results. Moreover, if the resulting bandwidth is too large, 
+#'adjustments to the arguments \code{inflation_rate}, \code{drop} and 
+#'\code{correction_factor} should be tried first in that order before any other changes 
+#'to the input arguments.
 #'
 #'The default print method for this function delivers key numbers such as the 
 #'bandwidth considered for smoothing.
@@ -644,9 +650,9 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'with \eqn{E(\epsilon_t) = 0} that are furthermore assumed to be independent 
 #'but identically distributed (i.i.d.).
 #'
-#'It is assumed that \eqn{m} and \eqn{s} can be approximated locally by 
-#'polynomials of
-#'small order and by a trigonometric polynomials, respectively. Through locally
+#'It is assumed that \eqn{m} and \eqn{s} can be approximated locally by a
+#'polynomial of
+#'small order and by a trigonometric polynomial, respectively. Through locally
 #'weighted regression, \eqn{m} and \eqn{s} can therefore be estimated 
 #'suitably.
 #'

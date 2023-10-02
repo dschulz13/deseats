@@ -138,7 +138,7 @@ xw <- xg                 ## weighted data matrix
  	          xg[j,1:ht] <- (th/n)**(j-1)
              if(j>v)
                   {
-	                Cj <- factorial(j)/factorial(j-v)
+	                Cj <- factorial(j-1)/factorial(j-1-v)
      	             xv[j,1:ht] <- Cj*(th/n)**(j-1-v)
                   }
 	         }
