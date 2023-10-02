@@ -39,7 +39,7 @@
 \item{value}{the value to set the corresponding option to.}
 }
 \value{
-The methods without \code{<-} return the corrsponding settings in the supplied 
+The methods without \code{<-} return the corresponding settings in the supplied 
 object. The methods with \code{<-} set the corresponding option in the 
 provided object.
 }

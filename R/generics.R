@@ -8,7 +8,7 @@
 #'
 #'@details
 #'\code{order_poly}, \code{season}, \code{kernel_fun}, \code{bwidth}, and
-#'\code{boundary_method} can be used to retrieve the order of polyonomial,
+#'\code{boundary_method} can be used to retrieve the order of polynomial,
 #'the seasonal frequency, the kernel function setting, the bandwidth and
 #'the boundary method from an object with smoothing options. The corresponding
 #'generics beginning with \code{<-} are useful to set such options instead.

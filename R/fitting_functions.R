@@ -473,7 +473,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
 
 #' Fitting of a Seasonal Semiparametric ARMA Model
 #' 
-#' Fit a seasonal semiparamteric autoregressive moving-average 
+#' Fit a seasonal semiparametric autoregressive moving-average 
 #' (S-Semi-ARMA) model to a univariate time series. The estimation is 
 #' in two steps: firstly, the series is detrended and seasonally adjusted using the
 #' function \code{\link{deseats}}. Then an ARMA model is fitted to the 

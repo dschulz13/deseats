@@ -76,7 +76,7 @@ estimation step.}
 }
 }
 \description{
-Fit a seasonal semiparamteric autoregressive moving-average 
+Fit a seasonal semiparametric autoregressive moving-average 
 (S-Semi-ARMA) model to a univariate time series. The estimation is 
 in two steps: firstly, the series is detrended and seasonally adjusted using the
 function \code{\link{deseats}}. Then an ARMA model is fitted to the 

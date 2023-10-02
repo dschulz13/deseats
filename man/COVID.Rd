@@ -3,7 +3,7 @@
 \docType{data}
 \name{COVID}
 \alias{COVID}
-\title{Daily Confirmed New Covid-19 Cases in Germany}
+\title{Daily Confirmed New COVID-19 Cases in Germany}
 \format{
 An object of class \code{ts} of length 183.
 }

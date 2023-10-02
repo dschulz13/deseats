@@ -121,7 +121,7 @@
 #'\url{https://www.dwd.de/DE/leistungen/zeitreihen/zeitreihen.html#buehneTop}
 "RAINFALL"
 
-#' Daily Confirmed New Covid-19 Cases in Germany 
+#' Daily Confirmed New COVID-19 Cases in Germany 
 #'
 #' A \code{ts} object that contains the daily confirmed new COVID-19 cases
 #' in Germany (in thousands of cases) from June 2021 to November 2021.
