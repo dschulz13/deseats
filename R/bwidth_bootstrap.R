@@ -65,10 +65,12 @@
 #'}
 #' 
 #' @examples
+#' \dontrun{
 #' xt <- log(EXPENDITURES)
 #' est <- deseats(xt, set_options(order_poly = 3))
 #' conf <- bwidth_confint(est, npaths = 200, num_cores = 2)
 #' conf
+#' }
 #' 
 
 bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, parallel = TRUE, num_cores = future::availableCores() - 1, ...) {

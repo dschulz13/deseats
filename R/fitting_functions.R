@@ -401,8 +401,10 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
   p <- det_options[["p"]]
   bb <- det_options[["bb"]]
   err <- determine_err(autocor)
-  CF <- determine_CF(correction_factor, err)
+  err_m <- determine_err_m(error_model)
+  CF <- determine_CF(correction_factor, err_m)
   bwidth <- smoothing_options@bwidth
+  
   
   # Select bandwidth automatically if required
   if (is.na(bwidth)) {
@@ -426,6 +428,9 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
   Residuals <- est[[4]]
   if (CF) {
     adjfactor <- CF_table$CF[CF_table$s == s & CF_table$p == p & CF_table$mu == mu]
+    
+    stopifnot("the use of correction_factor = TRUE inflates the bandwidth too strongly; try correction_factor = FALSE or use a smaller bandwidth" = bwidth * adjfactor <= 0.49)   
+    
     ResidsAdj <- tryCatch({
       residdeseatsCpp(y, p, s, mu, bwidth * adjfactor, bb)
     }, error = function (e1){
@@ -699,11 +704,13 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'
 BV4.1 <- function(yt, type = NULL) {
   
-  ts_name <- deparse(substitute(yt))
+  stopifnot(
+    'yt is missing without default' = !missing(yt),
+    'yt must be numeric, preferably an object of class "ts"' = is.numeric(yt),
+    'type muste be either NULL, "quarterly" or "monthly"' = is.null(type) || (length(type) == 1 && is.character(type) && type %in% c("quarterly", "monthly"))
+  )
   
-  if (!is.na(type) && length(type) == 2 && all(type) == c("monthly", "quarterly")) {
-    type = "monthly"
-  }
+  ts_name <- deparse(substitute(yt))
   
   yt <- stats::as.ts(yt)
   att <- attributes(yt)

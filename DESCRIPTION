@@ -1,6 +1,6 @@
 Package: deseats
 Type: Package
-Title: Data-driven Locally Weighted Regression for Trend and Seasonality in TS
+Title: Data-Driven Locally Weighted Regression for Trend and Seasonality in TS
 Version: 1.0.0
 Date: 2023-09-30
 Authors@R: 
