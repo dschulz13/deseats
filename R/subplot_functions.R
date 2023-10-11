@@ -33,7 +33,7 @@ plot_fit_detailed <- function(obj, ...) {
   do.call(graphics::matplot, args = dots)    
 }
 
-plot_components <- function(obj, ...) {
+plot_components <- function(obj, s_around = mean(obj@decomp[, 1]), ...) {
   dots <- list(...)
   defaults <- list(
     xlab = "Time",
@@ -46,7 +46,7 @@ plot_components <- function(obj, ...) {
   )
   dots <- set_default(dots, defaults)
   dots[["x"]] <- c(stats::time(obj@decomp))
-  dots[["y"]] <- cbind(obj@decomp[, 1], trend(obj), rep(mean(obj@decomp[, 1]), length(trend(obj))), season(obj) + mean(obj@decomp[, 1]))
+  dots[["y"]] <- cbind(obj@decomp[, 1], trend(obj), rep(s_around, length(trend(obj))), season(obj) + s_around)
   
   do.call(graphics::matplot, args = dots)   
 }
@@ -228,12 +228,12 @@ plot_fit_detailed_gg <- function(obj, ...) {
 
 }
 
-plot_components_gg <- function(obj, ...) {
+plot_components_gg <- function(obj, s_around = mean(obj@decomp[, 1]), ...) {
     n <- length(obj@decomp[, 1])
     t <- c(stats::time(obj@decomp))
     obs <- as.numeric(obj@decomp[, 1])
     trend_v <- as.numeric(obj@decomp[, 2])
-    middle_v <- rep(mean(obs), n)
+    middle_v <- rep(s_around, n)
     season_v <- as.numeric(season(obj))
     lo <- length(obs)
     lf <- length(trend_v)
@@ -243,7 +243,7 @@ plot_components_gg <- function(obj, ...) {
 
     df <- data.frame(
       Time = rep(t, 3),
-      Value = c(obs, trend_v, season_v + mean(obs)),
+      Value = c(obs, trend_v, season_v + s_around),
       Series = factor(c(rep(1:3, each = n)), labels = c("Observations", "Estimated trend", "Estimated seasonality"))
     )
     df2 <- data.frame(

@@ -44,6 +44,11 @@ Plots are created in the base R plot style. The type of plot can be chosen
 either interactively from the console, or the argument \code{which} can be 
 used to directly  select the kind of plot to create (see also the description
 of the argument \code{which}) within the function call.
+
+If plot type 5 (\code{which = 5}) is selected, the estimated 
+seasonality will be displayed around the mean of the observations by default.
+Setting the additional argument \code{s_around} to some other value, will lead 
+to the seasonality being displayed around that constant value.
 }
 \examples{
 
