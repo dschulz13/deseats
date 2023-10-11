@@ -37,8 +37,7 @@ plot_components <- function(obj, s_around = mean(obj@decomp[, 1]), ...) {
   dots <- list(...)
   defaults <- list(
     xlab = "Time",
-    main = paste0('The estimated trend and seasonality (displayed around',
-                  '\nthe series mean) in the time series "', obj@ts_name, '"'),
+    main = paste0('The estimated trend and seasonality (possibly shifted) in the time series "', obj@ts_name, '"'),
     ylab = obj@ts_name,
     col = c("grey60", "red", "lightgray", "blue"),
     lty = c(1, 1, 2, 1),
@@ -256,8 +255,7 @@ plot_components_gg <- function(obj, s_around = mean(obj@decomp[, 1]), ...) {
                          color = "lightgray", inherit.aes = FALSE,
                          linetype = "dashed") +
       ggplot2::geom_line(data = df, ggplot2::aes(x = .data[["Time"]], y = .data[["Value"]], color = .data[["Series"]]), inherit.aes = FALSE) +
-      ggplot2::ggtitle(paste0('The estimated trend and seasonality (displayed around',
-                  '\nthe series mean) in the time series "', obj@ts_name, '"')) +
+      ggplot2::ggtitle(paste0('The estimated trend and seasonality (possibly shifted) in the time series "', obj@ts_name, '"')) +
       ggplot2::ylab(obj@ts_name) +
       ggplot2::scale_color_manual(values = c("grey60", "red", "blue"))
     
