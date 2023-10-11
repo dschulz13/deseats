@@ -35,6 +35,7 @@
 #'\item{\code{\link{CONSUMPTION}}:}{real final consumption expenditure for Australia.}
 #'\item{\code{\link{COVID}}:}{new COVID-19 cases in Germany.}
 #'\item{\code{\link{DEATHS}}:}{recorded number of deaths in Germany.}
+#'\item{\code{\link{ENERGY}}:}{production and distribution of electricity, gas, steam and air conditioning in Germany.}
 #'\item{\code{\link{EXPENDITURES}}:}{consumption expenditures in the USA.}
 #'\item{\code{\link{GDP}}:}{GDP of the USA.}
 #'\item{\code{\link{HOUSES}}:}{new one family houses sold in the USA.}
@@ -42,6 +43,7 @@
 #'\item{\code{\link{NOLABORFORCE}}:}{number of persons in the USA not belonging 
 #'to the labor force.}
 #'\item{\code{\link{RAINFALL}}:}{average amount of rain in Germany.}
+#'\item{\code{\link{RETAIL}}:}{Retail sale volume in Germany.}
 #'\item{\code{\link{SAVINGS}}:}{savings of private households in Germany.}
 #'\item{\code{\link{SUNSHINE}}:}{average hours of sunshine in Germany.}
 #'\item{\code{\link{TEMPERATURE}}:}{average temperature in Germany.}

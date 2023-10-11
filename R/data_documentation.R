@@ -181,3 +181,35 @@
 #'
 #'\url{https://fred.stlouisfed.org/series/HSN1FNSA}
 "HOUSES"
+
+#' Monthly Total Production and Distribution of Electricity, Gas, Steam, and Air Conditioning for Germany
+#'
+#' A \code{ts} object that contains the monthly production and distribution 
+#' of electricity gas steam, and air conditioning for Germany (Index 2015 = 100) 
+#' from January 1991 
+#' to June 2023. The object contains 390 observations.
+#' 
+#'@source The data was obtained from the databank of the Federal Reserve Bank 
+#'of St. Louis
+#'(accessed: 2023-10-11) and 
+#'then transformed into a time series
+#'object using R. 
+#'
+#'\url{https://fred.stlouisfed.org/series/DEUPREND401IXOBM}
+"ENERGY"
+
+#' Monthly Total Volume of Retail Trade in Germany 
+#'
+#' A \code{ts} object that contains the monthly total volume of retail trade 
+#' in Germany (Index 2015 = 100)
+#' from January 1991 
+#' to December 2019. The object contains 348 observations.
+#' 
+#'@source The data was obtained from the databank of the Federal Reserve Bank 
+#'of St. Louis
+#'(accessed: 2023-10-11) and 
+#'then transformed into a time series
+#'object using R. 
+#'
+#'\url{https://fred.stlouisfed.org/series/DEUSLRTTO01IXOBM}
+"RETAIL"
