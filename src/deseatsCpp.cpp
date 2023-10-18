@@ -669,7 +669,7 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
   const double mukp = arma::accu(arma::pow(u, k) % wkp) / m;  
   
   const double c1 = std::pow(factorialCpp(k), 2.0) / (2 * k);
-  const double c2 = (1.0 - 2.0 * cb) * (Rp + (s - 1.0) * R2) / std::pow(mukp, 2.0);  
+  const double c2 = (1.0 - 2.0 * cb) * (Rp + (s - 1.0) * R2) / std::pow(mukp, 2.0);
   
   const int itMax = 20;
   
