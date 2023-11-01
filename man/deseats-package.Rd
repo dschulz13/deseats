@@ -17,7 +17,9 @@ algorithms by Feng (2013) and Feng et al. (2020). For comparison,
 a simplified version of the BV4.1 (Berlin Procedure 4.1, Speth, 2004), is 
 implemented as well that allows to implement the BV4.1 base model (trend 
 component + seasonality component + irregular component) without any 
-of the additional BV4.1 components (such as the calendar component).
+of the additional BV4.1 components (such as the calendar component). 
+Permission to include the BV4.1 base model procedure was kindly provided by 
+the Federal Statistical Office of Germany.
 }
 \section{Main Functions}{
 

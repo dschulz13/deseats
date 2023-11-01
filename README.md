@@ -20,7 +20,8 @@ DeSeaTS (deseasonalize time series) for locally weighted regression with
 an automatically selected bandwidth. DeSeaTS accounts for possible
 short-range dependence in the underlying error process. Furthermore, the
 base model of the BV4.1 (Berlin Procedure 4.1) can be considered as
-well.
+well. Permission to include the BV4.1 base model procedure was kindly
+provided by the Federal Statistical Office of Germany.
 
 ## Installation
 

@@ -672,6 +672,9 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
 #'only weighted sums of the observations (with already obtained weights) have 
 #'to be obtained at all time points. Thus, this procedure is quite fast.
 #'
+#'Permission to include the BV4.1 base model procedure was kindly provided by 
+#'the Federal Statistical Office of Germany.
+#'
 #'@export
 #'
 #'@references
