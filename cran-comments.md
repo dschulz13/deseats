@@ -39,6 +39,26 @@ These are spelled correctly.
     
 The README makes use of the ```badger``` package to display badges such as results from CRAN. Since this package is not yet published on CRAN, the URL does indeed not yet exist, however, it is expected that the URL becomes valid alongside the publication on CRAN.
 
+* Found the following (possibly) invalid DOIs:
+    DOI: 10.1080/02664763.2012.740626
+      From: DESCRIPTION
+      Status: Forbidden
+      Message: 403
+    DOI: 10.1080/10485252.2020.1759598
+      From: DESCRIPTION
+      Status: Forbidden
+      Message: 403
+
+These DOIs are valid. This appears also only on oldrelease-win-builder.
+
+* Found the following (possibly) invalid URLs:
+    URL: https://www.destatis.de/DE/Methoden/Saisonbereinigung/BV41-methodenbericht-Heft3_2004.pdf?__blob=publicationFile
+      From: DESCRIPTION
+      Status: 400
+      Message: Bad Request
+
+This appears only for devel-win-builder. The URL is however valid.
+
 ## macOS-builder check results
 
 0 errors | 0 warnings | 1 note
