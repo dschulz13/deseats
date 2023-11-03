@@ -33,10 +33,12 @@ create_deseats_fc <- function(pred, interv, obs, ts_name) {
 #'An object of class \code{"deseats_fc"} is returned.
 #'
 #'@examples
+#'\dontrun{
 #'est <- s_semiarma(log(EXPENDITURES), set_options(order_poly = 3))
 #'fc <- predict(est, n.ahead = 8)
 #'fc2 <- expo(fc)
 #'fc2
+#'}
 #'
 
 setMethod("expo", "deseats_fc", function(object, ...) {
@@ -77,10 +79,12 @@ setMethod("expo", "deseats_fc", function(object, ...) {
 #'@export
 #'
 #'@examples
+#'\dontrun{
 #'est <- s_semiarma(log(EXPENDITURES))
 #'fc <- predict(est, n.ahead = 4)
 #'fc_e <- expo(fc)
 #'plot(fc_e)
+#'}
 #'
 
 setMethod("plot", "deseats_fc", function(x, y = NULL, ...) {
@@ -156,10 +160,12 @@ setMethod("plot", "deseats_fc", function(x, y = NULL, ...) {
 #'@export
 #'
 #'@examples
+#'\dontrun{
 #'est <- s_semiarma(log(EXPENDITURES))
 #'fc <- predict(est, n.ahead = 4)
 #'fc_e <- expo(fc)
 #'autoplot(fc_e)
+#'}
 #'
 
 setMethod("autoplot", "deseats_fc", function(object, ...) {

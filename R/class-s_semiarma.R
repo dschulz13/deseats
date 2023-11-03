@@ -81,9 +81,11 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 #'}
 #'
 #'@examples
+#'\dontrun{
 #'xt <- log(EXPENDITURES)
 #'est <- s_semiarma(xt)
 #'predict(est, n.ahead = 10)
+#'}
 #'
 
 methods::setMethod("predict", "s_semiarma", 

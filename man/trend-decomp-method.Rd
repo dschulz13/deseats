@@ -43,6 +43,7 @@ the result of a decomposition of a seasonal time series, in order
 to retrieve individual estimated components.
 }
 \examples{
+\dontrun{
 Xt <- log(EXPENDITURES)
 smoothing_options <- set_options(order_poly = 3)
 est <- deseats(Xt, smoothing_options = smoothing_options)
@@ -52,5 +53,6 @@ trend_season_e <- fitted(est)   # Trend + seasonality estimates
 resid_e <- residuals(est)       # Residuals (observ. - trend - seasonality)
 ts_adj <- deseasonalize(est)    # Seasonally adjusted series
 ts_notrend <- detrend(est)      # Detrended series
+}
 
 }

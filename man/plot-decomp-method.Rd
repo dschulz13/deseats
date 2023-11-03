@@ -51,7 +51,6 @@ Setting the additional argument \code{s_around} to some other value, will lead
 to the seasonality being displayed around that constant value.
 }
 \examples{
-
 Xt <- log(EXPENDITURES)
 est <- deseats(Xt)
 plot(est, which = 3)

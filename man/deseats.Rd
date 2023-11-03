@@ -214,12 +214,13 @@ of the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
 better performance.
 }
 \examples{
-
+\dontrun{
 Xt <- log(EXPENDITURES)
 smoothing_options <- set_options(order_poly = 3)
 est <- deseats(Xt, smoothing_options = smoothing_options)
 est
 plot(est, which = 1)
+}
 
 }
 \references{

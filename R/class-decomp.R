@@ -63,7 +63,6 @@ setClass("decomp",
 #'}
 #'
 #'@examples
-#'
 #'Xt <- log(EXPENDITURES)
 #'est <- deseats(Xt)
 #'plot(est, which = 3)
@@ -157,10 +156,11 @@ setMethod("plot", "decomp", function(x, which = NULL, ...) {
 #'}
 #'
 #'@examples
-#'
+#'\dontrun{
 #'Xt <- log(EXPENDITURES)
 #'est <- deseats(Xt)
 #'autoplot(est, which = 3)
+#'}
 #'
 
 setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
@@ -220,6 +220,7 @@ setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
 #'@export
 #'
 #'@examples
+#'\dontrun{
 #'Xt <- log(EXPENDITURES)
 #'smoothing_options <- set_options(order_poly = 3)
 #'est <- deseats(Xt, smoothing_options = smoothing_options)
@@ -229,6 +230,7 @@ setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
 #'resid_e <- residuals(est)       # Residuals (observ. - trend - seasonality)
 #'ts_adj <- deseasonalize(est)    # Seasonally adjusted series
 #'ts_notrend <- detrend(est)      # Detrended series
+#'}
 #'
 
 methods::setMethod("trend", "decomp", function(object, ...) {

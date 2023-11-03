@@ -25,6 +25,7 @@ accuracy measures (MAE, RMSE, Pearson's correlation, MASE, RMSSE) are being
 calculated.
 }
 \examples{
+\dontrun{
 xt <- EXPENDITURES
 xt_in <- window(xt, end = c(2017, 4))
 yt <- log(xt_in)
@@ -32,5 +33,6 @@ est <- s_semiarma(yt, set_options(order_poly = 3), inflation_rate = "optimal")
 fc_results <- predict(est, n.ahead = 8, expo = TRUE)
 point_fc <- fc_results@pred
 measures(point_fc, xt)
+}
 
 }

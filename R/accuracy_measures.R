@@ -59,6 +59,7 @@ rmsse <- function(preds, obs) {
 #'
 #'
 #'@examples
+#'\dontrun{
 #'xt <- EXPENDITURES
 #'xt_in <- window(xt, end = c(2017, 4))
 #'yt <- log(xt_in)
@@ -66,6 +67,7 @@ rmsse <- function(preds, obs) {
 #'fc_results <- predict(est, n.ahead = 8, expo = TRUE)
 #'point_fc <- fc_results@pred
 #'measures(point_fc, xt)
+#'}
 #'
 
 measures <- function(preds, obs) {

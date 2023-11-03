@@ -29,9 +29,11 @@ bandwidth for locally weighted regression. Using this method,
 the applied bandwidth can be retrieved.
 }
 \examples{
+\dontrun{
 Xt <- log(EXPENDITURES)
 smoothing_options <- set_options(order_poly = 3)
 est <- deseats(Xt, smoothing_options = smoothing_options)
 bwidth(est)
+}
 
 }

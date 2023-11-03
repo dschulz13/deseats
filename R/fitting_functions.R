@@ -368,12 +368,13 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'}
 #'
 #'@examples
-#'
+#'\dontrun{
 #'Xt <- log(EXPENDITURES)
 #'smoothing_options <- set_options(order_poly = 3)
 #'est <- deseats(Xt, smoothing_options = smoothing_options)
 #'est
 #'plot(est, which = 1)
+#'}
 #'
 
 deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA")) {
@@ -570,10 +571,11 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
 #'}
 #'
 #'@examples
-#'
+#'\dontrun{
 #'Xt <- log(EXPENDITURES)
 #'est <- s_semiarma(Xt)
 #'est
+#'}
 #'
 s_semiarma <- function(yt, smoothing_options = set_options(),
                        arma_options = list(ar_order = NULL, ma_order = NULL),

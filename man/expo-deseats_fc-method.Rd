@@ -19,9 +19,11 @@ Exponentiate, i.e. as act of retransformation, (point and interval) forecasts
 obtained via the \code{deseats} package.
 }
 \examples{
+\dontrun{
 est <- s_semiarma(log(EXPENDITURES), set_options(order_poly = 3))
 fc <- predict(est, n.ahead = 8)
 fc2 <- expo(fc)
 fc2
+}
 
 }

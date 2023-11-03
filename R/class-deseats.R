@@ -352,10 +352,12 @@ if (is.null(save)) {
 #'smoothing procedure is returned.
 #'
 #'@examples
+#'\dontrun{
 #'Xt <- log(EXPENDITURES)
 #'smoothing_options <- set_options(order_poly = 3)
 #'est <- deseats(Xt, smoothing_options = smoothing_options)
 #'bwidth(est)
+#'}
 #'
 setMethod("bwidth", "deseats",
   function(object){

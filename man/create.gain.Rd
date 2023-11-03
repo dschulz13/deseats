@@ -37,12 +37,15 @@ corresponding index \eqn{j} is important for the order of the argument
 \code{filter.coefs}.
 }
 \examples{
+
 # Moving average with smoothing over three values
 a <- 1 / 3
 gain_ma <- create.gain(rep(a, 3))
 lambda <- seq(0, 0.5, 0.001)
 GF <- gain_ma(lambda)
 plot(lambda, GF, type = "l")
+
+
 
 # First differences filter
 b <- c(1, -1)
@@ -51,6 +54,7 @@ lambda <- seq(0, 0.5, 0.001)
 GF2 <- gain_diff(lambda)
 plot(lambda, GF2, type = "l")
 
+\dontrun{
 # For a fully data-driven local linear trend + 
 # trigonometric polynomial seasonality
 # (Note: we get various filters for different observation time points)
@@ -106,6 +110,7 @@ title(
     "point"
   )
 )
+}
 
 }
 \author{

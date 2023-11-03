@@ -40,6 +40,7 @@ domain. Using this method, those gain function values can be easily
 obtained.
 }
 \examples{
+\dontrun{
 xt <- log(EXPENDITURES)
 est <- deseats(xt)
 
@@ -64,6 +65,7 @@ matplot(lambda, t(gain_values$gain_deseason[1:(k + 1), ]),
  type = paste0(rep("l", k + 1), collapse = ""),
  col = cols, lty = rep(1, k + 1))
 title("Gain functions of the seasonal adjustment filters")
+} 
 
 }
 \author{
