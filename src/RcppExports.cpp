@@ -28,18 +28,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// JumpVarsBV41Cpp
-arma::mat JumpVarsBV41Cpp(arma::vec& jumpPoints, const int n);
-RcppExport SEXP _deseats_JumpVarsBV41Cpp(SEXP jumpPointsSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec& >::type jumpPoints(jumpPointsSEXP);
-    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(JumpVarsBV41Cpp(jumpPoints, n));
-    return rcpp_result_gen;
-END_RCPP
-}
 // ARinftySHORT
 arma::vec ARinftySHORT(const arma::vec& ar, const arma::rowvec& ma, const int max_i);
 RcppExport SEXP _deseats_ARinftySHORT(SEXP arSEXP, SEXP maSEXP, SEXP max_iSEXP) {
@@ -87,57 +75,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec& >::type ma(maSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type d_coef(d_coefSEXP);
     rcpp_result_gen = Rcpp::wrap(MAinftyLONG(ma, d_coef));
-    return rcpp_result_gen;
-END_RCPP
-}
-// acovmatCpp
-arma::mat acovmatCpp(const arma::vec& xt, const int M);
-RcppExport SEXP _deseats_acovmatCpp(SEXP xtSEXP, SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type xt(xtSEXP);
-    Rcpp::traits::input_parameter< const int >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(acovmatCpp(xt, M));
-    return rcpp_result_gen;
-END_RCPP
-}
-// kappaCpp
-arma::vec kappaCpp(const arma::mat& acovmat);
-RcppExport SEXP _deseats_kappaCpp(SEXP acovmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type acovmat(acovmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(kappaCpp(acovmat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// calendarCondValsCpp
-Rcpp::List calendarCondValsCpp(const arma::vec& xt, const int M, const double v, const arma::vec& kappa);
-RcppExport SEXP _deseats_calendarCondValsCpp(SEXP xtSEXP, SEXP MSEXP, SEXP vSEXP, SEXP kappaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type xt(xtSEXP);
-    Rcpp::traits::input_parameter< const int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< const double >::type v(vSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type kappa(kappaSEXP);
-    rcpp_result_gen = Rcpp::wrap(calendarCondValsCpp(xt, M, v, kappa));
-    return rcpp_result_gen;
-END_RCPP
-}
-// outlierDetectBV41Cpp
-Rcpp::List outlierDetectBV41Cpp(arma::vec xt, const double tau, const int M, const int forward);
-RcppExport SEXP _deseats_outlierDetectBV41Cpp(SEXP xtSEXP, SEXP tauSEXP, SEXP MSEXP, SEXP forwardSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type xt(xtSEXP);
-    Rcpp::traits::input_parameter< const double >::type tau(tauSEXP);
-    Rcpp::traits::input_parameter< const int >::type M(MSEXP);
-    Rcpp::traits::input_parameter< const int >::type forward(forwardSEXP);
-    rcpp_result_gen = Rcpp::wrap(outlierDetectBV41Cpp(xt, tau, M, forward));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -408,15 +345,10 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_deseats_BV41filterCpp", (DL_FUNC) &_deseats_BV41filterCpp, 7},
-    {"_deseats_JumpVarsBV41Cpp", (DL_FUNC) &_deseats_JumpVarsBV41Cpp, 2},
     {"_deseats_ARinftySHORT", (DL_FUNC) &_deseats_ARinftySHORT, 3},
     {"_deseats_MAinftySHORT", (DL_FUNC) &_deseats_MAinftySHORT, 3},
     {"_deseats_ARinftyLONG", (DL_FUNC) &_deseats_ARinftyLONG, 2},
     {"_deseats_MAinftyLONG", (DL_FUNC) &_deseats_MAinftyLONG, 2},
-    {"_deseats_acovmatCpp", (DL_FUNC) &_deseats_acovmatCpp, 2},
-    {"_deseats_kappaCpp", (DL_FUNC) &_deseats_kappaCpp, 1},
-    {"_deseats_calendarCondValsCpp", (DL_FUNC) &_deseats_calendarCondValsCpp, 4},
-    {"_deseats_outlierDetectBV41Cpp", (DL_FUNC) &_deseats_outlierDetectBV41Cpp, 4},
     {"_deseats_fcastCpp", (DL_FUNC) &_deseats_fcastCpp, 5},
     {"_deseats_tfcastCpp", (DL_FUNC) &_deseats_tfcastCpp, 6},
     {"_deseats_seqCpp", (DL_FUNC) &_deseats_seqCpp, 2},

@@ -57,7 +57,7 @@ These DOIs are valid. This appears also only on oldrelease-win-builder.
       Status: 400
       Message: Bad Request
 
-This appears only for devel-win-builder. The URL is however valid.
+The URL is however valid.
 
 ## macOS-builder check results
 
@@ -87,7 +87,7 @@ These are caused by the R-hub-builder itself.
 
 ### Fedora Linux [R-devel, clang, gfortran]
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 3 notes
 
 #### Notes
 
@@ -97,6 +97,19 @@ These are caused by the R-hub-builder itself.
   New submission
   
 Same as stated for the win-builder.
+
+* checking installed package size ... NOTE
+  installed size is  5.7Mb
+  sub-directories of 1Mb or more:
+    libs   4.9Mb
+    
+Same as stated for the macOS-builder.
+
+* checking HTML version of manual ... NOTE
+  Skipping checking HTML validation: no command 'tidy' found
+  Skipping checking math rendering: package 'V8' unavailable
+
+This is unrelated to the package.
 
 #### Others
 

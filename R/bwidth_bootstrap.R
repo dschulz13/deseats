@@ -15,7 +15,7 @@
 #' @param blocklen a numerical vector of length one that indicates the average 
 #' block length to be drawn from the detrended series; the default is 
 #' \code{NULL}, which means \code{8} for quarterly and \code{24} for monthly 
-#' data; selecting a suitable expected blocklength and checking the sensivity 
+#' data; selecting a suitable expected blocklength and checking the sensitivity 
 #' of the blocklength are left for the user.
 #' @param npaths a numeric vector of length one that indicates the number of
 #' bootstrap paths; the default is \code{npaths = 1000}.

@@ -21,7 +21,7 @@ estimation results returned by for example the function
 \item{blocklen}{a numerical vector of length one that indicates the average 
 block length to be drawn from the detrended series; the default is 
 \code{NULL}, which means \code{8} for quarterly and \code{24} for monthly 
-data; selecting a suitable expected blocklength and checking the sensivity 
+data; selecting a suitable expected blocklength and checking the sensitivity 
 of the blocklength are left for the user.}
 
 \item{npaths}{a numeric vector of length one that indicates the number of

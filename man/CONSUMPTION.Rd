@@ -21,7 +21,7 @@ CONSUMPTION
 }
 \description{
 A \code{ts} object that contains the quarterly real final consumption 
-expanditure (in thousands of domestic currency) from the third quarter of 1959 
+expenditure (in thousands of domestic currency) from the third quarter of 1959 
 to the last quarter in  2019. The object contains 242 observations.
 }
 \keyword{datasets}

@@ -155,7 +155,7 @@
 #' Quarterly Real Final Consumption Expenditure for Australia
 #'
 #' A \code{ts} object that contains the quarterly real final consumption 
-#' expanditure (in thousands of domestic currency) from the third quarter of 1959 
+#' expenditure (in thousands of domestic currency) from the third quarter of 1959 
 #' to the last quarter in  2019. The object contains 242 observations.
 #' 
 #'@source The data was obtained from the databank of the Federal Reserve Bank 
