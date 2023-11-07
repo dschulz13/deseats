@@ -19,7 +19,15 @@
 #'}
 #' 
 #'@export
-#' 
+#'
+#'@details
+#'A generic that can be extended by methods to automatically obtain gain 
+#'function values of linear filters described in certain objects.
+#'
+#'@return
+#'This generic does not return anything and is just the basis for more 
+#'sophisticated methods.
+#'
 
 methods::setGeneric(
   "gain", 
@@ -68,7 +76,7 @@ methods::setGeneric(
 #'}
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'xt <- log(EXPENDITURES)
 #'est <- deseats(xt)
 #'
@@ -291,7 +299,7 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
 #' GF2 <- gain_diff(lambda)
 #' plot(lambda, GF2, type = "l")
 #' 
-#' \dontrun{
+#' \donttest{
 #' # For a fully data-driven local linear trend + 
 #' # trigonometric polynomial seasonality
 #' # (Note: we get various filters for different observation time points)

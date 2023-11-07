@@ -65,7 +65,7 @@ values (trend + seasonality), the smoothing window, the fitted values from
 the local regression, and the active kernel weights.
 }
 \examples{
-\dontrun{
+\donttest{
 ### Creating the animation might take a while
 Xt <- log(EXPENDITURES)
 smoothing_options <- set_options(order_poly = 3)

@@ -70,7 +70,7 @@ sequential or parallel programming, and then also regardless of
 the number of workers, is employed.
 }
 \examples{
-\dontrun{
+\donttest{
 xt <- log(EXPENDITURES)
 est <- deseats(xt, set_options(order_poly = 3))
 conf <- bwidth_confint(est, npaths = 200, num_cores = 2)

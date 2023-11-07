@@ -49,7 +49,7 @@ Setting the additional argument \code{s_around} to some other value, will lead
 to the seasonality being displayed around that constant value.
 }
 \examples{
-\dontrun{
+\donttest{
 Xt <- log(EXPENDITURES)
 est <- deseats(Xt)
 autoplot(est, which = 3)

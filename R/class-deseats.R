@@ -124,7 +124,7 @@ setMethod("show", "deseats",
 #'The function returns \code{NULL}.
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'### Creating the animation might take a while
 #'Xt <- log(EXPENDITURES)
 #'smoothing_options <- set_options(order_poly = 3)
@@ -352,7 +352,7 @@ if (is.null(save)) {
 #'smoothing procedure is returned.
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'Xt <- log(EXPENDITURES)
 #'smoothing_options <- set_options(order_poly = 3)
 #'est <- deseats(Xt, smoothing_options = smoothing_options)

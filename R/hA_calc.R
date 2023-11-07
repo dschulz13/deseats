@@ -50,6 +50,7 @@
 #'}
 #'
 #'@examples
+#'\donttest{
 #'arma <- list(ar = 0.8, sd_e = 0.01)
 #'m_f <- expression(13.1 + 3.1 * x + (dnorm(x / 0.15 - 0.5 / 0.15) / 0.15) / 4)
 #'n <- 500
@@ -85,6 +86,7 @@
 #'est <- deseats(yt)
 #'est@bwidth
 #'est@sum_autocov
+#'}
 #'
 
 

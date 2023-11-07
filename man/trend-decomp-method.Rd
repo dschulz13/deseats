@@ -43,7 +43,7 @@ the result of a decomposition of a seasonal time series, in order
 to retrieve individual estimated components.
 }
 \examples{
-\dontrun{
+\donttest{
 Xt <- log(EXPENDITURES)
 smoothing_options <- set_options(order_poly = 3)
 est <- deseats(Xt, smoothing_options = smoothing_options)

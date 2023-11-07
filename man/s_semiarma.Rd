@@ -96,7 +96,7 @@ those in \code{\link[deseats]{deseats}}. If all elements in
 selected from \eqn{p, q = 0, 1, 2, 3} according to the BIC.
 }
 \examples{
-\dontrun{
+\donttest{
 Xt <- log(EXPENDITURES)
 est <- s_semiarma(Xt)
 est

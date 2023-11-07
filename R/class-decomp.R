@@ -156,7 +156,7 @@ setMethod("plot", "decomp", function(x, which = NULL, ...) {
 #'}
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'Xt <- log(EXPENDITURES)
 #'est <- deseats(Xt)
 #'autoplot(est, which = 3)
@@ -220,7 +220,7 @@ setMethod("autoplot", "decomp", function(object, which = NULL, ...) {
 #'@export
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'Xt <- log(EXPENDITURES)
 #'smoothing_options <- set_options(order_poly = 3)
 #'est <- deseats(Xt, smoothing_options = smoothing_options)

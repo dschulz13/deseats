@@ -75,7 +75,7 @@ Pass the resulting object to this method, in order to obtain point and
 interval forecasts.
 }
 \examples{
-\dontrun{
+\donttest{
 xt <- log(EXPENDITURES)
 est <- s_semiarma(xt)
 predict(est, n.ahead = 10)

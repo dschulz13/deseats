@@ -65,7 +65,7 @@
 #'}
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' xt <- log(EXPENDITURES)
 #' est <- deseats(xt, set_options(order_poly = 3))
 #' conf <- bwidth_confint(est, npaths = 200, num_cores = 2)
@@ -137,8 +137,6 @@ bwidth_confint <- function(nonpar_model, blocklen = NULL, npaths = 1000, paralle
     .options = furrr::furrr_options(seed = TRUE),
     .progress = TRUE
   )
-  
-  cat("", fill = TRUE)
   
   out <- list(
     conf = c(

@@ -41,6 +41,10 @@ an option.}
 
 \item{...}{without use; implemented for possible future compatibility only.}
 }
+\value{
+These generics do not return anything and are just the basis for more 
+sophisticated methods.
+}
 \description{
 Various generics that can be used write methods to either retrieve or set 
 smoothing options.
@@ -53,4 +57,7 @@ the boundary method from an object with smoothing options. The corresponding
 generics beginning with \code{<-} are useful to set such options instead.
 
 The generics themselves are without a direct purpose.
+
+Generics that can be extended by methods to set or obtain settings (e.g.
+smoothing options) in certain objects.
 }

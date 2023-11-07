@@ -15,6 +15,10 @@ to obtain the gain function.}
 
 \item{...}{currently without use; for possible future compatibility.}
 }
+\value{
+This generic does not return anything and is just the basis for more 
+sophisticated methods.
+}
 \description{
 Gain Function Generic
 }
@@ -22,6 +26,9 @@ Gain Function Generic
 A standard generic function. The purpose is to build various methods 
 to instantaneously obtain gain function values for linear filters of 
 different decomposition objects.
+
+A generic that can be extended by methods to automatically obtain gain 
+function values of linear filters described in certain objects.
 }
 \author{
 \itemize{

@@ -368,7 +368,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'}
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'Xt <- log(EXPENDITURES)
 #'smoothing_options <- set_options(order_poly = 3)
 #'est <- deseats(Xt, smoothing_options = smoothing_options)
@@ -571,7 +571,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
 #'}
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'Xt <- log(EXPENDITURES)
 #'est <- s_semiarma(Xt)
 #'est

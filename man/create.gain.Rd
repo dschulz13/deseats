@@ -54,7 +54,7 @@ lambda <- seq(0, 0.5, 0.001)
 GF2 <- gain_diff(lambda)
 plot(lambda, GF2, type = "l")
 
-\dontrun{
+\donttest{
 # For a fully data-driven local linear trend + 
 # trigonometric polynomial seasonality
 # (Note: we get various filters for different observation time points)

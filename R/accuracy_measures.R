@@ -59,7 +59,7 @@ rmsse <- function(preds, obs) {
 #'
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'xt <- EXPENDITURES
 #'xt_in <- window(xt, end = c(2017, 4))
 #'yt <- log(xt_in)

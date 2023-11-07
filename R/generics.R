@@ -16,6 +16,15 @@
 #'The generics themselves are without a direct purpose. 
 #'
 #'@export
+#'
+#'@details
+#'Generics that can be extended by methods to set or obtain settings (e.g.
+#'smoothing options) in certain objects.
+#'
+#'@return
+#'These generics do not return anything and are just the basis for more 
+#'sophisticated methods.
+#'
 methods::setGeneric("order_poly", function(object) standardGeneric("order_poly"))
 #'@rdname order_poly
 #'
@@ -66,6 +75,15 @@ methods::setGeneric("boundary_method<-", function(object, value) standardGeneric
 #'@param ... currently without use; included for future compatibility.
 #'
 #'@export
+#'
+#'@details
+#'Generics that can be extended by methods to obtain (estimated) time series
+#'components from certain estimation objects.
+#'
+#'@return
+#'These generics do not return anything and are just the basis for more 
+#'sophisticated methods.
+#'
 methods::setGeneric("trend", function(object, ...) standardGeneric("trend"))
 
 #'@rdname trend
@@ -90,6 +108,15 @@ methods::setGeneric("detrend", function(object, ...) standardGeneric("detrend"))
 #'@param ... currently of no use; included for future compatibility.
 #'
 #'@export
+#'
+#'@details
+#'A generic that can be extended by methods to automatically create animations 
+#'based on certain objects.
+#'
+#'@return
+#'This generic does not return anything and is just the basis for more 
+#'sophisticated methods.
+#'
 methods::setGeneric("animate", function(object, ...) standardGeneric("animate"))
 
 #------------------------------------------#
@@ -103,4 +130,13 @@ methods::setGeneric("animate", function(object, ...) standardGeneric("animate"))
 #'@param ... currently of no use; included for future compatibility.
 #'
 #'@export
+#'
+#'@details
+#'A generic that can be extended by methods to exponentiate the numeric 
+#'information in certain objects.
+#'
+#'@return
+#'This generic does not return anything and is just the basis for more 
+#'sophisticated methods.
+#'
 methods::setGeneric("expo", function(object, ...) standardGeneric("expo"))

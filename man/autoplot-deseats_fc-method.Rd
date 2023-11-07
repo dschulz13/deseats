@@ -26,7 +26,7 @@ Semi-ARMA model. Common plot arguments can be implemented to change the
 appearance.
 }
 \examples{
-\dontrun{
+\donttest{
 est <- s_semiarma(log(EXPENDITURES))
 fc <- predict(est, n.ahead = 4)
 fc_e <- expo(fc)

@@ -85,7 +85,7 @@ zoo_to_ts <- function(xt) {
 #'@importFrom utils read.table
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #'### Create an example data file
 #'a <- 1:12
 #'b <- 21:32
@@ -95,11 +95,14 @@ zoo_to_ts <- function(xt) {
 #'  a = a,
 #'  b = b
 #')
-#'write.table(df, file = "ExampleFile.csv", quote = FALSE, sep = ",",
+#'
+#'file <- paste0(tempdir(), "\\ExampleFile.csv")
+#'
+#'write.table(df, file = file, quote = FALSE, sep = ",",
 #'  row.names = FALSE, col.names = TRUE)
 #'  
 #'### Use the function to read in the data
-#'xt <- read_ts("ExampleFile.csv")
+#'xt <- read_ts(file)
 #'xt
 #'}
 #'

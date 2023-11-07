@@ -40,7 +40,7 @@ domain. Using this method, those gain function values can be easily
 obtained.
 }
 \examples{
-\dontrun{
+\donttest{
 xt <- log(EXPENDITURES)
 est <- deseats(xt)
 

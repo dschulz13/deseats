@@ -11,7 +11,15 @@ animate(object, ...)
 
 \item{...}{currently of no use; included for future compatibility.}
 }
+\value{
+This generic does not return anything and is just the basis for more 
+sophisticated methods.
+}
 \description{
 A generic that is the basis for methods that allow the user to create 
 specific animations on-the-fly.
+}
+\details{
+A generic that can be extended by methods to automatically create animations 
+based on certain objects.
 }

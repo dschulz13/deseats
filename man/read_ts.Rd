@@ -53,7 +53,7 @@ of the input data into an object of class \code{"ts"} or \code{"mts"} for
 the user.
 }
 \examples{
-\dontrun{
+\donttest{
 ### Create an example data file
 a <- 1:12
 b <- 21:32
@@ -63,11 +63,14 @@ df <- data.frame(
  a = a,
  b = b
 )
-write.table(df, file = "ExampleFile.csv", quote = FALSE, sep = ",",
+
+file <- paste0(tempdir(), "\\\\ExampleFile.csv")
+
+write.table(df, file = file, quote = FALSE, sep = ",",
  row.names = FALSE, col.names = TRUE)
  
 ### Use the function to read in the data
-xt <- read_ts("ExampleFile.csv")
+xt <- read_ts(file)
 xt
 }
 

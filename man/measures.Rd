@@ -25,7 +25,7 @@ accuracy measures (MAE, RMSE, Pearson's correlation, MASE, RMSSE) are being
 calculated.
 }
 \examples{
-\dontrun{
+\donttest{
 xt <- EXPENDITURES
 xt_in <- window(xt, end = c(2017, 4))
 yt <- log(xt_in)

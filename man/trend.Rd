@@ -17,7 +17,15 @@ detrend(object, ...)
 
 \item{...}{currently without use; included for future compatibility.}
 }
+\value{
+These generics do not return anything and are just the basis for more 
+sophisticated methods.
+}
 \description{
 Obtain estimated components, such as the estimated trend, the seasonally 
 adjusted series, and so on from an estimation object.
+}
+\details{
+Generics that can be extended by methods to obtain (estimated) time series
+components from certain estimation objects.
 }

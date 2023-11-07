@@ -1,7 +1,5 @@
 library(shiny)
 
-options(warn = -1)
-
 month_f <- function(month) {
   switch(month,
     January = 1,
