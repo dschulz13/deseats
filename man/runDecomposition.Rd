@@ -20,12 +20,6 @@ is immediately visualized within the app, so that the user can assess the
 suitability of the decomposition graphically. The decomposed data can then be 
 saved in CSV format.
 }
-\examples{
-\donttest{
-runDecomposition()
-}
-
-}
 \author{
 \itemize{
 \item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn

@@ -22,11 +22,6 @@
 #'Author and Package Creator
 #'}
 #'
-#'@examples
-#'\donttest{
-#'runDecomposition()
-#'}
-#'
 runDecomposition <- function() {
   appDir <- system.file("shiny-apps", "lwr", package = "deseats")
   if (appDir == "") {
