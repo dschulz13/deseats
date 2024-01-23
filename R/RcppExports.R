@@ -21,12 +21,12 @@ MAinftyLONG <- function(ma, d_coef) {
     .Call('_deseats_MAinftyLONG', PACKAGE = 'deseats', ma, d_coef)
 }
 
-fcastCpp <- function(X, innov, ar, ma, h) {
-    .Call('_deseats_fcastCpp', PACKAGE = 'deseats', X, innov, ar, ma, h)
+fcastCpp <- function(X, innov, ar, ma, mu, h) {
+    .Call('_deseats_fcastCpp', PACKAGE = 'deseats', X, innov, ar, ma, mu, h)
 }
 
-tfcastCpp <- function(X, innov, epsBoot, ar, ma, h) {
-    .Call('_deseats_tfcastCpp', PACKAGE = 'deseats', X, innov, epsBoot, ar, ma, h)
+tfcastCpp <- function(X, innov, epsBoot, ar, ma, mu, h) {
+    .Call('_deseats_tfcastCpp', PACKAGE = 'deseats', X, innov, epsBoot, ar, ma, mu, h)
 }
 
 seqCpp <- function(from, to) {

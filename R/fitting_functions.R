@@ -38,6 +38,12 @@
 #'obtained purely nonparametrically (\code{"free"}) or whether an
 #'autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
 #'default is \code{error_model = "free"}.
+#'@param nar_max only valid for \code{error_model = "ARMA"}; set the maximum AR 
+#'order to check via the BIC in each iteration of the algorithm.
+#'@param nma_max only valid for \code{error_model = "ARMA"}; set the maximum MA 
+#'order to check via the BIC in each iteration of the algorithm.
+#'@param arma_mean only valid for \code{error_model = "ARMA"}; decide whether to 
+#'include an estimate of the mean in the ARMA fitting for the detrended series.
 #'
 #'@export
 #'
@@ -82,7 +88,7 @@
 #'select_bwidth(Xt)
 #'
 
-select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA")) {
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_max = 1, nma_max = 1, arma_mean = FALSE) {
   
   check_input_deseats(
     y,
@@ -92,7 +98,10 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
     correction_factor,
     autocor,
     drop,
-    error_model
+    error_model,
+    nar_max,
+    nma_max,
+    arma_mean
   )
   
   # Identify exact smoothing options from input
@@ -194,6 +203,12 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'obtained purely nonparametrically (\code{"free"}) or whether an
 #'autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
 #'default is \code{error_model = "free"}.
+#'@param nar_max only valid for \code{error_model = "ARMA"}; set the maximum AR 
+#'order to check via the BIC in each iteration of the algorithm.
+#'@param nma_max only valid for \code{error_model = "ARMA"}; set the maximum MA 
+#'order to check via the BIC in each iteration of the algorithm.
+#'@param arma_mean only valid for \code{error_model = "ARMA"}; decide whether to 
+#'include an estimate of the mean in the ARMA fitting for the detrended series.
 #'
 #'@export
 #'
@@ -377,7 +392,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'}
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA")) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_max = 1, nma_max = 1, arma_mean = FALSE) {
 
   ts_name <- deparse(substitute(y))
   
@@ -392,7 +407,10 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
     correction_factor,
     autocor,
     drop,
-    error_model
+    error_model,
+    nar_max,
+    nma_max,
+    arma_mean
   )
   
   # Identify exact smoothing options from input
@@ -418,7 +436,10 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
       correction_factor = correction_factor, 
       autocor = autocor, 
       drop = drop, 
-      error_model = error_model
+      error_model = error_model,
+      nar_max,
+      nma_max,
+      arma_mean
     )$bopt
   
   }
@@ -448,7 +469,22 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
     }
   } else {
     if (err == 1) {
-      sum_autocov <- cf0Cpp(Residuals)      
+      if (err_m == 1) {
+        sum_autocov <- cf0Cpp(Residuals)          
+      } else if (err_m == 0) {
+        arma_orders <-  select_arma_orders(Residuals, NULL, NULL, nar_max, nma_max, arma_mean)
+        cat(arma_orders)
+        arma_fit <- stats::arima(Residuals, order = c(arma_orders[[1]], 0, arma_orders[[2]]), include.mean = arma_mean)
+        ar <- ma <- 0
+        if (arma_orders[[1]] > 0) {
+          ar <- arma_fit$coef[1:arma_orders[[1]]]
+        }
+        if (arma_orders[[2]] > 0) {
+          ma <- arma_fit$coef[(arma_orders[[1]] + 1):(arma_orders[[1]] + arma_orders[[2]])]
+        }
+        sig2 <- arma_fit$sigma2
+        sum_autocov <- sig2 * ((1 + sum(ma)) / (1 - sum(ar)))^2
+      }
     } else if (err == 0) {
       sum_autocov <- mean(Residuals^2) 
     }
@@ -529,6 +565,12 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
 #'obtained purely nonparametrically (\code{"free"}) or whether an
 #'autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
 #'default is \code{error_model = "free"}.
+#'@param nar_max only valid for \code{error_model = "ARMA"}; set the maximum AR 
+#'order to check via the BIC in each iteration of the algorithm.
+#'@param nma_max only valid for \code{error_model = "ARMA"}; set the maximum MA 
+#'order to check via the BIC in each iteration of the algorithm.
+#'@param arma_mean only valid for \code{error_model = "ARMA"}; decide whether to 
+#'include an estimate of the mean in the ARMA fitting for the detrended series.
 #'
 #'@export
 #'
@@ -544,7 +586,8 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
 #'All function arguments except for \code{arma_options} are identical to 
 #'those in \code{\link[deseats]{deseats}}. If all elements in 
 #'\code{arma_options} are set to \code{NULL}, the ARMA model orders are 
-#'selected from \eqn{p, q = 0, 1, 2, 3} according to the BIC.
+#'selected from \eqn{p, q = 0, 1, 2, 3, ...} up until \code{nar_max} and
+#'\code{nma_max} according to the BIC.
 #'
 #'
 #'@return
@@ -581,28 +624,28 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
                        arma_options = list(ar_order = NULL, ma_order = NULL),
                        bwidth_start = 0.2, inflation_rate = c("optimal", "naive"),
                        correction_factor = TRUE, drop = 0.1,
-                       error_model = c("free", "ARMA")) {
+                       error_model = c("free", "ARMA"),
+                       nar_max = 1, nma_max = 1, arma_mean = FALSE) {
   
   ts_name <- deparse(substitute(yt))
   
   nonpar_model <- deseats(yt, smoothing_options, bwidth_start, inflation_rate = inflation_rate,
                           autocor = TRUE, correction_factor = correction_factor, drop = drop,
-                          error_model = error_model)
+                          error_model = error_model, nar_max = nar_max,
+                          nma_max = nma_max, arma_mean = arma_mean)
   nonpar_model@ts_name <- ts_name
   
   res <- residuals(nonpar_model)
   
   ar_ma_select <- select_arma_orders(res, arma_options$ar_order, 
-                                     arma_options$ma_order)  
+                                     arma_options$ma_order,
+                                     nar_max, nma_max, arma_mean)  
   
   ar <- ar_ma_select[[1]]
   ma <- ar_ma_select[[2]]
 
   par_est <- stats::arima(res, order = c(ar, 0, ma),
-                        include.mean = FALSE)
-
-  par_est <- stats::arima(res, order = c(ar, 0, ma),
-                        include.mean = FALSE)
+                        include.mean = arma_mean)
 
   arma_res <- par_est$residuals
   attributes(arma_res) <- attributes(nonpar_model@decomp[, 1])

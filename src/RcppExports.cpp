@@ -79,8 +79,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // fcastCpp
-arma::vec fcastCpp(const arma::vec& X, const arma::vec& innov, const arma::rowvec& ar, const arma::rowvec& ma, const int h);
-RcppExport SEXP _deseats_fcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP arSEXP, SEXP maSEXP, SEXP hSEXP) {
+arma::vec fcastCpp(const arma::vec& X, const arma::vec& innov, const arma::rowvec& ar, const arma::rowvec& ma, const double mu, const int h);
+RcppExport SEXP _deseats_fcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP arSEXP, SEXP maSEXP, SEXP muSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,14 +88,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type innov(innovSEXP);
     Rcpp::traits::input_parameter< const arma::rowvec& >::type ar(arSEXP);
     Rcpp::traits::input_parameter< const arma::rowvec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const double >::type mu(muSEXP);
     Rcpp::traits::input_parameter< const int >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(fcastCpp(X, innov, ar, ma, h));
+    rcpp_result_gen = Rcpp::wrap(fcastCpp(X, innov, ar, ma, mu, h));
     return rcpp_result_gen;
 END_RCPP
 }
 // tfcastCpp
-arma::vec tfcastCpp(const arma::vec& X, const arma::vec& innov, const arma::vec& epsBoot, const arma::rowvec& ar, const arma::rowvec& ma, const int h);
-RcppExport SEXP _deseats_tfcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP epsBootSEXP, SEXP arSEXP, SEXP maSEXP, SEXP hSEXP) {
+arma::vec tfcastCpp(const arma::vec& X, const arma::vec& innov, const arma::vec& epsBoot, const arma::rowvec& ar, const arma::rowvec& ma, const double mu, const int h);
+RcppExport SEXP _deseats_tfcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP epsBootSEXP, SEXP arSEXP, SEXP maSEXP, SEXP muSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -104,8 +105,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type epsBoot(epsBootSEXP);
     Rcpp::traits::input_parameter< const arma::rowvec& >::type ar(arSEXP);
     Rcpp::traits::input_parameter< const arma::rowvec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const double >::type mu(muSEXP);
     Rcpp::traits::input_parameter< const int >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(tfcastCpp(X, innov, epsBoot, ar, ma, h));
+    rcpp_result_gen = Rcpp::wrap(tfcastCpp(X, innov, epsBoot, ar, ma, mu, h));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -349,8 +351,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_deseats_MAinftySHORT", (DL_FUNC) &_deseats_MAinftySHORT, 3},
     {"_deseats_ARinftyLONG", (DL_FUNC) &_deseats_ARinftyLONG, 2},
     {"_deseats_MAinftyLONG", (DL_FUNC) &_deseats_MAinftyLONG, 2},
-    {"_deseats_fcastCpp", (DL_FUNC) &_deseats_fcastCpp, 5},
-    {"_deseats_tfcastCpp", (DL_FUNC) &_deseats_tfcastCpp, 6},
+    {"_deseats_fcastCpp", (DL_FUNC) &_deseats_fcastCpp, 6},
+    {"_deseats_tfcastCpp", (DL_FUNC) &_deseats_tfcastCpp, 7},
     {"_deseats_seqCpp", (DL_FUNC) &_deseats_seqCpp, 2},
     {"_deseats_rseqCpp", (DL_FUNC) &_deseats_rseqCpp, 2},
     {"_deseats_factorialCpp", (DL_FUNC) &_deseats_factorialCpp, 1},
