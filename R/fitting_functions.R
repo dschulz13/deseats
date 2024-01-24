@@ -473,7 +473,6 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
         sum_autocov <- cf0Cpp(Residuals)          
       } else if (err_m == 0) {
         arma_orders <-  select_arma_orders(Residuals, NULL, NULL, nar_max, nma_max, arma_mean)
-        cat(arma_orders)
         arma_fit <- stats::arima(Residuals, order = c(arma_orders[[1]], 0, arma_orders[[2]]), include.mean = arma_mean)
         ar <- ma <- 0
         if (arma_orders[[1]] > 0) {

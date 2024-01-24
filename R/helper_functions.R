@@ -240,9 +240,9 @@ select_arma_orders <- function(xt, ar, ma, nar_max, nma_max, arma_mean) {
   
   if (is.null(ar) && is.null(ma)) {
     n <- length(xt)
-    bic <- matrix(NA, nrow = 4, ncol = 4)
-    P <- nar_max
-    Q <- nma_max
+    bic <- matrix(NA, nrow = nar_max + 1, ncol = nma_max + 1)
+    P <- 0:nar_max
+    Q <- 0:nma_max
 
     for (p0 in P) {
       for (q0 in Q) {
@@ -255,6 +255,7 @@ select_arma_orders <- function(xt, ar, ma, nar_max, nma_max, arma_mean) {
         bic[p0 + 1, q0 + 1] <- -2 * arma$loglik + (p0 + q0) * log(n)
       }
     }
+
     orders <- c(which(bic == min(bic), arr.ind = TRUE)) - 1
     ar <- orders[[1]]
     ma <- orders[[2]]
