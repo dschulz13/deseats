@@ -12,7 +12,10 @@ s_semiarma(
   inflation_rate = c("optimal", "naive"),
   correction_factor = TRUE,
   drop = 0.1,
-  error_model = c("free", "ARMA")
+  error_model = c("free", "ARMA"),
+  nar_lim = c(0, 1),
+  nma_lim = c(0, 1),
+  arma_mean = FALSE
 )
 }
 \arguments{
@@ -61,6 +64,17 @@ for \code{autocor = TRUE} the sum of autocovariances of the errors is
 obtained purely nonparametrically (\code{"free"}) or whether an
 autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
 default is \code{error_model = "free"}.}
+
+\item{nar_lim}{only valid for \code{error_model = "ARMA"}; set the minimum and 
+maximum AR order to check via the BIC in each iteration of the algorithm via 
+a two-element vector.}
+
+\item{nma_lim}{only valid for \code{error_model = "ARMA"}; set the minimum and
+maximum MA order to check via the BIC in each iteration of the algorithm via
+a two-element vector.}
+
+\item{arma_mean}{only valid for \code{error_model = "ARMA"}; decide whether to 
+include an estimate of the mean in the ARMA fitting for the detrended series.}
 }
 \value{
 The function returns and S4 object with the following elements (access them 
@@ -93,7 +107,8 @@ model is fitted using \code{\link[stats]{arima}}.
 All function arguments except for \code{arma_options} are identical to 
 those in \code{\link[deseats]{deseats}}. If all elements in 
 \code{arma_options} are set to \code{NULL}, the ARMA model orders are 
-selected from \eqn{p, q = 0, 1, 2, 3} according to the BIC.
+selected for \eqn{p, q} from \code{nar_lim[[1]]} and \code{nma_lim[[1]]} up
+until \code{nar_lim[[2]]} and \code{nma_lim[[2]]} according to the BIC.
 }
 \examples{
 \donttest{

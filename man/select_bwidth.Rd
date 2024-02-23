@@ -13,7 +13,10 @@ select_bwidth(
   correction_factor = TRUE,
   autocor = TRUE,
   drop = NULL,
-  error_model = c("free", "ARMA")
+  error_model = c("free", "ARMA"),
+  nar_lim = c(0, 1),
+  nma_lim = c(0, 1),
+  arma_mean = FALSE
 )
 }
 \arguments{
@@ -61,6 +64,17 @@ for \code{autocor = TRUE} the sum of autocovariances of the errors is
 obtained purely nonparametrically (\code{"free"}) or whether an
 autoregressive moving-average (ARMA) model is assumed \code{"ARMA"}; the
 default is \code{error_model = "free"}.}
+
+\item{nar_lim}{only valid for \code{error_model = "ARMA"}; set the minimum and 
+maximum AR order to check via the BIC in each iteration of the algorithm via 
+a two-element vector.}
+
+\item{nma_lim}{only valid for \code{error_model = "ARMA"}; set the minimum and
+maximum MA order to check via the BIC in each iteration of the algorithm via
+a two-element vector.}
+
+\item{arma_mean}{only valid for \code{error_model = "ARMA"}; decide whether to 
+include an estimate of the mean in the ARMA fitting for the detrended series.}
 }
 \value{
 The function returns a list with different components:
