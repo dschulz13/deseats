@@ -90,7 +90,7 @@
 #'select_bwidth(Xt)
 #'
 
-select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_lim = c(0, 1), nma_lim = c(0, 1), arma_mean = FALSE) {
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = FALSE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_lim = c(0, 1), nma_lim = c(0, 1), arma_mean = FALSE) {
   
   check_input_deseats(
     y,
@@ -396,7 +396,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'}
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = TRUE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_lim = c(0, 1), nma_lim = c(0, 1), arma_mean = FALSE) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = FALSE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_lim = c(0, 1), nma_lim = c(0, 1), arma_mean = FALSE) {
 
   ts_name <- deparse(substitute(y))
   
@@ -627,7 +627,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
 s_semiarma <- function(yt, smoothing_options = set_options(),
                        arma_options = list(ar_order = NULL, ma_order = NULL),
                        bwidth_start = 0.2, inflation_rate = c("optimal", "naive"),
-                       correction_factor = TRUE, drop = 0.1,
+                       correction_factor = FALSE, drop = NULL,
                        error_model = c("free", "ARMA"),
                        nar_lim = c(0, 1), nma_lim = c(0, 1), arma_mean = FALSE) {
   
