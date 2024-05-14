@@ -7,12 +7,15 @@
 #'@param xlab a label for the plot's x-axis.
 #'@param ylab a label for the plot's y-axis.
 #'@param main a title for the plot.
+#'@param labels whether or not to show tick labels.
 #'@param colorpalette a color palette (either a numeric or character vector) that 
 #'gives an alternative color palette to use for the subseries.
 #'@param rm_xticks whether to remove x-axis ticks and tick labels; the default is
 #'\code{FALSE}.
 #'
 #'@export
+#'
+#'@importFrom graphics axis lines text
 #'
 #'@details
 #'The function creates a seasonal plot of the provided time series object. The

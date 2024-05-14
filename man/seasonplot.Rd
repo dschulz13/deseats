@@ -23,6 +23,8 @@ seasonplot(
 
 \item{main}{a title for the plot.}
 
+\item{labels}{whether or not to show tick labels.}
+
 \item{colorpalette}{a color palette (either a numeric or character vector) that 
 gives an alternative color palette to use for the subseries.}
 

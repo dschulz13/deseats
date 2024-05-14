@@ -10,7 +10,7 @@ select_bwidth(
   smoothing_options = set_options(),
   bwidth_start = NULL,
   inflation_rate = c("optimal", "naive"),
-  correction_factor = TRUE,
+  correction_factor = FALSE,
   autocor = TRUE,
   drop = NULL,
   error_model = c("free", "ARMA"),

@@ -1,7 +1,7 @@
 Package: deseats
 Type: Package
 Title: Data-Driven Locally Weighted Regression for Trend and Seasonality in TS
-Version: 1.0.1
+Version: 1.1.0
 Date: 2023-11-08
 Authors@R: 
     c(person(given = "Yuanhua",
@@ -85,5 +85,4 @@ Collate:
     'arima_no_warn.R'
     'deseats-package.R'
     'seasonplot.R'
-    'adjustment_quality.R'
 Config/testthat/edition: 3

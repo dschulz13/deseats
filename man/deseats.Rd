@@ -10,7 +10,7 @@ deseats(
   smoothing_options = set_options(),
   bwidth_start = NULL,
   inflation_rate = c("optimal", "naive"),
-  correction_factor = TRUE,
+  correction_factor = FALSE,
   autocor = TRUE,
   drop = NULL,
   error_model = c("free", "ARMA"),
@@ -224,7 +224,7 @@ NOTE:
 
 This function implements C++ code by means
 of the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
-\code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages for
+\code{RcppArmadillo} packages for
 better performance.
 }
 \examples{

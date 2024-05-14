@@ -90,7 +90,7 @@
 #'select_bwidth(Xt)
 #'
 
-select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = FALSE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_lim = c(0, 1), nma_lim = c(0, 1), arma_mean = FALSE) {
+select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = FALSE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_lim = c(0, 3), nma_lim = c(0, 3), arma_mean = FALSE) {
   
   check_input_deseats(
     y,
@@ -314,7 +314,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'
 #'This function implements C++ code by means
 #'of the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
-#'\code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages for
+#'\code{RcppArmadillo} packages for
 #'better performance.
 #'
 #'@return
@@ -396,7 +396,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
 #'}
 #'
 
-deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = FALSE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_lim = c(0, 1), nma_lim = c(0, 1), arma_mean = FALSE) {
+deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, inflation_rate = c("optimal", "naive"), correction_factor = FALSE, autocor = TRUE, drop = NULL, error_model = c("free", "ARMA"), nar_lim = c(0, 3), nma_lim = c(0, 3), arma_mean = FALSE) {
 
   ts_name <- deparse(substitute(y))
   
@@ -629,7 +629,7 @@ s_semiarma <- function(yt, smoothing_options = set_options(),
                        bwidth_start = 0.2, inflation_rate = c("optimal", "naive"),
                        correction_factor = FALSE, drop = NULL,
                        error_model = c("free", "ARMA"),
-                       nar_lim = c(0, 1), nma_lim = c(0, 1), arma_mean = FALSE) {
+                       nar_lim = c(0, 3), nma_lim = c(0, 3), arma_mean = FALSE) {
   
   ts_name <- deparse(substitute(yt))
   
