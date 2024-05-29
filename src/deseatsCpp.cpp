@@ -747,7 +747,7 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
   
   arma::vec bout = bwidths.subvec(0, it - 1);
   
-  Rcpp::List out = Rcpp::List::create(_["bwidths"] = bout, _["Imk"] = I2, _["sum_autocov"] = cf0, _["c1"] = c1, _["c2"] = c2);
+  Rcpp::List out = Rcpp::List::create(_["bwidths"] = bout, _["Imk"] = I2, _["sum_autocov"] = cf0, _["RK"] = Rp, _["RW"] = R2, _["beta"] = mukp);
   
   return(out);
 
