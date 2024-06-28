@@ -13,8 +13,8 @@ s_semiarma(
   correction_factor = FALSE,
   drop = NULL,
   error_model = c("free", "ARMA"),
-  nar_lim = c(0, 1),
-  nma_lim = c(0, 1),
+  nar_lim = c(0, 3),
+  nma_lim = c(0, 3),
   arma_mean = FALSE
 )
 }
