@@ -183,8 +183,8 @@ seasonplot_gg <- function(x) {
   mat_u[["TP"]] <- 1:frequency(x)
   mat_u_l <- tidyr::pivot_longer(mat_u, cols = 1:n_u, names_to = "Subseries", values_to = "Value")
   
-  ggplot2::ggplot(mat_u_l, ggplot2::aes(x = TP, y = Value)) +
-    ggplot2::geom_line(ggplot2::aes(color = Subseries)) +
+  ggplot2::ggplot(mat_u_l, ggplot2::aes(x = .data[["TP"]], y = .data[["Value"]])) +
+    ggplot2::geom_line(ggplot2::aes(color = .data[["Subseries"]])) +
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::ggtitle(paste0('Seasonal plot of "', ylab, '"')) +

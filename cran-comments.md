@@ -1,3 +1,36 @@
+### Test results for current package version 1.1.0
+
+## R CMD check results
+
+0 errors | 0 warnings | 0 notes
+
+## win-builder check results
+
+0 errors | 0 warnings | 1 note
+
+* Found the following (possibly) invalid URLs:
+    URL: https://www.destatis.de/DE/Methoden/Saisonbereinigung/BV41-methodenbericht-Heft3_2004.pdf?__blob=publicationFile
+      From: DESCRIPTION
+      Status: 400
+      Message: Bad Request
+
+The URL is however valid.
+
+## macOS-builder check results
+
+0 errors | 0 warnings | 1 note
+
+### Notes
+
+* checking installed package size ... NOTE
+  installed size is  6.3Mb
+  sub-directories of 1Mb or more:
+    libs   5.5Mb
+    
+The package makes heavy use of C++ via the ```Rcpp``` and ```RcppArmadillo``` packages in order to improve the performance of the implemented algorithms. As a consequence, the size of the package is a bit larger.
+
+### Test results for older package versions
+
 ## Test environments
 
 - local Windows 10 install, R 4.3.1
