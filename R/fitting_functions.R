@@ -138,7 +138,7 @@ select_bwidth <- function(y, smoothing_options = set_options(), bwidth_start = N
   }
   
   tryCatch({
-    alg_result <- algorithmCpp(y, p, s, mu, bwidth_start, CF, err, drop, bb, err_m, infr)
+    alg_result <- algorithmCpp(y, p, s, mu, bwidth_start, CF, err, drop, bb, err_m, infr, nar_lim[[1]], nar_lim[[2]], nma_lim[[1]], nma_lim[[2]], arma_mean)
   }, error = function(e1) {
     stop(paste0(
       "Convergence of the bandwidth selection algorithm failed. Please try ",
