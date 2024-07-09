@@ -46,3 +46,4 @@
 ^.github$
 ^_pkgdown\.yml$
 ^CRAN-SUBMISSION$
+^src\deseats\.dll$
