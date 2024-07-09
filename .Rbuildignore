@@ -43,3 +43,6 @@
 ^DEUPREND401IXOBM\.csv$
 ^DEUSLRTTO01IXOBM\.csv$
 ^CRAN-SUBMISSION$
+^.github$
+^_pkgdown\.yml$
+^CRAN-SUBMISSION$

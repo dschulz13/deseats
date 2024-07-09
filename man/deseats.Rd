@@ -49,7 +49,9 @@ larger bandwidth to estimate the sum of autocovariances from residuals of
 pilot trend and seasonality estimates is advisable than for estimating trend
 and seasonality; for \code{correction_factor = TRUE}, this is implemented;
 for \code{error_model = "ARMA"}, \code{correction_factor = FALSE} is 
-enforced.}
+enforced; the default is \code{correction_factor = FALSE}, because it was
+found that setting this argument to \code{TRUE} often overestimates the 
+bandwidth.}
 
 \item{autocor}{a logical vector of length one; indicates whether to consider
 autocorrelated errors (\code{TRUE}) or independent but identically 
@@ -213,8 +215,8 @@ residuals (see \code{\link[stats]{arima}}).
 
 Usually, a local cubic trend (\code{smoothing_options = set_options(order_poly = 3)})
 gives more suitable results. Moreover, if the resulting bandwidth is too large, 
-adjustments to the arguments \code{inflation_rate}, \code{drop} and 
-\code{correction_factor} should be tried first in that order before any other changes 
+adjustments to the arguments \code{inflation_rate} and \code{drop} should be
+tried first in that order before any other changes 
 to the input arguments.
 
 The default print method for this function delivers key numbers such as the 

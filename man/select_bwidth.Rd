@@ -47,7 +47,10 @@ of 5/7 and 9/13, respectively.}
 \item{correction_factor}{A logical vector of length one; theoretically, a 
 larger bandwidth to estimate the sum of autocovariances from residuals of 
 pilot trend and seasonality estimates is advisable than for estimating trend
-and seasonality; for \code{correction_factor = TRUE}, this is implemented.}
+and seasonality; for \code{correction_factor = TRUE}, this is implemented; 
+the default is \code{correction_factor = FALSE}, because it was found 
+that setting this argument to \code{TRUE} often overestimates the 
+bandwidth.}
 
 \item{autocor}{a logical vector of length one; indicates whether to consider
 autocorrelated errors (\code{TRUE}) or independent but identically 

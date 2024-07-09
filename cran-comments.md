@@ -23,11 +23,16 @@ The URL is however valid.
 ### Notes
 
 * checking installed package size ... NOTE
-  installed size is  6.3Mb
+  installed size is  5.7Mb
   sub-directories of 1Mb or more:
-    libs   5.5Mb
+    libs   4.9Mb
     
-The package makes heavy use of C++ via the ```Rcpp``` and ```RcppArmadillo``` packages in order to improve the performance of the implemented algorithms. As a consequence, the size of the package is a bit larger.
+The package makes heavy use of C++ via the ```Rcpp``` and ```RcppArmadillo``` packages in order to improve the performance of the implemented algorithms. As a consequence, the size of the package is a bit larger. This was not a problem and fully accepted by CRAN when package
+version 1.0.0 was submitted to CRAN.
+
+## Rhub check results
+
+
 
 ### Test results for older package versions
 
