@@ -641,7 +641,7 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
     }
   }    
   
-  double bmax = std::min(std::pow(0.49, 1.0 / expo), 0.49 / adjFactor);  // The maximum bandwidth 
+  double bmax = 0.49;       // The maximum bandwidth 
   double bmin = 0.01;       // The minimum bandwidth 
 
   const int v = k;
@@ -701,12 +701,16 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
   while (it < itMax + 1 && stopreason == 0) {
     
     bv = std::pow(bopt, expo);
+    bv = std::max(bv, bmin);
+    bv = std::min(bv, bmax);  
     
     gv = derivdeseatsCpp(yt, pv, s, mu, bv, bb, v);
   
     I2 = arma::accu(arma::pow(gv.subvec(n1, n - n1 - 1), 2.0)) / (n - 2 * n1);
     
     bAdj = bopt * adjFactor;
+    bAdj = std::max(bAdj, bmin);
+    bAdj = std::min(bAdj, bmax);     
     
     resAdj = residdeseatsCpp(yt, p, s, mu, bAdj, bb);
       
