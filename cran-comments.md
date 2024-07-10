@@ -4,7 +4,7 @@
 
 0 errors | 0 warnings | 0 notes
 
-## win-builder check results
+## win-builder check results [oldrelease, release, devel]
 
 0 errors | 0 warnings | 1 note
 
@@ -32,7 +32,39 @@ version 1.0.0 was submitted to CRAN.
 
 ## Rhub check results
 
+### ubuntu-gcc12 [Ubuntu 22.04.4 LTS, R-devel]
 
+0 errors | 0 warnings | 0 notes
+
+### gcc13 [Fedora Linux 38 (Container Image), R-devel]
+
+0 errors | 0 warnings | 0 notes
+
+### linux [ubuntu-latest on GitHub, R-* (any version)]
+
+0 errors | 0 warnings | 1 note
+
+#### Notes
+
+* checking installed package size ... NOTE
+  installed size is  5.7Mb
+  sub-directories of 1Mb or more:
+    libs   4.9Mb
+    
+The package makes heavy use of C++ via the ```Rcpp``` and ```RcppArmadillo``` packages in order to improve the performance of the implemented algorithms. As a consequence, the size of the package is a bit larger. This was not a problem and fully accepted by CRAN when package
+version 1.0.0 was submitted to CRAN.
+
+### macos-arm64 [macos-latest on GitHub, R-* (any version)]
+
+0 errors | 0 warnings | 0 notes
+
+### macos [macos-13 on GitHub, R-* (any version)]
+
+0 errors | 0 warnings | 0 notes
+
+### windows [windows-latest on GitHub, R-* (any version)]
+
+0 errors | 0 warnings | 0 notes
 
 ### Test results for older package versions
 
