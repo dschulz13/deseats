@@ -209,9 +209,6 @@ setMethod("autoplot", "deseats_fc", function(object, ...) {
       Case = rev(rep(as.character(m:2), each = length(object@pred)))
     )      
     
-    print(.df4)
-    print(.df5)
-    
     p_out <- p_out +
       ggplot2::geom_ribbon(data = .df4, ggplot2::aes(x = .data[["Time"]], ymin = .data[["ymin"]], ymax = .data[["ymax"]],
                                                             fill = .data[["Case"]]),

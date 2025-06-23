@@ -1,4 +1,20 @@
-### Test results for current package version 1.1.0
+# Test results for current package version 1.1.1
+
+## R CMD check results
+
+0 errors | 0 warnings | 1 notes
+
+* checking installed package size ... NOTE
+  installed size is  6.0Mb
+  sub-directories of 1Mb or more:
+    libs   5.2Mb
+
+The package makes heavy use of C++ via the ```Rcpp``` and ```RcppArmadillo``` packages in order to improve the performance of the implemented algorithms. As a consequence, the size of the package is a bit larger. This was not a problem and fully accepted by CRAN when package
+version 1.0.0 was submitted to CRAN.
+
+# Test results for older package versions
+
+## Test results for current package version 1.1.0
 
 ## R CMD check results
 
@@ -65,8 +81,6 @@ version 1.0.0 was submitted to CRAN.
 ### windows [windows-latest on GitHub, R-* (any version)]
 
 0 errors | 0 warnings | 0 notes
-
-### Test results for older package versions
 
 ## Test environments
 
