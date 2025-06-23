@@ -1,5 +1,11 @@
 # Test results for current package version 1.1.1
 
+## Test environments
+* local Windows install, R 4.4.2
+* win-builder (oldrelease, release and devel)
+* macOS builder
+* R-hub (linux, m1-san, macos, macos-arm64, windows, atlas, c23, clang-asan, clang-ubsan, clang16, clang17, clang18, clang19, donttest, gcc-asan, gcc13, gcc14, gcc15, mkl, nold, noremap, nosuggests, ubuntu-clang, ubuntu-gcc12, ubuntu-next, ubuntu-release)
+
 ## R CMD check results
 
 0 errors | 0 warnings | 1 notes
@@ -9,12 +15,12 @@
   sub-directories of 1Mb or more:
     libs   5.2Mb
 
-The package makes heavy use of C++ via the ```Rcpp``` and ```RcppArmadillo``` packages in order to improve the performance of the implemented algorithms. As a consequence, the size of the package is a bit larger. This was not a problem and fully accepted by CRAN when package
+This appears on macOS builder only; the package makes heavy use of C++ via the ```Rcpp``` and ```RcppArmadillo``` packages in order to improve the performance of the implemented algorithms. As a consequence, the size of the package is a bit larger. This was not a problem and fully accepted by CRAN when package
 version 1.0.0 was submitted to CRAN.
 
 # Test results for older package versions
 
-## Test results for current package version 1.1.0
+## Test results for package version 1.1.0
 
 ## R CMD check results
 
