@@ -641,8 +641,8 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
     }
   }    
   
-  double bmax = 0.49;       // The maximum bandwidth 
-  double bmin = 0.01;       // The minimum bandwidth 
+  double bmax = 0.49 / adjFactor;         // The maximum bandwidth 
+  double bmin = ((p + s - 1) / 2.0) / n;  // The minimum bandwidth 
 
   const int v = k;
   const int pv = k + 1;
@@ -743,11 +743,11 @@ Rcpp::List algorithmCpp(const arma::vec& yt, const int p, const int s, const int
     bopt = std::max(bopt, bmin);
     bopt = std::min(bopt, bmax);   
    
-    if (std::abs(bopt - boptOld) / bopt < diffvalue) {
+    if (it > 2 && std::abs(bopt - boptOld) / bopt < diffvalue) {
       stopreason = 1;
     }
     
-    if (std::abs(bopt - boptOld2) / bopt < diffvalue) {
+    if (it > 3 && std::abs(bopt - boptOld2) / bopt < diffvalue) {
       stopreason = 1;
       bopt = (bopt + boptOld) / 2.0;
     }  

@@ -1,7 +1,7 @@
 Package: deseats
 Type: Package
 Title: Data-Driven Locally Weighted Regression for Trend and Seasonality in TS
-Version: 1.1.1
+Version: 1.1.2
 Date: 2025-06-23
 Authors@R: 
     c(person(given = "Yuanhua",
