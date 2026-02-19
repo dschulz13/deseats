@@ -2,7 +2,7 @@
 % Please edit documentation in R/runDecomposition.R
 \name{runDecomposition}
 \alias{runDecomposition}
-\title{Shiny App for Decomposing Seasonal Time Series}
+\title{Shiny App for Decomposing Seasonal Time Series (Deprecated)}
 \usage{
 runDecomposition()
 }
@@ -19,6 +19,8 @@ some of the approaches implemented in this package. The decomposition
 is immediately visualized within the app, so that the user can assess the
 suitability of the decomposition graphically. The decomposed data can then be 
 saved in CSV format.
+
+Note: This function is deprecated. Switch to \code{run_decomposition()}.
 }
 \author{
 \itemize{

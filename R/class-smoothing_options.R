@@ -9,7 +9,7 @@ setClass("smoothing_options",
     boundary_method = "character"
   ),
   prototype = list(
-    order_poly = 1,
+    order_poly = 3,
     season = NA_real_,
     kernel_fun = "epanechnikov",
     bwidth = NA_real_,
@@ -42,7 +42,7 @@ setValidity("smoothing_options", function(object) {
 #'@import methods
 #' 
 #'@param order_poly the order of the local polynomials used for estimating the
-#' smooth nonparametric trend; the default is \code{1}.
+#' smooth nonparametric trend; the default is \code{3}.
 #'@param season the frequency of observations per time unit, for example per 
 #'year; set to \code{12} for monthly data and to \code{4} for quarterly data
 #'and so on; the default is \code{NA_real_}, which leads to an automated 
@@ -102,7 +102,7 @@ setValidity("smoothing_options", function(object) {
 #'}
 
 set_options <- function(
-    order_poly = 1,
+    order_poly = 3,
     season = NA_real_,
     kernel_fun = "epanechnikov",
     bwidth = NA_real_,

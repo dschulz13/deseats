@@ -36,7 +36,7 @@ then the element \eqn{c_j} is the weight assigned to \eqn{y_{t-j}}. The
 corresponding index \eqn{j} is important for the order of the argument
 \code{filter.coefs}.
 
-Note: this function is deprecated.
+Note: This function is deprecated. Switch to \code{create_gain()}.
 }
 \examples{
 

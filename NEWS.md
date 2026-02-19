@@ -1,3 +1,18 @@
+# deseats 1.1.2
+- `create.gain()` and `runDecomposition()` are now deprecated and replaced
+  by `create_gain()` and `run_decomposition()`.
+- `select_bwidth()`, `deseats()` and `s_semiarma()` now have an argument 
+  `inf_criterion` that lets the user switch between `"bic"` (the default) and 
+  `"aic"`; this selects the information criterion (BIC or AIC) to use for 
+  the ARMA order selection wherever relevant within those functions.
+- `select_bwidth()`, `deseats()` and `s_semiarma()` now warn the user, when
+  an extremely small number of observations is being used, which makes
+  the bandwidth selection highly unreliable.
+- some internal functions have been made more robust, so that they do not
+  throw an error under small numbers of observations; instead they warn
+  the user (see previous point) and fall back to certain minimum / maximum
+  settings that still work (but are unreliable).
+
 # deseats 1.1.1
 - fixed a bug in the forecasting of seasonal semiparametric ARMA models, where for the
   special case of an ARMA for the rest including a mean estimate the forecasting intervals

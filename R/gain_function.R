@@ -267,7 +267,7 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
 #' corresponding index \eqn{j} is important for the order of the argument
 #' \code{filter.coefs}.
 #' 
-#' Note: this function is deprecated.
+#' Note: This function is deprecated. Switch to \code{create_gain()}.
 #' 
 #' @importFrom grDevices colorRampPalette
 #' 
@@ -364,7 +364,7 @@ create.gain <- function(filter.coefs = c(1),
                         zero.at = ceiling(length(filter.coefs) / 2)
 ) {
   
-  warning("create.gain with a dot in the name is deprecated.")
+  warning("This function is deprecated. Switch to create_gain() instead.")
   
   u <- seq_along(filter.coefs) - zero.at
   

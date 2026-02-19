@@ -294,7 +294,8 @@ check_input_deseats <- function(y, smoothing_options, bwidth_start, inflation_ra
     'error_model must be either "free" or "ARMA"' = (is.character(error_model) && (all(error_model == c("free", "ARMA")) || (length(error_model) == 1 && error_model %in% c("free", "ARMA")))),
     "nar_lim must be a two-element numeric vector" = (is.numeric(nar_lim) && length(nar_lim) == 2 && nar_lim[[1]] <= nar_lim[[2]]),
     "nma_lim must be a two-element numeric vector" = (is.numeric(nma_lim) && length(nma_lim) == 2 && nma_lim[[1]] <= nma_lim[[2]]),  
-    "arma_mean must be a single logical value" = (is.logical(arma_mean) && length(arma_mean) == 1)   
+    "arma_mean must be a single logical value" = (is.logical(arma_mean) && length(arma_mean) == 1),
+    'inf_criterion must be the the vector c("bic", "aic") or one of those values' = (is.character(inf_criterion) && length(inf_criterion) %in% c(1, 2) %% all(inf_criterion %in% c("bic", "aic")))
   )   
   
 }

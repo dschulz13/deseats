@@ -5,7 +5,7 @@
 \title{Specification of Smoothing Options}
 \usage{
 set_options(
-  order_poly = 1,
+  order_poly = 3,
   season = NA_real_,
   kernel_fun = "epanechnikov",
   bwidth = NA_real_,
@@ -14,7 +14,7 @@ set_options(
 }
 \arguments{
 \item{order_poly}{the order of the local polynomials used for estimating the
-smooth nonparametric trend; the default is \code{1}.}
+smooth nonparametric trend; the default is \code{3}.}
 
 \item{season}{the frequency of observations per time unit, for example per 
 year; set to \code{12} for monthly data and to \code{4} for quarterly data
