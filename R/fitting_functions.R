@@ -442,11 +442,16 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
     error_model,
     nar_lim,
     nma_lim,
-    arma_mean
+    arma_mean,
+    inf_criterion
   )
   
   inf_criterion <- match.arg(inf_criterion)
-  inf_c <- 
+  inf_c <- switch(
+    inf_criterion,
+    "aic" = 0,
+    "bic" = 1
+  )
   
   # Identify exact smoothing options from input
   det_options <- determine_options(y, smoothing_options)
@@ -475,7 +480,7 @@ deseats <- function(y, smoothing_options = set_options(), bwidth_start = NULL, i
       nar_lim,
       nma_lim,
       arma_mean,
-      inf_c
+      inf_criterion
     )$bopt
   
   }

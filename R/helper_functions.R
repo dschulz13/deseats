@@ -281,7 +281,8 @@ cap_1st <- function(string) {
     sub(paste0("^", first_letter), LETTERS[[w]], string)
 }
 
-check_input_deseats <- function(y, smoothing_options, bwidth_start, inflation_rate, correction_factor, autocor, drop, error_model, nar_lim, nma_lim, arma_mean) {
+check_input_deseats <- function(y, smoothing_options, bwidth_start, inflation_rate, correction_factor, autocor, drop, error_model, nar_lim, nma_lim, arma_mean, inf_criterion) {
+
   
   stopifnot(
     'y needs to be a time series object of class "ts" or a numeric vector' = (inherits(y, "ts") || (is.atomic(y) && is.numeric(y))),
@@ -295,7 +296,7 @@ check_input_deseats <- function(y, smoothing_options, bwidth_start, inflation_ra
     "nar_lim must be a two-element numeric vector" = (is.numeric(nar_lim) && length(nar_lim) == 2 && nar_lim[[1]] <= nar_lim[[2]]),
     "nma_lim must be a two-element numeric vector" = (is.numeric(nma_lim) && length(nma_lim) == 2 && nma_lim[[1]] <= nma_lim[[2]]),  
     "arma_mean must be a single logical value" = (is.logical(arma_mean) && length(arma_mean) == 1),
-    'inf_criterion must be the the vector c("bic", "aic") or one of those values' = (is.character(inf_criterion) && length(inf_criterion) %in% c(1, 2) %% all(inf_criterion %in% c("bic", "aic")))
+    'inf_criterion must be the vector c("bic", "aic") or one of those values' = (is.character(inf_criterion) && (length(inf_criterion) %in% c(1, 2)) && all(inf_criterion %in% c("bic", "aic")))
   )   
   
 }
