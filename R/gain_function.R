@@ -267,6 +267,8 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
 #' corresponding index \eqn{j} is important for the order of the argument
 #' \code{filter.coefs}.
 #' 
+#' Note: this function is deprecated.
+#' 
 #' @importFrom grDevices colorRampPalette
 #' 
 #' @return 
@@ -362,6 +364,8 @@ create.gain <- function(filter.coefs = c(1),
                         zero.at = ceiling(length(filter.coefs) / 2)
 ) {
   
+  warning("create.gain with a dot in the name is deprecated.")
+  
   u <- seq_along(filter.coefs) - zero.at
   
   i <- 0 + 1i
@@ -383,3 +387,146 @@ create.gain <- function(filter.coefs = c(1),
   }
   
 }
+
+#' Create Gain Function from a Linear Time Series Filter
+#' 
+#' This function takes a coefficient series of a linear
+#' time series filter as an input and then returns the 
+#' corresponding gain function as an R function.
+#' 
+#' @param filter.coefs a numeric vector with the filter coefficients ordered 
+#' by coefficient index; see details for more info.
+#' @param zero.at a numeric vector of length one that indicates the position 
+#' of the coefficient for the present observation in \code{filter.coefs};
+#' by default, the position is in the middle or just below the midpoint.
+#' 
+#' @export
+#' 
+#' @details
+#' This is a functional. The function returns a function that 
+#' represents the gain function for the input filter 
+#' \code{filter.coefs}. The returned function only has the 
+#' argument \code{lambda}, which is the frequency for which 
+#' the value of the gain function should be obtained.
+#' 
+#' Let \eqn{(y_t)} be the input series and \eqn{(c_j)} the linear filter; 
+#' then the element \eqn{c_j} is the weight assigned to \eqn{y_{t-j}}. The 
+#' corresponding index \eqn{j} is important for the order of the argument
+#' \code{filter.coefs}.
+#' 
+#' @importFrom grDevices colorRampPalette
+#' 
+#' @return 
+#' The function returns a "gain function" function that has the numeric 
+#' argument \code{lambda} only that represents frequencies to calculate 
+#' the values of the gain function for.
+#' 
+#'@author
+#'\itemize{
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Author and Package Creator
+#'}
+#' 
+#' @examples
+#'
+#' # Moving average with smoothing over three values
+#' a <- 1 / 3
+#' gain_ma <- create_gain(rep(a, 3))
+#' lambda <- seq(0, 0.5, 0.001)
+#' GF <- gain_ma(lambda)
+#' plot(lambda, GF, type = "l")
+#' 
+#' 
+#'
+#' # First differences filter
+#' b <- c(1, -1)
+#' gain_diff <- create_gain(b)
+#' lambda <- seq(0, 0.5, 0.001)
+#' GF2 <- gain_diff(lambda)
+#' plot(lambda, GF2, type = "l")
+#' 
+#' \donttest{
+#' # For a fully data-driven local linear trend + 
+#' # trigonometric polynomial seasonality
+#' # (Note: we get various filters for different observation time points)
+#' 
+#' xt <- EXPENDITURES
+#' est <- deseats(log(xt), set_options(order_poly = 3))
+#' ws <- est@weights[, , "Combined"]
+#' l <- (length(ws[, 1]) - 1) / 2
+#' 
+#' lambda <- seq(0, 0.5, 0.001)
+#' mat <- matrix(0, ncol = length(lambda), nrow = l + 1)
+#' colF <- colorRampPalette(c("deepskyblue4", "deepskyblue"))
+#' cols <- colF(l)
+#' 
+#' for (j in 1:(l + 1)) {
+#' 
+#'   gainF <- create_gain(ws[j, ], zero.at = j)
+#'   mat[j, ] <- gainF(lambda)
+#' 
+#' }
+#' 
+#' matplot(lambda, t(mat), type = paste0(rep("l", l + 1), collapse = ""),
+#'         lty = rep(1, l + 1), col = cols)
+#' title(
+#'   main = paste0(
+#'     "Gain functions for the applied data-driven locally weighted ",
+#'     "regression\napproach at boundary points and the first interior ",
+#'     "point"
+#'   )
+#' )
+#' 
+#' # Same example as before but not for the trend but for the detrending filters
+#' # (Note: we get various filters for different observation time points)
+#' 
+#' ll <- l * 2 + 1
+#' mat2 <- mat
+#' 
+#' for (j in 1:(l + 1)) {
+#' 
+#'   zero.vec <- rep(0, ll)
+#'   zero.vec[[j]] <- 1
+#'   gainF <- create_gain(zero.vec - ws[j, ], zero.at = j)
+#'   mat2[j, ] <- gainF(lambda)
+#' 
+#' }
+#' 
+#' matplot(lambda, t(mat2), type = paste0(rep("l", l + 1), collapse = ""),
+#'         lty = rep(1, l + 1), col = cols)
+#' title(
+#'   main = paste0(
+#'     "Gain functions for the applied data-driven detrending filter\n",
+#'     "at boundary points and the first interior ",
+#'     "point"
+#'   )
+#' )
+#' }
+#' 
+
+create_gain <- function(filter.coefs = c(1), 
+                        zero.at = ceiling(length(filter.coefs) / 2)) {
+
+  u <- seq_along(filter.coefs) - zero.at
+  
+  i <- 0 + 1i
+  
+  function(lambda = 0) {
+    
+    l <- length(lambda)
+    
+    out <- rep(0, l)
+    
+    for (s in 1:l) {
+      
+      out[[s]] <- sum(filter.coefs * exp(i * 2 * pi * lambda[[s]] * u))
+      
+    }
+    
+    abs(out)
+    
+  }                   
+                                                    
+}
+

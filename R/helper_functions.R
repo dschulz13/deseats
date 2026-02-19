@@ -236,12 +236,19 @@ aniSave <- function(fun) {
   )
 }
 
-select_arma_orders <- function(xt, ar, ma, nar_lim, nma_lim, arma_mean) {
+select_arma_orders <- function(xt, ar, ma, nar_lim, nma_lim, arma_mean, inf_criterion) {
   
   if (is.null(ar) && is.null(ma)) {
     n <- length(xt)
     P <- nar_lim[[1]]:nar_lim[[2]]
     Q <- nma_lim[[1]]:nma_lim[[2]]
+    
+    fac <- switch(
+      inf_criterion,
+      "bic" = log(n),
+      "aic" = 2
+    )
+    
     bic <- matrix(NA, nrow = length(P), ncol = length(Q))    
 
     for (p0 in P) {
@@ -252,7 +259,7 @@ select_arma_orders <- function(xt, ar, ma, nar_lim, nma_lim, arma_mean) {
             include.mean = arma_mean))
           }, error = function(e1) {data.frame(loglik = -10000000)}
         )
-        bic[p0 - P[[1]] + 1, q0 - Q[[1]] + 1] <- -2 * arma$loglik + (p0 + q0) * log(n)
+        bic[p0 - P[[1]] + 1, q0 - Q[[1]] + 1] <- -2 * arma$loglik + (p0 + q0) * fac
       }
     }
 

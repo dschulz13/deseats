@@ -35,6 +35,8 @@ Let \eqn{(y_t)} be the input series and \eqn{(c_j)} the linear filter;
 then the element \eqn{c_j} is the weight assigned to \eqn{y_{t-j}}. The 
 corresponding index \eqn{j} is important for the order of the argument
 \code{filter.coefs}.
+
+Note: this function is deprecated.
 }
 \examples{
 
