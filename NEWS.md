@@ -12,6 +12,9 @@
   throw an error under small numbers of observations; instead they warn
   the user (see previous point) and fall back to certain minimum / maximum
   settings that still work (but are unreliable).
+- some defaults in `set_option()` have been adjusted, namely `order_poly = 3`
+  instead of `order_poly = 1` as well as `boundary_method = "shorten"` instead
+  of `boundary_method = "extend"`.
 
 # deseats 1.1.1
 - fixed a bug in the forecasting of seasonal semiparametric ARMA models, where for the

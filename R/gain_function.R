@@ -121,31 +121,31 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
     
     ### For trend filters
     
-    gain_fun <- create.gain(filter.coefs = rev(ws_trend[i, ]), zero.at = n - (i - 1))
+    gain_fun <- create_gain(filter.coefs = rev(ws_trend[i, ]), zero.at = n - (i - 1))
    
     mat_trend[i, ] <- gain_fun(lambda)
     
-    gain_fun <- create.gain(filter.coefs = rev(ws_trend[n - (i - 1), ]), zero.at = i)
+    gain_fun <- create_gain(filter.coefs = rev(ws_trend[n - (i - 1), ]), zero.at = i)
     
     mat_trend[n - (i - 1), ] <- gain_fun(lambda)
     
     ### For seasonality filters
     
-    gain_fun <- create.gain(filter.coefs = rev(ws_season[i, ]), zero.at = n - (i - 1))
+    gain_fun <- create_gain(filter.coefs = rev(ws_season[i, ]), zero.at = n - (i - 1))
    
     mat_season[i, ] <- gain_fun(lambda)
     
-    gain_fun <- create.gain(filter.coefs = rev(ws_season[n - (i - 1), ]), zero.at = i)
+    gain_fun <- create_gain(filter.coefs = rev(ws_season[n - (i - 1), ]), zero.at = i)
     
     mat_season[n - (i - 1), ] <- gain_fun(lambda)  
     
     ### For trend + seasonality filters
     
-    gain_fun <- create.gain(filter.coefs = rev(ws_comb[i, ]), zero.at = n - (i - 1))
+    gain_fun <- create_gain(filter.coefs = rev(ws_comb[i, ]), zero.at = n - (i - 1))
    
     mat_trendseason[i, ] <- gain_fun(lambda)
     
-    gain_fun <- create.gain(filter.coefs = rev(ws_comb[n - (i - 1), ]), zero.at = i)
+    gain_fun <- create_gain(filter.coefs = rev(ws_comb[n - (i - 1), ]), zero.at = i)
     
     mat_trendseason[n - (i - 1), ] <- gain_fun(lambda)    
     
@@ -154,19 +154,19 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
     zero_v <- rep(0, n)
     zero_v[[i]] <- 1
     
-    gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_trend[i, ]), zero.at = n - (i - 1))
+    gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_trend[i, ]), zero.at = n - (i - 1))
    
     mat_detrend[i, ] <- gain_fun(lambda)
     
     ### For deseasonalize filters 1
     
-    gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_season[i, ]), zero.at = n - (i - 1))
+    gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_season[i, ]), zero.at = n - (i - 1))
    
     mat_deseason[i, ] <- gain_fun(lambda)  
     
     ### For detrend + deseasonalize filters 1
     
-    gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_comb[i, ]), zero.at = n - (i - 1))
+    gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_comb[i, ]), zero.at = n - (i - 1))
    
     mat_detrendseason[i, ] <- gain_fun(lambda)
     
@@ -175,19 +175,19 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
     zero_v <- rep(0, n)
     zero_v[[n - (i - 1)]] <- 1
     
-    gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_trend[n - (i - 1), ]), zero.at = i)
+    gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_trend[n - (i - 1), ]), zero.at = i)
     
     mat_detrend[n - (i - 1), ] <- gain_fun(lambda)  
     
     ### For deseasonalize filters 2    
     
-    gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_season[n - (i - 1), ]), zero.at = i)
+    gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_season[n - (i - 1), ]), zero.at = i)
     
     mat_deseason[n - (i - 1), ] <- gain_fun(lambda) 
     
     ### For detrend + deseasonalize filters 2    
     
-    gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_comb[n - (i - 1), ]), zero.at = i)
+    gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_comb[n - (i - 1), ]), zero.at = i)
     
     mat_detrendseason[n - (i - 1), ] <- gain_fun(lambda)     
      
@@ -195,19 +195,19 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
   
   # Middle trend filter
   
-  gain_fun <- create.gain(filter.coefs = rev(ws_trend[k + 1, ]), zero.at = k + 1)
+  gain_fun <- create_gain(filter.coefs = rev(ws_trend[k + 1, ]), zero.at = k + 1)
    
   mat_trend[k + 1, ] <- gain_fun(lambda)
   
   # Middle seasonality filter
   
-  gain_fun <- create.gain(filter.coefs = rev(ws_season[k + 1, ]), zero.at = k + 1)
+  gain_fun <- create_gain(filter.coefs = rev(ws_season[k + 1, ]), zero.at = k + 1)
    
   mat_season[k + 1, ] <- gain_fun(lambda)
   
   # Middle trend + seasonality filter
   
-  gain_fun <- create.gain(filter.coefs = rev(ws_comb[k + 1, ]), zero.at = k + 1)
+  gain_fun <- create_gain(filter.coefs = rev(ws_comb[k + 1, ]), zero.at = k + 1)
    
   mat_trendseason[k + 1, ] <- gain_fun(lambda)
   
@@ -216,19 +216,19 @@ methods::setMethod("gain", "deseats", function(object, lambda = seq(0, 0.5, 0.00
   zero_v <- rep(0, n)
   zero_v[[k + 1]] <- 1  
   
-  gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_trend[k + 1, ]), zero.at = k + 1)
+  gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_trend[k + 1, ]), zero.at = k + 1)
    
   mat_detrend[k + 1, ] <- gain_fun(lambda)
   
   # Middle deseasonalize filter  
   
-  gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_season[k + 1, ]), zero.at = k + 1)
+  gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_season[k + 1, ]), zero.at = k + 1)
    
   mat_deseason[k + 1, ] <- gain_fun(lambda)
   
   # Middle detrend + deseasonalize filter  
   
-  gain_fun <- create.gain(filter.coefs = rev(zero_v - ws_comb[k + 1, ]), zero.at = k + 1)
+  gain_fun <- create_gain(filter.coefs = rev(zero_v - ws_comb[k + 1, ]), zero.at = k + 1)
    
   mat_detrendseason[k + 1, ] <- gain_fun(lambda)    
   

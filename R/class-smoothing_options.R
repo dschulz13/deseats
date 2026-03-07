@@ -13,7 +13,7 @@ setClass("smoothing_options",
     season = NA_real_,
     kernel_fun = "epanechnikov",
     bwidth = NA_real_,
-    boundary_method = "extend"
+    boundary_method = "shorten"
   )
 )
 
@@ -61,9 +61,9 @@ setValidity("smoothing_options", function(object) {
 #'triggers a data-driven selection of an globally optimal bandwidth when
 #'the output of this function is passed to a smoothing function.
 #'@param boundary_method a single character value; it indicates, what bandwidth 
-#'method to use at boundary points; for \code{"extend"}, the default, the 
+#'method to use at boundary points; for \code{"extend"}, the 
 #'smoothing window around boundary points will be extended towards the center of 
-#'the data; for \code{"shorten"}, the window width will keep decreasing at 
+#'the data; for \code{"shorten"}, the default, the window width will keep decreasing at 
 #'boundary points when approaching the very first and the very last observation.
 #'
 #'@export
@@ -106,7 +106,7 @@ set_options <- function(
     season = NA_real_,
     kernel_fun = "epanechnikov",
     bwidth = NA_real_,
-    boundary_method = "extend") {
+    boundary_method = "shorten") {
   
       methods::new("smoothing_options",
         order_poly = order_poly,

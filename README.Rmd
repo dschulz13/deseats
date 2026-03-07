@@ -110,7 +110,7 @@ The provided decomposition methods can also be applied interactively. Run the
 following code.
 
 ```{r example6, eval = FALSE}
-runDecomposition()
+run_decomposition()
 ```
 
 This starts a shiny app which lets you load data files, decompose the time 
