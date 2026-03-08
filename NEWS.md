@@ -15,6 +15,8 @@
 - some defaults in `set_option()` have been adjusted, namely `order_poly = 3`
   instead of `order_poly = 1` as well as `boundary_method = "shorten"` instead
   of `boundary_method = "extend"`.
+- a vignette was added to the package that introduces readers to the basic
+  applications of the package with an example.
 
 # deseats 1.1.1
 - fixed a bug in the forecasting of seasonal semiparametric ARMA models, where for the
