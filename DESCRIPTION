@@ -86,3 +86,4 @@ Collate:
     'deseats-package.R'
     'seasonplot.R'
 Config/testthat/edition: 3
+VignetteBuilder: knitr
