@@ -17,6 +17,8 @@
   of `boundary_method = "extend"`.
 - a vignette was added to the package that introduces readers to the basic
   applications of the package with an example.
+- the `animate()` method for output of `deseats()` now also shows proper
+  results for the case with `boundary_method = "shorten"` in `set_options()`.
 
 # deseats 1.1.1
 - fixed a bug in the forecasting of seasonal semiparametric ARMA models, where for the
