@@ -94,7 +94,7 @@ for (p in 0:3) {
 pq_opt_b <- c(which(BIC_all_b == min(BIC_all_b), arr.ind = TRUE)) - 1
 pq_opt_b <- c(pq_opt_b[[1]], 0, pq_opt_b[[2]])
 pq_opt_a <- selectOrderBIC(Xt, pmin = 0, pmax = 3, qmin = 0, qmax = 3,
-                           armamean = TRUE)
+                           armamean = TRUE, inf_c = 1)
 
 test_that("ARMA model orders are selected correctly following the BIC", {
   
@@ -105,7 +105,7 @@ test_that("ARMA model orders are selected correctly following the BIC", {
 ### Optimal model fitting via 'armaoptCpp'
 
 mopt_b <- stats::arima(Xt, order = pq_opt_b)
-mopt_a <- armaoptCpp(Xt, 0, 3, 0, 3, TRUE)
+mopt_a <- armaoptCpp(Xt, 0, 3, 0, 3, TRUE, 1)
 
 test_that("Selected optimal model return the same fitting results", {
   
