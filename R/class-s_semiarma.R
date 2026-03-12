@@ -55,12 +55,22 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 #'\code{\link[stats]{quantile}}.
 #'@param expo a logical vector of length one; indicates whether the forecasting 
 #'results should be exponentiated at the end; the default is \code{expo = FALSE}.
+#'@param adjust.bias a logical vector of length one; indicates whether or not
+#'the point forecasts should have a bias adjustment when simultaneously
+#'\code{expo = TRUE}; the default is \code{TRUE}; for \code{TRUE}, the point
+#'forecasts on the exponentiated scale will be mean forecasts.
 #'@param ... only for comparability with the standard \code{predict} method.
 #'
 #'@details
 #'Assume a Seasonal Semi-ARMA model was fitted using \code{\link{s_semiarma}}.
 #'Pass the resulting object to this method, in order to obtain point and 
 #'interval forecasts.
+#'
+#'If \code{expo = TRUE} and \code{adjust.bias = TRUE}, the point forecasts
+#'will be exponentiated and adjusted for bias, so that the resulting forecasts
+#'can be seen as mean forecasts on the exponentiated scale. Forecasting intervals
+#'do not need such an adjustment. For \code{expo = TRUE}, no adjustment will be
+#'done.
 #'
 #'@export
 #'
@@ -91,7 +101,7 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 methods::setMethod("predict", "s_semiarma", 
   function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"),
            bootMethod = c("simple", "advanced"), npaths = 5000, quant.type = 8,
-           expo = FALSE, ...) {
+           expo = FALSE, adjust.bias = TRUE, ...) {
     
     if (intervals) {
     
@@ -122,16 +132,20 @@ methods::setMethod("predict", "s_semiarma",
       
       if (method == "norm") {
         
-        fi <- normCast(model = object@par_model,
-          p = p, q = q, h = n.ahead, alpha = alpha)        
+        norm_out <- normCast(model = object@par_model,
+          p = p, q = q, h = n.ahead, alpha = alpha)   
+        
+        fi <- norm_out$q_out
         
       } else if (method == "boot") {
         
         bootMethod <- match.arg(bootMethod)
         
-        fi <- bootCast(model = object@par_model, X = object@decomp[, 4],
+        boot_out <- bootCast(model = object@par_model, X = object@decomp[, 4],
           p = p, q = q, h = n.ahead, alpha = alpha, quant.type = quant.type,
           bootstrap_type = bootMethod, it = npaths)
+        
+        fi <- boot_out$quants
 
       }
       
@@ -152,7 +166,19 @@ methods::setMethod("predict", "s_semiarma",
     ts_name <- object@nonpar_model@ts_name    
     
     if (expo) {
-      fc_total <- exp(fc_total)
+      fc_total <- if (adjust.bias) {    # adjust for bias upon retransformation
+        if (method == "norm") {
+          var.fc <- norm_out$var.fcast
+          exp(fc_total) * exp(var.fc / 2)
+        } else if (method == "boot") {
+          err.mat <- boot_out$err.mat
+          for (i in 1:n.ahead) {
+            fc_total[[i]] <- mean(exp(fc_total + err.mat[, i]))
+          }
+        }
+      } else if (!adjust.bias) {        # ...or just exponentiate without bias adjustment
+        exp(fc_total)
+      }
       interv <- exp(interv)
       obs <- exp(obs)
       ts_name <- paste0("exp(", ts_name, ")")

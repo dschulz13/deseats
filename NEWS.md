@@ -19,6 +19,8 @@
   applications of the package with an example.
 - the `animate()` method for output of `deseats()` now also shows proper
   results for the case with `boundary_method = "shorten"` in `set_options()`.
+- the `predict()` method for S-Semi-ARMA models now allows for bias adjustment
+  of point forecasts via `bias.adjust = TRUE`, if `expo = TRUE`.
 
 # deseats 1.1.1
 - fixed a bug in the forecasting of seasonal semiparametric ARMA models, where for the
