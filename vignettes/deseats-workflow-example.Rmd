@@ -100,7 +100,7 @@ plot(fc, xlab = "Year", ylab = "Millions of person", main = "US persons not in t
      xlim = c(2010, 2021 - 1 / 12), ylim = c(80, 97))
 ```
 
-`xlim` and `ylim` were used to adjust the plot window, so that only the last observations will be shown together with the forecasts. If we had implemented an initial log-transformation of the data, we may want to retransform the forecasts. In such a case, we could apply `fc_e <- expo(fc)`, and use the plot method on `fc2` instead (not relevant for the given example).
+`xlim` and `ylim` were used to adjust the plot window, so that only the last observations will be shown together with the forecasts. If we had implemented an initial log-transformation of the data, we may want to retransform the forecasts. In such a case, we should set `expo = TRUE` in the call to the `predict()` method. By default, with `adjust.bias = TRUE`, the point forecasts are then adjusted for biases on the original scale. Under normality, this is done using the theoretical relation between the normal distribution (for the log-data forecasts) and the log-normal distribution (for the original data forecasts). When the bootstrap is applied, the sample mean of the future retransformed paths is considered.
 
 **Note**: forecasts using this method should only be created for the next few future time points, as extrapolating estimated components can lead to highly unreliable results, if going too far into the future.
 
