@@ -172,7 +172,5 @@ normCast <- function(model, p = NULL, q = NULL, h = 1,
   colnames(q_out) <- cname
   
   list(q_out = q_out, var.fcast = var.fcast)
-  
-  q_out
 
 }

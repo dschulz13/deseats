@@ -179,10 +179,14 @@ methods::setMethod("predict", "s_semiarma",
           var.fc <- norm_out$var.fcast
           exp(fc_total) * exp(var.fc / 2)
         } else if (method == "boot") {
+          start_fc <- stats::start(fc_total)
+          frq_fc <- stats::frequency(fc_total)
           err.mat <- boot_out$err.mat
+          fc_total <- as.numeric(fc_total)
           for (i in 1:n.ahead) {
-            fc_total[[i]] <- mean(exp(fc_total + err.mat[, i]))
+            fc_total[[i]] <- mean(exp(fc_total[[i]] + err.mat[, i]))
           }
+          fc_total <- stats::ts(fc_total, start = start_fc, frequency = frq_fc)
         }
       } else if (!adjust.bias) {        # ...or just exponentiate without bias adjustment
         exp(fc_total)
