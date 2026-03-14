@@ -2,7 +2,7 @@
 title: "Introduction to deseats"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{deseats-workflow-example}
+  %\VignetteIndexEntry{Introduction to deseats}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
