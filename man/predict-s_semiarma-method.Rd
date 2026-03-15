@@ -84,11 +84,11 @@ If \code{expo = TRUE} and \code{adjust.bias = TRUE}, the point forecasts
 will be exponentiated and adjusted for bias, so that the resulting forecasts
 can be seen as mean forecasts on the exponentiated scale. Forecasting intervals
 do not need such an adjustment. For \code{expo = FALSE}, no adjustment will be
-done. Let \code{\hat{y}_{n+k}} be the forecast on the log-scale (with \code{n}
+done. Let \code{y_{n+k}} be the forecast on the log-scale (with \code{n}
 as the number of observations and \code{k} as the forecast horizon). Under
 \code{method = "norm"}, we use
-\eqn{\exp{\hat{y}_{n+k}}\exp{\hat{\sigma}_h^2 / 2}} as the bias-adjusted
-point forecast, where \eqn{\hat{\sigma}_h^2 / 2} is the estimated
+\eqn{\exp{y_{n+k}}\exp{\sigma_h^2 / 2}} as the bias-adjusted
+point forecast, where \eqn{\sigma_h^2 / 2} is the estimated
 variance of the prediction error in accordance with the infinite-order
 moving-average representation of the fitted ARMA model part.
 For \code{method = "boot"}, the sample mean of future simulated paths on
