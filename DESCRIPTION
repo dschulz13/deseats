@@ -12,7 +12,7 @@ Authors@R:
              family = "Schulz",
              role = c("aut", "cre"),
              email = "dominik.schulz.r@gmail.com",
-             comment = "Paderborn University, Germany"))
+             comment = "formerly Paderborn University, Germany"))
 Maintainer: Dominik Schulz <dominik.schulz.r@gmail.com>
 Description: Various methods for the identification of trend and seasonal
   components in time series (TS) are provided. Among them is a data-driven locally
