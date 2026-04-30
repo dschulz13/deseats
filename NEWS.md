@@ -1,3 +1,8 @@
+# deseats 1.1.3
+- Change in maintainer email address from dominik.schulz@uni-paderborn.de
+  to dominik.schulz.r@gmail.com; the maintainer is, however, still the same
+  person.
+
 # deseats 1.1.2
 - `create.gain()` and `runDecomposition()` are now deprecated and replaced
   by `create_gain()` and `run_decomposition()`.
