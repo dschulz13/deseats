@@ -2,7 +2,7 @@
 - Fixed a bug in the `predict` method for `s_semiarma()` output that
   was experienced on machines with one machine core; it is now ensured
   that the number of cores used in the bootstrap procedure uses at least
-  one core and cannot drop to zero (thanks to Henrik Begtsson for pointing
+  one core and cannot drop to zero (thanks to Henrik Bengtsson for pointing
   this out).
 - Added two arguments `ncores` and `progress_bar` in the `predict` method for
   `s_semiarma()` output to control the number of cores used in the bootstrap
