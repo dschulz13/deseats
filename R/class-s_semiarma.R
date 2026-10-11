@@ -59,6 +59,12 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 #'the point forecasts should have a bias adjustment when simultaneously
 #'\code{expo = TRUE}; the default is \code{TRUE}; for \code{TRUE}, the point
 #'forecasts on the exponentiated scale will be mean forecasts.
+#'@param ncores a numerical value giving the number of cores to use, if
+#'\code{method = "boot"}; by default, uses one core fewer than available (with
+#'a minimum of one core).
+#'@param progress_bar a logical value indicating, whether or not a progress
+#'bar should be displayed in the console for \code{method = "boot"}; the default
+#'is \code{progress_bar = TRUE}.
 #'@param ... only for comparability with the standard \code{predict} method.
 #'
 #'@details
@@ -109,13 +115,16 @@ create_s_semiarma <- function(decomp, nonpar_model, par_model) {
 methods::setMethod("predict", "s_semiarma", 
   function(object, n.ahead = 1, intervals = TRUE, alpha = c(0.95, 0.99), method = c("norm", "boot"),
            bootMethod = c("simple", "advanced"), npaths = 5000, quant.type = 8,
-           expo = FALSE, adjust.bias = TRUE, ...) {
+           expo = FALSE, adjust.bias = TRUE,
+           ncores = max(future::availableCores() - 1, 1),
+           progress_bar = TRUE, ...) {
     
     if (intervals) {
     
       method <- match.arg(method)
     
     }
+    
     
     freq <- object@nonpar_model@frequency
     trend_e <- utils::tail(trend(object), 2)
@@ -149,9 +158,15 @@ methods::setMethod("predict", "s_semiarma",
         
         bootMethod <- match.arg(bootMethod)
         
+        if (ncores < 1) {
+          ncores <- 1
+          message('"ncores" was < 1. Automatically set the value to 1.')
+        }
+        
         boot_out <- bootCast(model = object@par_model, X = object@decomp[, 4],
           p = p, q = q, h = n.ahead, alpha = alpha, quant.type = quant.type,
-          bootstrap_type = bootMethod, it = npaths)
+          bootstrap_type = bootMethod, it = npaths, cores = ncores,
+          pb = progress_bar)
         
         fi <- boot_out$quants
 

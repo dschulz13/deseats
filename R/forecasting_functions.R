@@ -2,7 +2,7 @@
 
 bootCast <- function(model, X, p = NULL, q = NULL,
   n.start = 1000, h = 5, it = 5000, pb = TRUE,
-  cores = future::availableCores() - 1, alpha = c(0.95, 0.99), 
+  cores = max(future::availableCores() - 1, 1), alpha = c(0.95, 0.99), 
   quant.type = 8, bootstrap_type = c("simple", "advanced"), ...) {
 
   bootF <- bootSetup(model = model, X, p = p, q = q, h = h, n.start = n.start,

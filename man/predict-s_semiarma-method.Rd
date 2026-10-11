@@ -15,6 +15,8 @@
   quant.type = 8,
   expo = FALSE,
   adjust.bias = TRUE,
+  ncores = max(future::availableCores() - 1, 1),
+  progress_bar = TRUE,
   ...
 )
 }
@@ -60,6 +62,14 @@ results should be exponentiated at the end; the default is \code{expo = FALSE}.}
 the point forecasts should have a bias adjustment when simultaneously
 \code{expo = TRUE}; the default is \code{TRUE}; for \code{TRUE}, the point
 forecasts on the exponentiated scale will be mean forecasts.}
+
+\item{ncores}{a numerical value giving the number of cores to use, if
+\code{method = "boot"}; by default, uses one core fewer than available (with
+a minimum of one core).}
+
+\item{progress_bar}{a logical value indicating, whether or not a progress
+bar should be displayed in the console for \code{method = "boot"}; the default
+is \code{progress_bar = TRUE}.}
 
 \item{...}{only for comparability with the standard \code{predict} method.}
 }

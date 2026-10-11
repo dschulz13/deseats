@@ -29,6 +29,13 @@ You can install the current version of the package from CRAN with:
 install.packages("deseats")
 ```
 
+To install the development version from GitHub use:
+
+``` r
+# install.packages("pak")
+pak::pak("dschulz13/deseats")
+```
+
 ## Examples
 
 ### Basic decomposition
@@ -188,4 +195,6 @@ sources.
 ## Contact
 
 For questions, bug reports, etc., please contact the maintainer
-Mr. Dominik Schulz via <dominik.schulz@uni-paderborn.de>.
+Mr. Dominik Schulz via <dominik.schulz.r@gmail.com> or visit the
+package’s GitHub at
+[dschulz13/deseats](https://github.com/dschulz13/deseats).

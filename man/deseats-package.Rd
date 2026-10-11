@@ -79,6 +79,13 @@ Zeitreihen mit dem Verfahren BV4.1. Methodenberichte 3. Statistisches
 Bundesamt. URL: https://www.destatis.de/DE/Methoden/Saisonbereinigung/BV41-methodenbericht-Heft3_2004.pdf?__blob=publicationFile.}
 }
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/dschulz13/deseats}
+}
+
+}
 \author{
 \itemize{
 \item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
