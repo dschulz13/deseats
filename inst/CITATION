@@ -1,0 +1,38 @@
+bibentry(
+  bibtype = "Article",
+  title = "deseats: An R Package for Data-Driven Trend and Seasonality Estimation in Time Series",
+  author = c(
+    person("Dominik", "Schulz", role = "aut")
+  ),
+  journal = "The R Journal",
+  year = "2026",
+  volume = "18",
+  number = "2",
+  pages = "245-193",
+  doi = "10.32614/RJ-2026-025",
+  
+  textVersion = paste0(
+    "To cite the methodology or journal article, please use:\n\n",
+    "Schulz, D. (2026). deseats: An R Package for Data-Driven Trend and Seasonality Estimation in Time Series. The R Journal, 18(2), 1-15. DOI:10.32614/RJ-2026-025."
+  )
+)
+
+
+bibentry(
+  bibtype = "Manual",
+  title = "deseats: Data-Driven Locally Weighted Regression for Trend and
+Seasonality in TS",
+  author = as.person(meta$Author),
+  year = "2026",
+  note = paste0("R package version ", meta$Version),
+  doi = "10.32614/CRAN.package.deseats",
+  
+  textVersion = paste0(
+    "To cite the specific software version/manual, please use:\n\n",
+    "Feng, Y., and Schulz, D. (2026). ",
+    "deseats: Data-Driven Locally Weighted Regression for Trend and
+Seasonality in TS. ",
+    "R package version ", meta$Version, ". ",
+    "DOI: 10.32614/CRAN.package.deseats"
+  )
+)
