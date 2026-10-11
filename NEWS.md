@@ -9,6 +9,8 @@
 - Change in maintainer email address from dominik.schulz@uni-paderborn.de
   to dominik.schulz.r@gmail.com; the maintainer is, however, still the same
   person.
+- Further updates to the general documentation of the package, so that it is
+  easier to find the package's GitHub repository, to cite the package, etc.
 
 # deseats 1.1.2
 - `create.gain()` and `runDecomposition()` are now deprecated and replaced
