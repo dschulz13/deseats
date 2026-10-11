@@ -1,15 +1,29 @@
-# Test results for current package version 1.1.2
+# Test results for current package version 1.1.3
 
 ## Test environments
-* local Windows install, R 4.5.1
+* local Windows install, R 4.6.1
 * win-builder (oldrelease, release and devel)
-* R-hub (linux, windows, ubuntu-next, ubuntu-release)
+* R-hub (linux, windows, ubuntu-next, ubuntu-release, m1-san, macos-arm64, macos)
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 notes
+
+* checking CRAN incoming feasibility ... [132s] NOTE
+  Maintainer: 'Dominik Schulz <dominik.schulz.r@gmail.com>'
+
+  New maintainer:
+    Dominik Schulz <dominik.schulz.r@gmail.com>
+  Old maintainer(s):
+    Dominik Schulz <dominik.schulz@uni-paderborn.de>
+
+
+This is a change in the maintainer's email address, as the old email address
+is a corporate address that may cease to exist within the next twelve months.
 
 # Test results for older package versions
+
+## Test results for package version 1.1.2
 
 ## Test environments
 * local Windows install, R 4.4.2
